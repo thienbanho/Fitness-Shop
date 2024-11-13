@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import Logo from "../../assets/Logo_grey.png";
+import supabase from "../../config/supabaseClient"; 
 import "./Login.css";
 
 function Login() {
   const [isLoginForm, setIsLoginForm] = useState(true);
   const [selectedGender, setSelectedGender] = useState(null);
-
+  console.log(supabase);
   const toggleForm = (form) => {
     setIsLoginForm(form === "login");
   };
