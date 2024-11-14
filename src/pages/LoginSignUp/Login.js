@@ -6,13 +6,65 @@ import "./Login.css";
 function Login() {
   const [isLoginForm, setIsLoginForm] = useState(true);
   const [selectedGender, setSelectedGender] = useState(null);
-  console.log(supabase);
+  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    dateOfBirth: '',
+    phoneNumber: '',
+    password: ''
+  });
+
   const toggleForm = (form) => {
     setIsLoginForm(form === "login");
+    setError(''); // Clear any previous error
+    setFormData({ fullName: '', email: '', dateOfBirth: '', phoneNumber: '', password: '' }); // Clear form data
   };
 
   const selectGender = (gender) => {
     setSelectedGender(gender);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSignUp = async () => {
+    const { email, password } = formData;
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    }, {
+      data: {
+        full_name: formData.fullName,
+        date_of_birth: formData.dateOfBirth,
+        phone_number: formData.phoneNumber,
+        gender: selectedGender
+      }
+    });
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setError('');
+      alert("Signup successful! Please check your email to verify your account.");
+    }
+  };
+
+  const handleLogin = async () => {
+    const { email, password } = formData;
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setError('');
+      alert("Login successful!");
+    }
   };
 
   return (
@@ -30,9 +82,12 @@ function Login() {
             <form className="active-form">
               <div className="form-group">
                 <input
-                  type="text"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="form-input"
-                  placeholder="Email or phone number"
+                  placeholder="Email"
                   required
                 />
               </div>
@@ -40,24 +95,29 @@ function Login() {
               <div className="form-group">
                 <input
                   type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   className="form-input"
                   placeholder="Password"
                   required
                 />
               </div>
 
-              <div className="forgot-password">
-                <a href="#">Forgot Password?</a>
-              </div>
+              {error && <p className="error-text">{error}</p>}
 
-              <button type="submit" className="submit-btn login-btn">
+              <button 
+                type="button" 
+                className="submit-btn login-btn" 
+                onClick={handleLogin}
+              >
                 Login
               </button>
 
               <div className="divider">
-                <div class="line"></div>
-                <span class="or-text">OR</span>
-                <div class="line"></div>
+                <div className="line"></div>
+                <span className="or-text">OR</span>
+                <div className="line"></div>
               </div>
 
               <button type="button" className="social-btn facebook-btn">
@@ -78,6 +138,9 @@ function Login() {
               <div className="form-group">
                 <input
                   type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
                   className="form-input"
                   placeholder="Full name"
                   required
@@ -87,6 +150,9 @@ function Login() {
               <div className="form-group">
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="form-input"
                   placeholder="Email"
                   required
@@ -96,8 +162,10 @@ function Login() {
               <div className="form-group">
                 <input
                   type="date"
+                  name="dateOfBirth"
+                  value={formData.dateOfBirth}
+                  onChange={handleChange}
                   className="form-input"
-                  placeholder="Date of birth"
                   required
                 />
               </div>
@@ -105,6 +173,9 @@ function Login() {
               <div className="form-group">
                 <input
                   type="tel"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
                   className="form-input"
                   placeholder="Phone number"
                   required
@@ -114,6 +185,9 @@ function Login() {
               <div className="form-group">
                 <input
                   type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   className="form-input"
                   placeholder="Password"
                   required
@@ -122,39 +196,39 @@ function Login() {
 
               <div className="gender-options">
                 <div
-                  className={`gender-option ${
-                    selectedGender === "male" ? "selected" : ""
-                  }`}
+                  className={`gender-option ${selectedGender === "male" ? "selected" : ""}`}
                   onClick={() => selectGender("male")}
                 >
                   Male
                 </div>
                 <div
-                  className={`gender-option ${
-                    selectedGender === "female" ? "selected" : ""
-                  }`}
+                  className={`gender-option ${selectedGender === "female" ? "selected" : ""}`}
                   onClick={() => selectGender("female")}
                 >
                   Female
                 </div>
                 <div
-                  className={`gender-option ${
-                    selectedGender === "customize" ? "selected" : ""
-                  }`}
+                  className={`gender-option ${selectedGender === "customize" ? "selected" : ""}`}
                   onClick={() => selectGender("customize")}
                 >
                   Customize
                 </div>
               </div>
 
-              <button type="submit" className="submit-btn register-btn">
+              {error && <p className="error-text">{error}</p>}
+
+              <button 
+                type="button" 
+                className="submit-btn register-btn" 
+                onClick={handleSignUp}
+              >
                 Register
               </button>
 
               <div className="divider">
-                <div class="line"></div>
-                <span class="or-text">OR</span>
-                <div class="line"></div>
+                <div className="line"></div>
+                <span className="or-text">OR</span>
+                <div className="line"></div>
               </div>
 
               <button type="button" className="social-btn facebook-btn">
