@@ -14,8 +14,6 @@ function Login() {
 
   const toggleForm = (form) => {
     setIsLoginForm(form === "login");
-    setError(''); // Clear any previous error
-    setFormData({ fullName: '', email: '', dateOfBirth: '', phoneNumber: '', password: '' }); // Clear form data
   };
 
   const selectGender = (gender) => {
@@ -147,9 +145,6 @@ function Login() {
               <div className="form-group">
                 <input
                   type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
                   className="form-input"
                   placeholder="Password"
                   value={password}
@@ -158,20 +153,18 @@ function Login() {
                 />
               </div>
 
-              {error && <p className="error-text">{error}</p>}
+              <div className="forgot-password">
+                <a href="#">Forgot Password?</a>
+              </div>
 
-              <button 
-                type="button" 
-                className="submit-btn login-btn" 
-                onClick={handleLogin}
-              >
+              <button type="submit" className="submit-btn login-btn">
                 Login
               </button>
 
               <div className="divider">
-                <div className="line"></div>
-                <span className="or-text">OR</span>
-                <div className="line"></div>
+                <div class="line"></div>
+                <span class="or-text">OR</span>
+                <div class="line"></div>
               </div>
 
               <button type="button" onClick={handleFacebookLogin} className="social-btn facebook-btn">
@@ -193,9 +186,6 @@ function Login() {
               <div className="form-group">
                 <input
                   type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
                   className="form-input"
                   placeholder="Full name"
                   value={fullName}
@@ -207,9 +197,6 @@ function Login() {
               <div className="form-group">
                 <input
                   type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
                   className="form-input"
                   placeholder="Email"
                   value={email}
@@ -221,9 +208,6 @@ function Login() {
               <div className="form-group">
                 <input
                   type="date"
-                  name="dateOfBirth"
-                  value={formData.dateOfBirth}
-                  onChange={handleChange}
                   className="form-input"
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
@@ -234,9 +218,6 @@ function Login() {
               <div className="form-group">
                 <input
                   type="tel"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
                   className="form-input"
                   placeholder="Phone number"
                   value={phone}
@@ -248,9 +229,6 @@ function Login() {
               <div className="form-group">
                 <input
                   type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
                   className="form-input"
                   placeholder="Password"
                   value={password}
@@ -280,13 +258,7 @@ function Login() {
                 </div>
               </div>
 
-              {error && <p className="error-text">{error}</p>}
-
-              <button 
-                type="button" 
-                className="submit-btn register-btn" 
-                onClick={handleSignUp}
-              >
+              <button type="submit" className="submit-btn register-btn">
                 Register
               </button>
 
