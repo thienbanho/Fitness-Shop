@@ -63,7 +63,7 @@ body {
     position: absolute;
     left: 58px;
     top: 155px;
-    font-size: 11px;
+    font-size: 13px;
     color: #000000;
     display: flex;
     flex-direction: column;
@@ -80,14 +80,18 @@ body {
   .menu-items {
     position: absolute;
     left: 50px;
-    top: 269px;
+    top: 350px;
     width: 100%;
     padding: 0;
     list-style-type: none;
     margin: 0;
   }
   
-  .menu-items li {
+  .menu-items li{
+    margin-bottom: 20px;
+  }
+  
+  .menu-items a {
     padding: 0;
     text-align: left;
     font-size: 20px;
@@ -96,11 +100,12 @@ body {
     border: none;
     background-color: transparent;
     margin-top: 50px;
+    text-decoration: none;
   }
   
-  .menu-items li:not(:first-child) {
-    margin-top: 15px;
-  }
+  .menu-items a:hover {
+    color: #989595;
+}
   
   .account-coupon {
     width: 70%;
