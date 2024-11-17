@@ -11,11 +11,21 @@ function Coupon() {
         <div className="content">
           <div className="sidebar">
             <ul className="menu-items">
-              <li>Account Information</li>
-              <li>List of orders</li>
-              <li>PT registration</li>
-              <li>Coupon wallet</li>
-              <li>Sign out</li>
+              <li>
+                <a href='#'>Account information</a>
+              </li>
+              <li>
+                <a href='#'>List of orders</a>
+              </li>
+              <li>
+                <a href='#'>PT registration</a>
+              </li>
+              <li>
+                <a href='#'>Coupon wallet</a>
+              </li>
+              <li>
+                <a href='#'>Sign out</a>
+              </li>
             </ul>
           </div>
 
