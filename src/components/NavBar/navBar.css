@@ -1,14 +1,15 @@
-.nav_bar {
-    background-color: #ffffff;
-    display: flex;
-    align-items: center;
+  .nav_bar {
     position: fixed;
     top: 0;
     left: 0;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
     width: 100%;
     border: 1px solid black;
     height: 100px;
-
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
   
   .logo {
