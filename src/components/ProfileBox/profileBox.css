@@ -1,0 +1,46 @@
+.profile-container {
+    width: 414px;
+    margin-left: 34px;
+    margin-top: 74px;
+}
+
+.avt {
+    margin-top: 45px;
+    margin-left: 60px;
+    margin-bottom: 10px;
+    height: 100px;
+    width: 100px;
+    overflow: hidden;
+    border-radius: 50%;
+    display:flex;
+}
+
+.name, .email {
+    font-size: 20px;
+    padding-left: 60px;
+    padding-bottom: 10px;
+}
+
+.profile-header {
+    border-style: solid;
+    border-color: black;
+    background-color: rgb(224, 224, 224);
+    height: 257px;
+}
+
+.menu-list {
+    background-color: white;
+    border-style: solid;
+    border-color: black;
+    border-top: none;
+    height: 517px;
+    font-size: 20px;
+    padding-left: 60px;
+    padding-top: 90px;
+}
+
+a {
+    line-height: 50px;
+    text-decoration: none;
+    color: black;
+}

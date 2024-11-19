@@ -1,14 +1,14 @@
 import React from 'react';
 import './PTRegist.css';
-import ProfileBox from './components/profileBox';
-import PTRegistrationForm from './components/contract';
+import ProfileBox from '../../components/ProfileBox/profileBox';
+import PTRegistrationForm from '../../components/PTcontract/contract';
 import NavBar from '../../components/NavBar/NavBar';
 import Footer from '../../components/Footer/Footer';
 
 const PTRegist = () => {
   return (
     <>
-      <NavBar></NavBar>
+      <NavBar />
 
       <div className="pt-regist">
         {/* Profile Box */}
@@ -18,7 +18,7 @@ const PTRegist = () => {
         <PTRegistrationForm />
       </div>
       
-      <Footer></Footer>
+      <Footer />
     </>
   );
 };
