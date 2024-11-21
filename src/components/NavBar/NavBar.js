@@ -4,6 +4,9 @@ import LogoProfile from "../../assets/profile-user.png";
 import LogoCart from "../../assets/shopping-cart.png";
 import "./navBar.css";
 import React from "react";
+// import { Link } from "react-router-dom";
+
+import Product from "../../pages/Product/Product";
 
 function NavBar() {
   return (
@@ -13,6 +16,9 @@ function NavBar() {
         <li>
           <a href="#">HOME</a>
         </li>
+        {/* <li>
+          <Link to={Product}>PRODUCTS</Link>
+        </li> */}
         <li>
           <a href="#">PRODUCTS</a>
         </li>

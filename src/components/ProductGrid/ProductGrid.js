@@ -11,63 +11,93 @@ const ProductGrid = ({product1, name1, price1,
         <div className="product-grid">
             <div className="product-card">
                 <div className="product-image">
-                    <img src={product1} alt={name1} />
-                </div>
-                <div className="product-title">{name1}</div>
-                <div className="product-price">{price1}</div>
-                <div className="product-rating">★★★★★</div>
-                <button className="buy-button">CHỌN</button>
+                        <img src={product1} alt={name1} />
+                    </div>
+                    <div className="product-title">{name1}</div>
+                    <div className="product-price">
+                        {price1}
+                        <span className="product-price-discount">2.050.000đ</span> {/* Giá gạch ngang */}
+                    </div>
+                    <div className="product-gift">Quà trị giá 250.000đ</div> {/* Thêm quà tặng */}
+                    <div className="product-rating">★★★★★</div>
+                    <button className="buy-button">CHỌN</button>
+                <div className="product-discount">-15%</div> {/* Hiển thị giảm giá */}
             </div>
 
             <div className="product-card">
                 <div className="product-image">
-                    <img src={product2} alt={name2} />
-                </div>
-                <div className="product-title">{name2}</div> 
-                <div className="product-price">{price2}</div>
-                <div className="product-rating">★★★★★</div>
-                <button className="buy-button">CHỌN</button>
+                        <img src={product2} alt={name2} />
+                    </div>
+                    <div className="product-title">{name2}</div>
+                    <div className="product-price">
+                        {price2}
+                        <span className="product-price-discount">2.050.000đ</span> {/* Giá gạch ngang */}
+                    </div>
+                    <div className="product-gift">Quà trị giá 250.000đ</div> {/* Thêm quà tặng */}
+                    <div className="product-rating">★★★★★</div>
+                    <button className="buy-button">CHỌN</button>
+                <div className="product-discount">-15%</div> {/* Hiển thị giảm giá */}
             </div>
 
             <div className="product-card">
                 <div className="product-image">
-                    <img src={product3} alt={name3} />
-                </div>
-                <div className="product-title">{name3}</div>
-                <div className="product-price">{price3}</div>
-                <div className="product-rating">★★★★★</div>
-                <button className="buy-button">CHỌN</button>
+                        <img src={product3} alt={name3} />
+                    </div>
+                    <div className="product-title">{name3}</div>
+                    <div className="product-price">
+                        {price3}
+                        <span className="product-price-discount">2.050.000đ</span> {/* Giá gạch ngang */}
+                    </div>
+                    <div className="product-gift">Quà trị giá 250.000đ</div> {/* Thêm quà tặng */}
+                    <div className="product-rating">★★★★★</div>
+                    <button className="buy-button">CHỌN</button>
+                <div className="product-discount">-15%</div> {/* Hiển thị giảm giá */}
             </div>
 
             <div className="product-card">
                 <div className="product-image">
-                    <img src={product4} alt={name4} />
-                </div>
-                <div className="product-title">{name4}</div>
-                <div className="product-price">{price4}</div>
-                <div className="product-rating">★★★★★</div>
-                <button className="buy-button">CHỌN</button>
+                        <img src={product4} alt={name4} />
+                    </div>
+                    <div className="product-title">{name4}</div>
+                    <div className="product-price">
+                        {price4}
+                        <span className="product-price-discount">2.050.000đ</span> {/* Giá gạch ngang */}
+                    </div>
+                    <div className="product-gift">Quà trị giá 250.000đ</div> {/* Thêm quà tặng */}
+                    <div className="product-rating">★★★★★</div>
+                    <button className="buy-button">CHỌN</button>
+                <div className="product-discount">-15%</div> {/* Hiển thị giảm giá */}
             </div>
 
             
             <div className="product-card">
                 <div className="product-image">
-                    <img src={product5} alt={name5} />
-                </div>
-                <div className="product-title">{name5}</div>
-                <div className="product-price">{price5}</div>
-                <div className="product-rating">★★★★★</div>
-                <button className="buy-button">CHỌN</button>
+                        <img src={product5} alt={name5} />
+                    </div>
+                    <div className="product-title">{name5}</div>
+                    <div className="product-price">
+                        {price5}
+                        <span className="product-price-discount">2.050.000đ</span> {/* Giá gạch ngang */}
+                    </div>
+                    <div className="product-gift">Quà trị giá 250.000đ</div> {/* Thêm quà tặng */}
+                    <div className="product-rating">★★★★★</div>
+                    <button className="buy-button">CHỌN</button>
+                <div className="product-discount">-15%</div> {/* Hiển thị giảm giá */}
             </div>
 
             <div className="product-card">
                 <div className="product-image">
-                    <img src={product6} alt={name6} />
-                </div>
-                <div className="product-title">{name6}</div>
-                <div className="product-price">{price6}</div>
-                <div className="product-rating">★★★★★</div>
-                <button className="buy-button">CHỌN</button>
+                        <img src={product6} alt={name6} />
+                    </div>
+                    <div className="product-title">{name6}</div>
+                    <div className="product-price">
+                        {price6}
+                        <span className="product-price-discount">2.050.000đ</span> {/* Giá gạch ngang */}
+                    </div>
+                    <div className="product-gift">Quà trị giá 250.000đ</div> {/* Thêm quà tặng */}
+                    <div className="product-rating">★★★★★</div>
+                    <button className="buy-button">CHỌN</button>
+                <div className="product-discount">-15%</div> {/* Hiển thị giảm giá */}
             </div>
         </div>
     );

@@ -2,65 +2,104 @@
     margin-top: 40px;
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* Three columns */
-    grid-template-rows: repeat(2, 1fr);    /* Two rows */
-    gap: 95px;
+    gap: 30px; /* Khoảng cách giữa các thẻ */
+    width: 100%;
+    padding: 10px;
 }
-  
+
 .product-card {
-    border: 2px solid black;
-    background: #fff;
+    border: 2px solid #000000;
     border-radius: 8px;
+    background: #fff;
     padding: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative; /* icon khuyến mãi */
 }
-  
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Phần ảnh */
 .product-image {
     width: 150px;
     height: 150px;
     margin: 0 auto 15px;
 }
-  
+
 .product-image img {
     max-width: 100%;
-    height: auto;
+    max-height: 100%;
+    object-fit: contain;
 }
-  
+
+/* Tiêu đề */
 .product-title {
     font-size: 14px;
-    margin-bottom: 10px;
-    background-color: white;
+    font-weight: bold;
     color: #333;
+    margin-bottom: 10px;
     line-height: 1.4;
 }
-  
+
+/* Giá */
 .product-price {
-    background-color: white;
     color: #e53935;
     font-weight: bold;
-    margin-bottom: 10px;
+    font-size: 16px;
+    margin-bottom: 5px;
 }
-  
-.product-rating {
-    background-color: white;
-    color: #ffc107;
+
+/* Giá gạch ngang */
+.product-price-discount {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 14px;
+}
+
+/* Nhãn giảm giá */
+.product-discount {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #e53935;
+    color: white;
+    padding: 5px 8px;
     font-size: 12px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Phần giá trị quà tặng */
+.product-gift {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+/* Đánh giá (ngôi sao) */
+.product-rating {
+    color: #ffc107; /* Màu vàng */
+    font-size: 14px;
     margin-bottom: 10px;
 }
-  
+
+/* Nút "CHỌN" */
 .buy-button {
     background: #e53935;
     color: white;
     border: none;
-    padding: 5px 5px;
+    padding: 8px 12px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-    width: 60px;
+    width: 80px;
     margin: 0 auto;
 }
 
