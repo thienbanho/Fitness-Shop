@@ -1,7 +1,7 @@
 import React from "react";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
-import userDashboard from "../../components/userDashboard/userDashboard";
+import userDashboard from "../../components/User Dashboard/userDashboard";
 import "./info.css";
 
 function profileInfo() {
