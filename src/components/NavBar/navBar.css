@@ -1,16 +1,15 @@
-  .nav_bar {
-    position: fixed;
-    top: 0;
-    left: 0;
+ .nav_bar {
     background-color: #ffffff;
     display: flex;
     align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     border: 1px solid black;
     height: 100px;
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
+  
   
   .logo {
     max-width: 20%; /* hoặc bất kỳ giá trị phần trăm nào mà bạn muốn */
