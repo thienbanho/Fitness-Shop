@@ -1,77 +1,48 @@
-import NavBar from "../../../components/NavBar/NavBar";
-import Footer from "../../../components/Footer/Footer";
-import "./info.css";
 import React from "react";
+import NavBar from "../../components/NavBar/NavBar";
+import Footer from "../../components/Footer/Footer";
+import userDashboard from "../../components/userDashboard/userDashboard";
+import "./info.css";
 
-function Info() {
+function profileInfo() {
   return (
     <>
       <NavBar />
-      <div className="main-content">
-        {}
-        <div className="content">
-          <div className="sidebar">
-            <ul className="menu-items">
-              <li>
-                <a href='#'>Account information</a>
-              </li>
-              <li>
-                <a href='#'>List of orders</a>
-              </li>
-              <li>
-                <a href='#'>PT registration</a>
-              </li>
-              <li>
-                <a href='#'>Coupon wallet</a>
-              </li>
-              <li>
-                <a href='#'>Sign out</a>
-              </li>
-            </ul>
+      <div className="account_information">
+        <userDashboard />
+        
+        <div className="info-container">
+          <div className="info-header">
+            <h1>Account information</h1>
           </div>
-
-          <div className="menu-sidebar">
-            <div className="profile-picture" />
-            <div className="user-mail">
-              <h2>Long Ho Truong Viet</h2>
-              <h2>longext04@gmail.com</h2>
-            </div>
-          </div>
-        </div>
-
-        <div className="sidebar-info">
-          <h2>Account Information</h2>
-          <div className="input-field">
+          
+          <div className="form-group">
             <label htmlFor="name">Họ và tên:</label>
-            <input type="text" id="name" name="name" placeholder="Ho Truong Viet Long" />
+            <input type="text" id="name" name="name"/>
           </div>
 
-          <div className="input-row">
+          <div className="form-group input-row">
             <div className="input-field">
               <label htmlFor="email">Email:</label>
-              <input type="email" id="email" name="email" placeholder="longext04@gmail.com" />
+              <input type="email" id="email" name="email"/>
             </div>
-
             <div className="input-field">
-              <label htmlFor="number">Số điện thoại:</label>
-              <input type="text" id="number" name="number" placeholder="0987654321" />
+              <label htmlFor="phone">Số điện thoại:</label>
+              <input type="tel" id="phone" name="phone"/>
             </div>
           </div>
 
-          <div className="input-field">
+          <div className="form-group">
             <label htmlFor="address">Địa chỉ:</label>
-            <input type="text" id="address" name="address" placeholder="131 BLA BLA" />
+            <input type="text" id="address" name="address"/>
           </div>
 
-          <div className="input-field">
-            <button type="submit">THAY ĐỔI</button>
-          </div>
+          <button type="submit" className="submit-btn">THAY ĐỔI</button>
         </div>
-
       </div>
       <Footer />
     </>
   );
 }
 
-export default Info;
+export default profileInfo;
