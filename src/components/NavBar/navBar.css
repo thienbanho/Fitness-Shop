@@ -1,8 +1,6 @@
- .nav_bar {
-    background-color: #ffffff;
+.nav_bar {
     display: flex;
     align-items: center;
-    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -12,7 +10,7 @@
   
   
   .logo {
-    max-width: 20%; /* hoặc bất kỳ giá trị phần trăm nào mà bạn muốn */
+    max-width: 20%;
     height: auto; /* Đảm bảo giữ đúng tỷ lệ */
     margin-left: 50px;
   }
@@ -41,10 +39,11 @@
   .icon {
     display: flex;
     margin-left: 60px;
-    
   }
   
   .icon img {
-    max-width: 35%; /* hoặc bất kỳ giá trị phần trăm nào mà bạn muốn */
+    margin-top: 15px;
+    background-color: white;
+    width: 50%;
     height: auto; /* Đảm bảo giữ đúng tỷ lệ */
   }

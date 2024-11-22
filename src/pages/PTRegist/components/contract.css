@@ -1,0 +1,143 @@
+.registration-container {
+    width: 841px;
+    min-height: 1226px;
+    margin-top: 74px;
+    padding: 40px;
+    box-sizing: border-box;
+    border-color: #000000;
+    border-style: solid;
+    background-color: white;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 20px;
+    border: 2px solid black;
+    padding: 8px;
+}
+
+.form-header h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.print-note {
+    font-style: italic;
+    font-weight: bolder;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-section {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 180px;
+}
+
+.form-group.full-width {
+    flex: 100%;
+}
+
+label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 20px;
+}
+
+.address-fields {
+    display: flex;
+    gap: 8px;
+}
+
+.address-fields input {
+    flex: 1;
+}
+
+.payment-note {
+    margin: 15px 0;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.policies-section h2,
+.risk-section h2,
+.waiver-section h2 {
+    font-size: 20px;
+    text-decoration: underline;
+    text-align: center;
+    color: #000000;
+}
+
+.policies-section ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    line-height: 1.4;
+}
+
+.policies-section li,
+.risk-section p,
+.waiver-section p {
+    line-height: 1.4;
+    font-size: 20px;
+}
+
+.guardian-section h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+.submit-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 20px;
+    margin-top: 15px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #45a049;
+}
+
+@media print {
+    .registration-container {
+        width: 100%;
+        min-height: 100%;
+        box-shadow: none;
+        padding: 20px;
+    }
+
+    .submit-button {
+        display: none;
+    }
+}
