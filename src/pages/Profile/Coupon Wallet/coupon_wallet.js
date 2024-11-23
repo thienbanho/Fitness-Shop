@@ -4,7 +4,7 @@ import Footer from "../../components/Footer/Footer";
 import "./coupon_wallet.css";
 import UserDashboard from "../../components/User Dashboard/userDashboard";
 
-function couponWallet() {
+function Coupon() {
   return (
     <>
       <NavBar />
@@ -27,4 +27,4 @@ function couponWallet() {
   );
 }
 
-export default couponWallet;
+export default Coupon;
