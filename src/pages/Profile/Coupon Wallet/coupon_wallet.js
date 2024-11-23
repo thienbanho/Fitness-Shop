@@ -2,14 +2,14 @@ import React from "react";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
 import "./coupon_wallet.css";
-import userDashboard from "../../components/User Dashboard/userDashboard";
+import UserDashboard from "../../components/User Dashboard/userDashboard";
 
 function couponWallet() {
   return (
     <>
       <NavBar />
       <div className="coupon-wallet">
-        <userDashboard />
+        <UserDashboard />
         
         <div className="coupon-container">
           <div className="coupon-header"><h1>My voucher</h1>
