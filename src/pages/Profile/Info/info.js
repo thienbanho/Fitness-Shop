@@ -4,7 +4,7 @@ import Footer from "../../components/Footer/Footer";
 import UserDashboard from "../../components/User Dashboard/userDashboard";
 import "./info.css";
 
-function profileInfo() {
+function Info() {
   return (
     <>
       <NavBar />
@@ -45,4 +45,4 @@ function profileInfo() {
   );
 }
 
-export default profileInfo;
+export default Info;
