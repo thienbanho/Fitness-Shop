@@ -48,12 +48,17 @@ function Login() {
       email,
       password,
     });
-
+    //if already login
+    if (data) {
+      alert("You are already logged in!");
+      return;
+    }
     if (error) {
       alert(`Error during login: ${error.message}`);
     } else {
       alert("Login successful!");
-      console.log(data);
+      // Redirect to home page
+      window.location.href = "/pages/Home";
     }
   };
 

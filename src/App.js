@@ -5,10 +5,20 @@ import PTRegist from "./pages/PTRegist/PTRegist.js";
 import Product from "./pages/Product/Product.js";
 import NavBar from "./components/NavBar/NavBar.js";
 import Footer from "./components/Footer/Footer.js";
+import { BrowserRouter } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 
 function App() {
   return (
-    <PTRegist/>
+    <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Home/>}/>
+      <Route path="/pages/Home" element={<Home/>}/>
+      <Route path="/pages/LoginSignup/Login" element={<Login/>}/>
+      <Route path="/pages/PTRegist/PTRegist" element={<PTRegist/>}/>
+      <Route path="/pages/Product" element={<Product/>}/>
+    </Routes>
+    </BrowserRouter>
   );
 }
 

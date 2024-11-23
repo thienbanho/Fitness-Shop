@@ -2,8 +2,10 @@ import Logo from "../../assets/logo.png";
 import LogoSearch from "../../assets/search.png";
 import LogoProfile from "../../assets/profile-user.png";
 import LogoCart from "../../assets/shopping-cart.png";
+import Home from "../../pages/Home/Home";
 import "./navBar.css";
 import React from "react";
+import { Link } from "react-router";
 
 function NavBar() {
   return (
@@ -11,10 +13,10 @@ function NavBar() {
       <img className="logo" src={Logo} alt="Logo"></img>
       <ul class="nav-links">
         <li>
-          <a href="#">HOME</a>
+          <Link to="../../pages/Home">HOME</Link>
         </li>
         <li>
-          <a href="#">PRODUCTS</a>
+          <Link to="../../pages/Product">PRODUCTS</Link>
         </li>
         <li>
           <a href="#">HIRE PT</a>
@@ -27,9 +29,9 @@ function NavBar() {
         <a href="#">
           <img src={LogoSearch} alt="search"></img>
         </a>
-        <a href="#">
+        <Link to="../../pages/LoginSignUp/Login">
           <img src={LogoProfile} alt="profile"></img>
-        </a>
+        </Link>
         <a href="#">
           <img src={LogoCart} alt="cart"></img>
         </a>
