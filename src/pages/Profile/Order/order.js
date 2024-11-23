@@ -4,7 +4,7 @@ import Footer from "../../components/Footer/Footer";
 import "./order.css";
 import UserDashboard from "../../components/User Dashboard/userDashboard";
 
-function orderManagement() {
+function Order() {
   return (
     <>
       <NavBar />
@@ -27,4 +27,4 @@ function orderManagement() {
   );
 }
 
-export default OrderManagement;
+export default Order;
