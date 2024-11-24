@@ -2,7 +2,7 @@ import React from "react";
 import './userDashboard.css'
 import profileAvt from '../../assets/avatar.png'
 
-const userDashboard = () => {
+const UserDashboard = () => {
     return (
         <div className="profile-sidebar">
             <div className="mail-zone">
@@ -26,4 +26,4 @@ const userDashboard = () => {
     );
 };
 
-export default userDashboard;
+export default UserDashboard;

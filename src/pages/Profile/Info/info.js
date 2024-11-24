@@ -1,15 +1,15 @@
 import React from "react";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
-import userDashboard from "../../components/User Dashboard/userDashboard";
+import UserDashboard from "../../components/User Dashboard/userDashboard";
 import "./info.css";
 
-function profileInfo() {
+function Info() {
   return (
     <>
       <NavBar />
       <div className="account_information">
-        <userDashboard />
+        <UserDashboard />
         
         <div className="info-container">
           <div className="info-header">
@@ -45,4 +45,4 @@ function profileInfo() {
   );
 }
 
-export default profileInfo;
+export default Info;

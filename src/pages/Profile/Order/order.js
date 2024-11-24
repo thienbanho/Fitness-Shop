@@ -2,14 +2,14 @@ import React from "react";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
 import "./order.css";
-import userDashboard from "../../components/User Dashboard/userDashboard";
+import UserDashboard from "../../components/User Dashboard/userDashboard";
 
-function orderManagement() {
+function Order() {
   return (
     <>
       <NavBar />
       <div className="order-management">
-        <userDashboard />
+        <UserDashboard />
         
         <div className="order-container">
             <div className="order-header">
@@ -27,4 +27,4 @@ function orderManagement() {
   );
 }
 
-export default OrderManagement;
+export default Order;
