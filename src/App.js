@@ -18,6 +18,7 @@ function App() {
       <Route path="/pages/LoginSignup/Login" element={<Login/>}/>
       <Route path="/pages/PTRegist/PTRegist" element={<PTRegist/>}/>
       <Route path="/pages/Product" element={<Product/>}/>
+      <Route path="/pages/Profile/Info" element={<Info/>}/>
     </Routes>
     </BrowserRouter>
   );

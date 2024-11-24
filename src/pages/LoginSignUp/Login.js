@@ -12,6 +12,7 @@ function Login() {
   const [phone, setPhone] = useState("");
   const [dob, setDob] = useState("");
 
+  
   const toggleForm = (form) => {
     setIsLoginForm(form === "login");
   };

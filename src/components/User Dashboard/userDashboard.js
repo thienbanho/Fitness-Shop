@@ -1,6 +1,6 @@
 import React from "react";
 import './userDashboard.css'
-import profileAvt from '../../assets/avatar.png'
+import profileAvt from '../../assets/profile-user.png'
 
 const UserDashboard = () => {
     return (
