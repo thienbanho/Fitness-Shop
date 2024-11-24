@@ -1,8 +1,8 @@
 import React from "react";
-import NavBar from "../../components/NavBar/NavBar";
-import Footer from "../../components/Footer/Footer";
+import NavBar from "../../../components/NavBar/NavBar";
+import Footer from "../../../components/Footer/Footer";
 import "./coupon_wallet.css";
-import UserDashboard from "../../components/User Dashboard/userDashboard";
+import UserDashboard from "../../../components/User Dashboard/userDashboard";
 
 function Coupon() {
   return (
