@@ -8,6 +8,7 @@ import NavBar from "./components/NavBar/NavBar.js";
 import Footer from "./components/Footer/Footer.js";
 import { BrowserRouter } from 'react-router-dom';
 import { Routes, Route, Link } from 'react-router-dom';
+import RoleManagementPage from "./components/User Dashboard/RoleManagementPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Route path="/pages/PTRegist/PTRegist" element={<PTRegist/>}/>
       <Route path="/pages/Product" element={<Product/>}/>
       <Route path="/pages/Profile/Info" element={<Info/>}/>
+      <Route path="/components/UserDashboard/RoleManagementPage" element={<RoleManagementPage/>}/>
     </Routes>
     </BrowserRouter>
   );
