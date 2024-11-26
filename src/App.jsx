@@ -12,6 +12,7 @@ import Create from './pages/Create'
 import Profile from './pages/Profile'
 import AboutPage from './pages/About/About'
 import Forum from './pages/Forum/Forum'
+import ProductDetail from './pages/DetailProduct/DetailProduct'
 
 // router and routes
 const router = createBrowserRouter(
@@ -22,6 +23,7 @@ const router = createBrowserRouter(
       <Route path="profile" element={<Profile />} />
       <Route path="about" element={<AboutPage />} />
       <Route path="forum" element={<Forum />} />
+      <Route path="DetailProduct" element={<ProductDetail />} />
 
     </Route>
   )
