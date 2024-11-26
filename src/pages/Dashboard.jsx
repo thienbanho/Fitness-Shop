@@ -1,5 +1,4 @@
 import { Box, Container, Heading, Text } from "@chakra-ui/react";
-
 export default function Dashboard() {
 
   const boxStyles = {
