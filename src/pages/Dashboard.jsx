@@ -1,6 +1,6 @@
 import { Box, Container, Heading, Text, Flex } from "@chakra-ui/react";
-import Sidebar from "../components/sidebar/sidebar"; // Sidebar Component
-import Navbar from "../components/navbar/navbar";   // Navbar Component
+import Sidebar from "../components/Sidebar/Sidebar"; // Sidebar Component
+import Navbar from "../components/NavBar/NavBar";   // Navbar Component
 
 export default function Dashboard() {
 

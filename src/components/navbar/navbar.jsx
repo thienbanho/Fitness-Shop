@@ -1,6 +1,5 @@
-'use client'
-
 import {
+  Image,
   Box,
   Flex,
   Text,
@@ -29,9 +28,9 @@ export default function WithSubnavigation() {
   return (
     <Box>
       <Flex
-        bg={useColorModeValue('white', 'gray.800')}
+        bg={useColorModeValue('white', 'black.800')}
         color={useColorModeValue('gray.600', 'white')}
-        minH={'60px'}
+        minH={'80px'}
         py={{ base: 2 }}
         px={{ base: 4 }}
         borderBottom={1}
@@ -54,7 +53,7 @@ export default function WithSubnavigation() {
             textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
             fontFamily={'heading'}
             color={useColorModeValue('gray.800', 'white')}>
-            Logo
+            <Image src="/src/assets/logo.png" alt="Logo" boxSize="50px" width="100px" />
           </Text>
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
@@ -76,7 +75,7 @@ export default function WithSubnavigation() {
             fontSize={'sm'}
             fontWeight={600}
             color={'white'}
-            bg={'pink.400'}
+            bg={'red.600'}
             href={'#'}
             _hover={{
               bg: 'pink.300',
@@ -106,9 +105,10 @@ const DesktopNav = () => {
             <PopoverTrigger>
               <Box
                 as="a"
-                p={2}
+                p={3}
+                display="flex"
                 href={navItem.href ?? '#'}
-                fontSize={'sm'}
+                fontSize={'m'}
                 fontWeight={500}
                 color={linkColor}
                 _hover={{
@@ -155,7 +155,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
         <Box>
           <Text
             transition={'all .3s ease'}
-            _groupHover={{ color: 'pink.400' }}
+            _groupHover={{ color: 'red.600' }}
             fontWeight={500}>
             {label}
           </Text>
@@ -236,41 +236,41 @@ const MobileNavItem = ({ label, children, href }) => {
 
 const NAV_ITEMS = [
   {
-    label: 'Inspiration',
+    label: 'Product',
     children: [
       {
-        label: 'Explore Design Work',
-        subLabel: 'Trending Design to inspire you',
+        label: 'Shop Supplements',
+        subLabel: 'Browse high-quality whey, vitamins, and more',
         href: '#',
       },
       {
-        label: 'New & Noteworthy',
-        subLabel: 'Up-and-coming Designers',
+        label: 'Sell Your Products',
+        subLabel: 'List your fitness products for others to buy',
         href: '#',
       },
     ],
   },
   {
-    label: 'Find Work',
+    label: 'Personal Trainers',
     children: [
       {
-        label: 'Job Board',
-        subLabel: 'Find your dream design job',
+        label: 'Hire Personal Trainers',
+        subLabel: 'Connect with experts for personalized training',
         href: '#',
       },
       {
-        label: 'Freelance Projects',
-        subLabel: 'An exclusive list for contract work',
+        label: 'Become a Trainer',
+        subLabel: 'Join our platform as a certified trainer',
         href: '#',
       },
     ],
   },
   {
-    label: 'Learn Design',
-    href: '#',
+    label: 'Forum',
+    href: 'Forum',
   },
   {
-    label: 'Hire Designers',
-    href: '#',
+    label: 'About',
+    href: 'About',
   },
 ]
