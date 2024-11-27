@@ -9,7 +9,7 @@ import {
 import RootLayout from './layouts/RootLayout'
 import Dashboard from './pages/Dashboard'
 import Create from './pages/Create'
-import Profile from './pages/Profile'
+import Profile from './pages/Profile/Profile'
 import AboutPage from './pages/About/About'
 import Forum from './pages/Forum/Forum'
 import ProductDetail from './pages/DetailProduct/DetailProduct'
