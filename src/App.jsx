@@ -16,6 +16,7 @@ import ProductDetail from './pages/DetailProduct/DetailProduct'
 import UploadProduct from './pages/UploadProduct/UploadProduct'
 import Payment from './pages/Payment/Payment'
 import SignIn from './pages/SignIn/SignIn'
+import SignUp from './pages/SignUp/SignUp'
 
 // router and routes
 const router = createBrowserRouter(
@@ -30,6 +31,7 @@ const router = createBrowserRouter(
       <Route path="UploadProduct" element={<UploadProduct />} />
       <Route path="Payment" element={<Payment />} />
       <Route path="SignIn" element={<SignIn />} />
+      <Route path="SignUp" element={<SignUp />} />
 
     </Route>
   )

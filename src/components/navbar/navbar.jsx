@@ -95,7 +95,7 @@ export default function WithSubnavigation() {
             fontWeight={600}
             color={"white"}
             bg={"red.600"}
-            href={"#"}
+            href={"/SignUp"}
             _hover={{
               bg: "pink.300",
             }}
