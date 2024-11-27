@@ -6,8 +6,8 @@ import {
   Flex,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import Navbar from "../components/NavBar/NavBar"; // Navbar Component
-import Footer from "../components/Footer/Footer"; // Footer Component
+import Navbar from "/HCMUS/Software Engineering/pj/fitness-shop/src/components/NavBar/NavBar.jsx"; // Navbar Component
+import Footer from "/HCMUS/Software Engineering/pj/fitness-shop/src/components/Footer/Footer.jsx"; // Footer Component
 
 export default function Dashboard() {
   const boxStyles = {
