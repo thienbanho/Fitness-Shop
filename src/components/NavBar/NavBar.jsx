@@ -21,6 +21,7 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
+import logo from '/src/assets/logo.png';
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
@@ -60,7 +61,7 @@ export default function WithSubnavigation() {
           >
             <Button as={"a"} variant={"link"} href={"/"}>
               <Image
-                src="/src/assets/logo.png"
+                src={logo}
                 alt="Logo"
                 boxSize="50px"
                 width="100px"
