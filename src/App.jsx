@@ -13,6 +13,7 @@ import Profile from './pages/Profile'
 import AboutPage from './pages/About/About'
 import Forum from './pages/Forum/Forum'
 import ProductDetail from './pages/DetailProduct/DetailProduct'
+import UploadProduct from './pages/UploadProduct/UploadProduct'
 
 // router and routes
 const router = createBrowserRouter(
@@ -24,7 +25,7 @@ const router = createBrowserRouter(
       <Route path="about" element={<AboutPage />} />
       <Route path="forum" element={<Forum />} />
       <Route path="DetailProduct" element={<ProductDetail />} />
-
+      <Route path="UploadProduct" element={<UploadProduct />} />
     </Route>
   )
 )

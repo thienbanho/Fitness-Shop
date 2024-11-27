@@ -65,7 +65,7 @@ export default function ProductDetail() {
       <Box as="header" width="100%" position="fixed" top="0" zIndex="10">
         <Navbar />
       </Box>
-      <Box maxWidth="1200px" mx="auto" px="6" py="20" flex="1">
+      <Box maxWidth="1200px" mx="auto" px="6" py="40">
         {/* Product Header */}
         <Flex direction={{ base: "column", lg: "row" }} gap={6}>
           {/* Image Section */}
