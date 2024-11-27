@@ -15,7 +15,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import Navbar from "../../components/NavBar/NavBar"; // Navbar Component
+import Navbar from "../../components/Navbar/NavBar"; // Navbar Component
 import Footer from "../../components/Footer/Footer";
 import Reviews from "../../components/Review/Review";
 const productData = {
@@ -31,7 +31,6 @@ const productData = {
     "https://www.wheystore.vn/images/products/2023/11/22/large/rule1-protein-5lbs_1700622059.jpg.webp", // Replace with your paths
     "https://www.wheystore.vn/images/products/2023/11/22/large/rule1-protein-5lbs_1700622059.jpg.webp", // Replace with your paths
     "https://www.wheystore.vn/images/products/2023/11/22/large/rule1-protein-5lbs_1700622059.jpg.webp", // Replace with your paths
-
   ],
   types: [
     "Chocolate Peanut Butter",
@@ -48,7 +47,8 @@ const productData = {
     "Chocolate Banana",
     "Chocolate",
     "Salted Caramel",
-    "Vanilla Milkshake","Chocolate Peanut Butter",
+    "Vanilla Milkshake",
+    "Chocolate Peanut Butter",
     "Chocolate Banana",
     "Chocolate",
     "Salted Caramel",
@@ -130,7 +130,7 @@ export default function ProductDetail() {
           </Box>
         </Flex>
         {/* Reviews Section */}
-          <Reviews />
+        <Reviews />
       </Box>
       {/* Footer */}
       <Box as="footer" width="100%" bg="black" color="white" py="4">
