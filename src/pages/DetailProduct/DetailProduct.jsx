@@ -15,7 +15,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import Navbar from "../../components/Navbar/NavBar"; // Navbar Component
+import Navbar from "../../components/NavBar/NavBar"; // Navbar Component
 import Footer from "../../components/Footer/Footer";
 import Reviews from "../../components/Review/Review";
 const productData = {

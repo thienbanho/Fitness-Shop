@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Navbar from "../../components/Navbar/NavBar";
+import Navbar from "../../components/NavBar/NavBar";
 import { orderData } from "./PaymentData"; // Adjusted import
 import {
   Box,
