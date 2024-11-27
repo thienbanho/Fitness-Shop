@@ -6,7 +6,6 @@ import {
   Flex,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import Sidebar from "../components/Sidebar/Sidebar"; // Sidebar Component
 import Navbar from "../components/NavBar/NavBar"; // Navbar Component
 import Footer from "../components/Footer/Footer"; // Footer Component
 
