@@ -9,7 +9,7 @@ import {
     SimpleGrid, 
     Text, 
     VStack,
-    useBreakpointValue,
+    useBreakpointValue, 
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -21,6 +21,8 @@ import VitaminsImage from "../../assets/ProductTypes/omega3.png";
 import SupplementsImage from "../../assets/ProductTypes/supplements.png";
 
 import ProductCard from "../../components/ProductCard/ProductCard";
+import WithSubnavigation from "../../components/NavBar/NavBar";
+import Footer from "../../components/Footer/Footer";
 
 const categories = [
   { title: "Whey Protein", image: WheyProteinImage },
@@ -35,7 +37,9 @@ export default function Product() {
     const isHorizontal = useBreakpointValue({ base: false, md: true });
 
     return (
-        <Box mx="108px" mt="174px" align="center">
+        <>
+        <WithSubnavigation/>
+        <Box mx="108px" mt="50px" mb="100px" align="center">
             <Box maxW="1298px" border="solid" py={4} px="30px" bg="white" boxShadow="md">
                 <Text fontSize="xl" fontWeight="bold" textAlign="center" mb={4}>
                     DANH MỤC NỔI BẬT
@@ -76,7 +80,7 @@ export default function Product() {
                 </Flex>
             </Box>
             
-            <Flex ml={{xl: "65px", lg: "0px", sm: "0px"}} mt="60px" verticalAlign="center">
+            <Flex mt="60px" verticalAlign="center">
                 <Box
                     maxW="298px"
                     h={{sm: "auto", m: "auto", lg: "848px"}}
@@ -157,5 +161,7 @@ export default function Product() {
                 </SimpleGrid>
             </Flex>  
         </Box>
+        <Footer/>
+        </>
     );
 }
