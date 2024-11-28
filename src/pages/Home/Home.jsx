@@ -1,6 +1,310 @@
-export default function Home() {
-    return (
-      <div>Home</div>
-    )
-  }
-  
+import React from "react";
+import { Box, Flex, Image, Text, VStack, Heading } from "@chakra-ui/react";
+import { Link } from 'react-router-dom';
+import Navbar from "../../components/NavBar/NavBar";
+import Footer from "../../components/Footer/Footer";
+
+function Home() {
+  return (
+    <Box bg="black" color="white" fontFamily="Arial, sans-serif">
+      {/* Navbar Section */}
+      <Navbar />
+
+      {/* Hero Section*/}
+      <Box
+        bgImage="url(/src/assets/hero.png)"
+        bgPosition="center"
+        bgSize="cover"
+        bgRepeat="no-repeat"
+        textAlign="left"
+        minHeight="92vh"
+        py={0}
+        px={5}
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+      >
+        <VStack 
+          spacing={0} 
+          align="flex-start"
+          ml={{ base: "40px", md: "200px" }}
+          mt={60}
+        >
+          <Heading
+            size="lg"
+            fontSize={{ lg: "150px" }}
+            color="yellow.500"
+          >
+            STRONGER
+          </Heading>
+          <Heading
+            size="lg"
+            fontSize={{ lg: "150px" }}
+            fontFamily="'Bebas Neue', sans-serif"
+            color="transparent"
+            sx={{
+              WebkitTextStroke: '2px yellow',
+              textStroke: '2px white',
+            }}
+          >
+            EVERYDAY
+          </Heading>
+          <Heading
+            size="lg"
+            fontSize={{ lg: "150px" }}
+            fontFamily="'Bebas Neue', sans-serif"
+            color="yellow.500"
+          >
+            FITTER
+          </Heading>
+          <Heading
+            size="lg"
+            fontSize={{ lg: "150px" }}
+            fontFamily="'Bebas Neue', sans-serif"
+            color="transparent"
+            sx={{
+              WebkitTextStroke: '2px yellow',
+              textStroke: '2px white',
+            }}
+          >
+            FOREVER
+          </Heading>
+        </VStack>
+
+        {/* Scroll Down Text */}
+        <Box 
+          mt="auto"
+          textAlign="center"
+          mb={5}
+        >
+          <Text 
+            fontSize="xl" 
+            fontFamily="'Montserrat', sans-serif"
+            color="white"
+            fontWeight="bold"
+          >
+            Scroll Down for More Information
+          </Text>
+        </Box>
+      </Box>
+
+      {/* Product Section */}
+      <Link
+        to="/product"
+        _hover={{ textDecoration: "none" }}
+      >
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          py={16}
+          px={{ base: 6, md: 10 }}
+          alignItems="center"
+          bg="gray.900"
+          _hover={{
+            bg: "gray.700",
+            transform: "scale(1.02)",
+            transition: "transform 0.3s ease, background-color 0.3s ease",
+          }}
+          cursor="pointer"
+        >
+          <VStack
+            align="start"
+            flex={1}
+            spacing={4}
+            pr={{ md: 8 }}
+            transform={{ base: "translateX(40px)", md: "translateX(150px)" }}
+          >
+            <Text fontSize="lg" color="gray.400">
+              PRODUCT
+            </Text>
+
+            <Heading
+              size="lg"
+              fontSize={{ lg: "60px" }}
+            >
+              <Text as="span" color="white">Explore our </Text>
+              <Text as="span" color="red.600">Products</Text>
+            </Heading>
+
+            <Text
+              color="gray.300"
+              fontStyle="italic"
+              size="md"
+              fontSize={{ md: "30px" }}
+              pt={10}
+            >
+              Enhance Your Workout with Premium Supplements
+            </Text>
+
+            <Text
+              color="gray.200"
+              size="sm"
+              fontSize={{ sm: "20px" }}
+            >
+              Discover top-quality supplements designed to boost strength, endurance, and recovery.<br />
+              Whether you're looking to build muscle or enhance performance, we have the perfect product for your fitness goals.<br />
+              Shop now and fuel your fitness journey!
+            </Text>
+          </VStack>
+          <Image
+            src="/src/assets/product.png"
+            alt="Product"
+            flex={1}
+            objectFit="cover"
+            maxWidth={{ base: "200%", md: "800px" }}
+            height="auto"
+            borderRadius="md"
+            boxShadow="lg"
+            transform={{ base: "translateX(-40px)", md: "translateX(-150px)" }}
+          />
+        </Flex>
+      </Link>
+
+      {/* Personal Trainer Section */}
+      <Link
+        to="/trainer"
+        _hover={{ textDecoration: "none" }}
+      >
+        <Flex
+          direction={{ base: "column", md: "row-reverse" }}
+          py={16}
+          px={{ base: 6, md: 10 }}
+          alignItems="center"
+          bg="gray.800"
+          _hover={{
+            bg: "gray.700",
+            transform: "scale(1.02)",
+            transition: "transform 0.3s ease, background-color 0.3s ease",
+          }}
+          cursor="pointer"
+        >
+          <VStack
+            align="start"
+            flex={1}
+            spacing={4}
+            pl={{ md: 8 }}
+            transform={{ base: "translateX(80px)", md: "translateX(650px)" }}
+          >
+            <Text fontSize="lg" color="gray.400">
+              PERSONAL TRAINER
+            </Text>
+
+            <Heading
+              size="lg"
+              fontSize={{ lg: "60px" }}
+            >
+              <Text as="span" color="white">Get Expert </Text>
+              <Text as="span" color="cyan.500">Guidance</Text>
+            </Heading>
+
+            <Text
+              color="gray.300"
+              fontStyle="italic"
+              size="md"
+              fontSize={{ md: "30px" }}
+              pt={10}
+            >
+              Boost Your Performance with Expert Fitness Advice
+            </Text>
+
+            <Text
+              color="gray.200"
+              size="sm"
+              fontSize={{ sm: "20px" }}
+            >
+              Whether you're just starting your fitness journey or you're a pro looking to level up.<br />
+              We provide personalized guidance to help you progress toward your goals.<br />
+              Book a session today and start your journey toward your best results!
+            </Text>
+          </VStack>
+          <Image
+            src="/src/assets/trainer.png"
+            alt="Trainer"
+            flex={1}
+            objectFit="cover"
+            maxWidth={{ base: "200%", md: "800px" }}
+            height="auto"
+            borderRadius="md"
+            boxShadow="lg"
+            transform={{ base: "translateX(40px)", md: "translateX(150px)" }}
+          />
+        </Flex>
+      </Link>
+
+      {/* Forum Section */}
+      <Link
+        to="/forum"
+        _hover={{ textDecoration: "none" }}
+      >
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          py={16}
+          px={{ base: 6, md: 10 }}
+          alignItems="center"
+          bg="gray.800"
+          _hover={{
+            bg: "gray.700",
+            transform: "scale(1.02)",
+            transition: "transform 0.3s ease, background-color 0.3s ease",
+          }}
+          cursor="pointer"
+        >
+          <VStack
+            align="start"
+            flex={1}
+            spacing={4}
+            pr={{ md: 8 }}
+            transform={{ base: "translateX(40px)", md: "translateX(150px)" }}
+          >
+            <Text fontSize="lg" color="gray.400">
+              FORUM
+            </Text>
+            
+            <Heading
+              size="lg"
+              fontSize={{ lg: "60px" }}
+            >
+              <Text as="span" color="white">Join our </Text>
+              <Text as="span" color="green.500">Community</Text>
+            </Heading>
+
+            <Text
+              color="gray.300"
+              fontStyle="italic"
+              size="md"
+              fontSize={{ md: "30px" }}
+              pt={10}
+            >
+              Be Part of Our Fitness Family
+            </Text>
+
+            <Text
+              color="gray.200"
+              size="sm"
+              fontSize={{ sm: "20px" }}
+            >
+              Connect with others who share your fitness passion and exchange experiences.<br />
+              Get expert advice, motivation, and tips to help you stay on track.<br />
+              Our forum is the ideal space to find support and stay inspired on your fitness journey.
+            </Text>
+          </VStack>
+          <Image
+            src="/src/assets/forum.png"
+            alt="Forum"
+            flex={1}
+            objectFit="cover"
+            maxWidth={{ base: "200%", md: "800px" }}
+            height="auto"
+            borderRadius="md"
+            boxShadow="lg"
+            transform={{ base: "translateX(-40px)", md: "translateX(-150px)" }}
+          />
+        </Flex>
+      </Link>
+
+      {/* Footer Section */}
+      <Footer />
+    </Box>
+  );
+}
+
+export default Home;
