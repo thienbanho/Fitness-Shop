@@ -25,35 +25,63 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState(''); // Add state for username
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const handleSignUp = async () => {
     setLoading(true);
+
+    // Sign up with Supabase authentication
     const { user, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: { username },
+      },
     });
-
-    setLoading(false);
 
     if (error) {
       toast({
-        title: 'Sign Up Failed',
+        title: "Sign-up failed",
         description: error.message,
-        status: 'error',
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Insert user data into the Users table without hashing the password
+    const { data, insertError } = await supabase.from('users').insert([
+      {
+        username,
+        password, // Storing the password as plain text (not recommended)
+        email,
+        role: 'user',
+      },
+    ]);
+
+    if (insertError) {
+      toast({
+        title: "Database Error",
+        description: insertError.message,
+        status: "error",
         duration: 5000,
         isClosable: true,
       });
     } else {
       toast({
-        title: 'Sign Up Successful',
-        description: 'You can now log in!',
-        status: 'success',
+        title: "Success",
+        description: "Your account has been created!",
+        status: "success",
         duration: 5000,
         isClosable: true,
       });
     }
+
+    setLoading(false);
   };
 
   return (
@@ -93,6 +121,14 @@ const SignUp = () => {
                 </FormControl>
               </Box>
             </HStack>
+            <FormControl id="username" isRequired>
+              <FormLabel>Username</FormLabel>
+              <Input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </FormControl>
             <FormControl id="email" isRequired>
               <FormLabel>Email address</FormLabel>
               <Input
