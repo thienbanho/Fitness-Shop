@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Flex, Box, FormControl, FormLabel, Input, Checkbox, Stack, Button, Heading, Text, useColorModeValue } from '@chakra-ui/react';
 import supabase from "../../config/supabaseClient";
+import { FcGoogle} from "react-icons/fc";
+import { FaFacebook} from "react-icons/fa";
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -24,6 +26,67 @@ export default function SignIn() {
     } else {
       // Successful login, redirect to profile or another page
       window.location.href = '/profile'; // Replace with your desired redirect
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    const { user, session, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+
+    if (user) {
+      // Kiểm tra xem có email hay không trước khi sử dụng
+      if (user.email) {
+        console.log("User email:", user.email);
+        handleUserMetadata(user);
+      } else {
+        console.error("User does not have an email associated.");
+      }
+    } else {
+      console.error("User object is undefined or null.");
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    const { user, session, error } = await supabase.auth.signInWithOAuth({
+      provider: "facebook",
+      options: {
+        redirectTo: "http://localhost:5173", 
+      },
+    });
+
+    if (error) {
+      console.error("Error during Facebook login:", error.message);
+      alert(`Error during Facebook login: ${error.message}`);
+      return;
+    }
+  
+    if (user) {
+      // Kiểm tra xem có email hay không trước khi sử dụng
+      if (user.email) {
+        console.log("User email:", user.email);
+        handleUserMetadata(user);
+      } else {
+        console.error("User does not have an email associated.");
+      }
+    } else {
+      console.error("User object is undefined or null.");
+    }
+  };
+
+  const handleUserMetadata = async (user) => {
+    // data non-exist --> init
+    const { data, error } = await supabase
+      .from("users")
+      .upsert({
+        email: user.email,
+        full_name: user.user_metadata.full_name || user.email, // use email to replace name if no exist
+      });
+  
+    if (error) {
+      console.log("Error saving metadata", error);
+    } else {
+      console.log("User metadata saved:", data);
     }
   };
 
@@ -80,6 +143,28 @@ export default function SignIn() {
                 onClick={handleSignIn}>
                 Sign in
               </Button>
+              <Stack spacing={3}>
+                <Button
+                  leftIcon={<FcGoogle />}
+                  bg="white"
+                  color="black"
+                  border="1px"
+                  borderColor="gray.300"
+                  _hover={{ bg: "gray.100" }}
+                  onClick={handleGoogleLogin}>
+                  Sign in with Google
+                </Button>
+                <Button
+                  leftIcon={<FaFacebook />}
+                  bg="white"
+                  color="black"
+                  border="1px"
+                  borderColor="gray.300"
+                  _hover={{ bg: "gray.100" }}
+                  onClick={handleFacebookLogin}>
+                  Sign in with Facebook
+                </Button>
+              </Stack>
             </Stack>
           </Stack>
         </Box>
