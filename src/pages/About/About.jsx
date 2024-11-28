@@ -1,7 +1,6 @@
 import { Box, Text, VStack, Button, Flex } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { Dumbbell, Users, ShoppingBag, Award } from "lucide-react";
-import PTSection from "/src/assets/PTSection.png"
 
 export default function AboutPage() {
   return (
@@ -84,7 +83,7 @@ export default function AboutPage() {
           <Flex direction={{ base: "column", md: "row" }} align="center" px={4}>
             <Box flex="1" textAlign="center" mb={{ base: 8, md: 0 }}>
               <img
-                src={PTSection}
+                src="/src/assets/PTSection.png"
                 alt="Personal trainer with client"
                 style={{ borderRadius: "8px" }}
               />
