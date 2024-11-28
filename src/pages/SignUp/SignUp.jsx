@@ -1,5 +1,6 @@
 'use client';
-
+import { FcGoogle} from "react-icons/fc";
+import { FaFacebook} from "react-icons/fa";
 import React, { useState } from 'react';
 import {
   Flex,
@@ -82,6 +83,65 @@ const SignUp = () => {
     }
 
     setLoading(false);
+  };
+
+  const handleGoogleLogin = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+    
+    if (error) {
+      console.error("Google login error:", error.message);
+      return;
+    }
+
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError) {
+      console.error("Error fetching user data:", userError.message);
+      return;
+    }
+    
+    const user = userData.user;
+    await supabase.from('users').insert([
+      {
+        username: user.user_metadata.full_name || user.email,
+        password:'', // Storing the password as plain text (not recommended)
+        email: user.email,
+        role: 'user',
+      }, ]);
+
+  };
+
+  const handleFacebookLogin = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "facebook",
+      options: {
+        redirectTo: "http://localhost:5173", 
+      },
+    });
+
+    if (error) {
+      console.error("Error during Facebook login:", error.message);
+      alert(`Error during Facebook login: ${error.message}`);
+      return;
+    }
+
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError) {
+      console.error("Error fetching user data:", userError.message);
+      return;
+    }
+    
+    const user = userData.user;
+    await supabase.from('users').insert([
+      {
+        username: user.user_metadata.full_name || user.email,
+        password:'', // Storing the password as plain text (not recommended)
+        email: user.email,
+        role: 'user',
+      }, ]);
+  
+    
   };
 
   return (
@@ -169,6 +229,28 @@ const SignUp = () => {
               >
                 Sign up
               </Button>
+              <Stack spacing={3}>
+                <Button
+                  leftIcon={<FcGoogle />}
+                  bg="white"
+                  color="black"
+                  border="1px"
+                  borderColor="gray.300"
+                  _hover={{ bg: "gray.100" }}
+                  onClick={handleGoogleLogin}>
+                  Sign in with Google
+                </Button>
+                <Button
+                  leftIcon={<FaFacebook />}
+                  bg="white"
+                  color="black"
+                  border="1px"
+                  borderColor="gray.300"
+                  _hover={{ bg: "gray.100" }}
+                  onClick={handleFacebookLogin}>
+                  Sign in with Facebook
+                </Button>
+              </Stack>
             </Stack>
             <Stack pt={6}>
               <Text align={'center'}>

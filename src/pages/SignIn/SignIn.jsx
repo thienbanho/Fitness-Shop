@@ -30,25 +30,34 @@ export default function SignIn() {
   };
 
   const handleGoogleLogin = async () => {
-    const { user, session, error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
     });
-
-    if (user) {
-      // Kiểm tra xem có email hay không trước khi sử dụng
-      if (user.email) {
-        console.log("User email:", user.email);
-        handleUserMetadata(user);
-      } else {
-        console.error("User does not have an email associated.");
-      }
-    } else {
-      console.error("User object is undefined or null.");
+    
+    if (error) {
+      console.error("Google login error:", error.message);
+      return;
     }
+
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError) {
+      console.error("Error fetching user data:", userError.message);
+      return;
+    }
+    
+    const user = userData.user;
+    await supabase.from('users').insert([
+      {
+        username: user.user_metadata.full_name || user.email,
+        password:'', // Storing the password as plain text (not recommended)
+        email: user.email,
+        role: 'user',
+      }, ]);
+
   };
 
   const handleFacebookLogin = async () => {
-    const { user, session, error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "facebook",
       options: {
         redirectTo: "http://localhost:5173", 
@@ -60,35 +69,25 @@ export default function SignIn() {
       alert(`Error during Facebook login: ${error.message}`);
       return;
     }
-  
-    if (user) {
-      // Kiểm tra xem có email hay không trước khi sử dụng
-      if (user.email) {
-        console.log("User email:", user.email);
-        handleUserMetadata(user);
-      } else {
-        console.error("User does not have an email associated.");
-      }
-    } else {
-      console.error("User object is undefined or null.");
+
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError) {
+      console.error("Error fetching user data:", userError.message);
+      return;
     }
+    
+    const user = userData.user;
+    await supabase.from('users').insert([
+      {
+        username: user.user_metadata.full_name || user.email,
+        password:'', // Storing the password as plain text (not recommended)
+        email: user.email,
+        role: 'user',
+      }, ]);
+  
+    
   };
 
-  const handleUserMetadata = async (user) => {
-    // data non-exist --> init
-    const { data, error } = await supabase
-      .from("users")
-      .upsert({
-        email: user.email,
-        full_name: user.user_metadata.full_name || user.email, // use email to replace name if no exist
-      });
-  
-    if (error) {
-      console.log("Error saving metadata", error);
-    } else {
-      console.log("User metadata saved:", data);
-    }
-  };
 
   return (
     <Flex
