@@ -18,10 +18,21 @@ import {
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import logo from '/src/assets/logo.png';
 import { AuthProvider, useAuth } from "../../hooks/Auth"; // Import useAuth hook
+import supabase from "../../config/supabaseClient";
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
-  const { user, logout } = useAuth(); // Use the Auth hook to check user state
+  const { user} = useAuth(); // Use the Auth hook to check user state
+  const logout = async () => {
+    try {
+      const response = await supabase.auth.signOut();
+      console.log(response); // Check for any errors
+      setUser(null); // Ensure the user state is cleared
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+  
 
   return (
     <Box>
