@@ -48,7 +48,8 @@ export default function Forum() {
           });
         } else {
           console.log('Fetched users:', userData);
-          setUser(userData[0]);
+          if (userData)
+            setUser(userData[0]);
         }
       };
   
@@ -100,24 +101,6 @@ export default function Forum() {
 
   const handleNewPostSubmit = async (e) => {
     e.preventDefault();
-    
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email',user.email);
-    if (userError) {
-      toast({
-          title: 'Error fetching topics.',
-          description: error1.message,
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        console.log('Fetched users:', userData);
-        setUser(userData[0]);
-      }
-    console.log(user_public.user_id);
 
     if (selectedTopic && user_public && newPost.content) {
       const { data, error } = await supabase.from('forum_posts').insert({
@@ -125,7 +108,9 @@ export default function Forum() {
         user_id: user_public.user_id, // Use logged-in user ID
         content: newPost.content,
         created_at: new Date().toISOString(),
+        user_name: user_public.username
       });
+      console.log(user_public.username)
 
       if (error) {
         toast({
@@ -135,7 +120,7 @@ export default function Forum() {
           duration: 3000,
           isClosable: true,
         });
-      } else {
+      } else {if (data)
         setPosts((prev) => [
           ...prev,
           {
@@ -144,6 +129,7 @@ export default function Forum() {
             user_id: user_public.user_id, // Add user ID to the new post
             content: newPost.content,
             created_at: new Date().toISOString(),
+            user_name: user_public.username
           },
         ]);
         setNewPost({ content: '' }); // Reset the content after submitting
@@ -177,7 +163,7 @@ export default function Forum() {
             <></>
           ) : (
             <Text fontWeight={600}>
-              Welcome, {user_public.username || 'wrong'} {/* Show user's email or name */}
+              You're interact with name {user_public.username || 'error'} {/* Show user's email or name */}
             </Text>
           )}
         </Stack>
@@ -243,7 +229,7 @@ export default function Forum() {
                   bg="white"
                   boxShadow="md"
                 >
-                  <Text fontWeight="bold">{post.user_id === user.id ? 'You' : 'Anonymous'}</Text>
+                  <Text fontWeight="bold">{post.user_id === user_public.user_id ? 'You' : post.user_name}</Text>
                   <Text>{post.content}</Text>
                   <Text fontSize="sm" color="gray.500">
                     {new Date(post.created_at).toLocaleString()}
