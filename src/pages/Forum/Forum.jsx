@@ -101,17 +101,28 @@ export default function Forum() {
 
   const handleNewPostSubmit = async (e) => {
     e.preventDefault();
-
-    if (selectedTopic && user_public && newPost.content) {
+  
+    if (!user_public || !user_public.user_id || !user_public.username) {
+      toast({
+        title: 'Error',
+        description: 'User information is missing.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+  
+    if (selectedTopic && newPost.content) {
       const { data, error } = await supabase.from('forum_posts').insert({
         topic_id: selectedTopic.topic_id,
-        user_id: user_public.user_id, // Use logged-in user ID
+        user_id: user_public.user_id,
         content: newPost.content,
         created_at: new Date().toISOString(),
         user_name: user_public.username
       });
-      console.log(user_public.username)
-
+      console.log(data);
+  
       if (error) {
         toast({
           title: 'Error submitting post.',
@@ -120,19 +131,21 @@ export default function Forum() {
           duration: 3000,
           isClosable: true,
         });
-      } else {if (data)
+      } else {
         setPosts((prev) => [
           ...prev,
           {
-            post_id: data[0].post_id,
+            //post_id: data[0].post_id,
             topic_id: selectedTopic.topic_id,
-            user_id: user_public.user_id, // Add user ID to the new post
+            user_id: user_public.user_id,
             content: newPost.content,
             created_at: new Date().toISOString(),
             user_name: user_public.username
           },
         ]);
-        setNewPost({ content: '' }); // Reset the content after submitting
+  
+        setNewPost({ content: '' });
+  
         toast({
           title: 'Post submitted.',
           description: "We've added your post to the discussion.",
@@ -151,6 +164,7 @@ export default function Forum() {
       });
     }
   };
+  
 
   return (
     <Box maxWidth="1200px" margin="auto" padding={4}>
