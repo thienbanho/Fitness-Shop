@@ -1,20 +1,35 @@
 'use client'
 
 import { useState } from 'react';
-import { Flex, Box, FormControl, FormLabel, Input, Checkbox, Stack, Button, Heading, Text, useColorModeValue } from '@chakra-ui/react';
+import { 
+  Box, 
+  Flex, 
+  VStack,
+  FormControl,
+  FormLabel,
+  Input,
+  Checkbox,
+  Button,
+  Text,
+  Link,
+  Image,
+  Divider,
+  useColorModeValue
+} from '@chakra-ui/react';
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook } from "react-icons/fa";
 import supabase from "../../config/supabaseClient";
-import { FcGoogle} from "react-icons/fc";
-import { FaFacebook} from "react-icons/fa";
+import Logo from "../../assets/Logo.png"
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
 
-  // Handle the form submission and Supabase authentication
   const handleSignIn = async (e) => {
     e.preventDefault();
-    setError(''); // Clear previous error messages
+    setError('');
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -22,10 +37,9 @@ export default function SignIn() {
     });
 
     if (error) {
-      setError(error.message); // Set the error message if login fails
+      setError(error.message);
     } else {
-      // Successful login, redirect to profile or another page
-      window.location.href = '/profile'; // Replace with your desired redirect
+      window.location.href = '/profile';
     }
   };
 
@@ -49,11 +63,11 @@ export default function SignIn() {
     await supabase.from('users').insert([
       {
         username: user.user_metadata.full_name || user.email,
-        password:'', // Storing the password as plain text (not recommended)
+        password: '',
         email: user.email,
         role: 'user',
-      }, ]);
-
+      },
+    ]);
   };
 
   const handleFacebookLogin = async () => {
@@ -66,7 +80,6 @@ export default function SignIn() {
 
     if (error) {
       console.error("Error during Facebook login:", error.message);
-      alert(`Error during Facebook login: ${error.message}`);
       return;
     }
 
@@ -80,94 +93,99 @@ export default function SignIn() {
     await supabase.from('users').insert([
       {
         username: user.user_metadata.full_name || user.email,
-        password:'', // Storing the password as plain text (not recommended)
+        password: '',
         email: user.email,
         role: 'user',
-      }, ]);
-  
-    
+      },
+    ]);
   };
 
-
   return (
-    <Flex
-      minH={'100vh'}
-      align={'center'}
-      justify={'center'}
-      bg={useColorModeValue('gray.50', 'gray.800')}>
-      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-        <Stack align={'center'}>
-          <Heading fontSize={'4xl'}>Sign in to your account</Heading>
-          <Text fontSize={'lg'} color={'gray.600'}>
-            to enjoy all of our cool <Text color={'blue.400'}>features</Text> ✌️
-          </Text>
-        </Stack>
-        <Box
-          rounded={'lg'}
-          bg={useColorModeValue('white', 'gray.700')}
-          boxShadow={'lg'}
-          p={8}>
-          <Stack spacing={4}>
-            <FormControl id="email" isRequired>
-              <FormLabel>Email address</FormLabel>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="password" isRequired>
-              <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </FormControl>
-            <Stack spacing={10}>
-              <Stack
-                direction={{ base: 'column', sm: 'row' }}
-                align={'start'}
-                justify={'space-between'}>
-                <Checkbox>Remember me</Checkbox>
-                <Text color={'blue.400'}>Forgot password?</Text>
-              </Stack>
-              {error && <Text color="red.500">{error}</Text>} {/* Display error message */}
+    <Flex minHeight="100vh" width="full" align="center" justifyContent="center" bg={useColorModeValue('gray.50', 'gray.800')}>
+      <Box
+        borderWidth={1}
+        px={4}
+        width="full"
+        maxWidth="500px"
+        borderRadius={4}
+        textAlign="center"
+        boxShadow="lg"
+        bg={useColorModeValue('white', 'gray.700')}
+      >
+        <Box p={4}>
+          <VStack spacing={8} align="stretch" >
+            <Image src={Logo} alt="The Fitness Shop" height="60px" mx="auto" />
+            <Text fontSize="xl" fontWeight="semibold">
+              Your Fitness Hub – Everything You Need to Train, Fuel, and Succeed!
+            </Text>
+            <Box as="form" onSubmit={handleSignIn}>
+              <VStack spacing={4} align="stretch">
+                <FormControl>
+                  <FormLabel htmlFor="email">Email or phone number</FormLabel>
+                  <Input
+                    id="email"
+                    type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel htmlFor="password">Password</FormLabel>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </FormControl>
+                <Flex justify="space-between" align="center">
+                  <Checkbox
+                    isChecked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  >
+                    Remember me
+                  </Checkbox>
+                  <Link color="blue.500" href="/forgot-password">
+                    Forgot Password?
+                  </Link>
+                </Flex>
+                {error && <Text color="red.500">{error}</Text>}
+                <Button type="submit" colorScheme="red" width="full">
+                  Login
+                </Button>
+              </VStack>
+            </Box>
+            <VStack spacing={4} align="stretch">
+              <Divider />
+              <Text textAlign="center">OR</Text>
               <Button
-                bg={'blue.400'}
-                color={'white'}
-                _hover={{
-                  bg: 'blue.500',
-                }}
-                onClick={handleSignIn}>
-                Sign in
+                leftIcon={<FaFacebook />}
+                colorScheme="facebook"
+                onClick={handleFacebookLogin}
+                width="full"
+              >
+                Facebook
               </Button>
-              <Stack spacing={3}>
-                <Button
-                  leftIcon={<FcGoogle />}
-                  bg="white"
-                  color="black"
-                  border="1px"
-                  borderColor="gray.300"
-                  _hover={{ bg: "gray.100" }}
-                  onClick={handleGoogleLogin}>
-                  Sign in with Google
-                </Button>
-                <Button
-                  leftIcon={<FaFacebook />}
-                  bg="white"
-                  color="black"
-                  border="1px"
-                  borderColor="gray.300"
-                  _hover={{ bg: "gray.100" }}
-                  onClick={handleFacebookLogin}>
-                  Sign in with Facebook
-                </Button>
-              </Stack>
-            </Stack>
-          </Stack>
+              <Button
+                leftIcon={<FcGoogle />}
+                onClick={handleGoogleLogin}
+                width="full"
+              >
+                Google
+              </Button>
+            </VStack>
+            <Text fontSize="sm">
+              Don't have an account yet?{' '}
+              <Link color="blue.500" href="/signup">
+                Sign up
+              </Link>
+            </Text>
+          </VStack>
         </Box>
-      </Stack>
+      </Box>
     </Flex>
   );
 }
+

@@ -319,4 +319,8 @@ const NAV_ITEMS = [
     label: "Forum",
     href: "Forum",
   },
+  {
+    label: "About",
+    href: "About",
+  },
 ];
