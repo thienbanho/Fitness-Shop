@@ -33,25 +33,35 @@ const UploadProduct = () => {
     type: "",
   });
 
-  const [imageFile, setImageFile] = useState(null); // Lưu file ảnh
-  const [imageUrl, setImageUrl] = useState(null); // Lưu URL ảnh sau khi tải lên
+  const [imageFile, setImageFile] = useState(null); // To store the image file
+  const [imageUrl, setImageUrl] = useState(null);   // To store the uploaded image URL
 
-  // Xử lý khi người dùng chọn file ảnh
+  // Handle file selection
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImageFile(file);
-        setImageUrl(reader.result); // Hiển thị ảnh
+        setImageUrl(reader.result); // Display the image preview
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Xử lý upload ảnh lên Supabase
-  const handleImageUpload = async () => {
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProductData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async () => {
     if (!imageFile) {
+      console.log("No file selected");
       toast({
         title: "No file selected",
         description: "Please select an image to upload.",
@@ -62,26 +72,32 @@ const UploadProduct = () => {
       return;
     }
 
-    const fileName = `${Date.now()}_${imageFile.name}`; // Tên file duy nhất
+    try {
+      // Generate a unique file name for the image
+      const fileName = `${Date.now()}_${imageFile.name}`;
+      console.log("Uploading file with name:", fileName);
 
-    const { data, error } = await supabase.storage
-      .from("product-images") // Thay bằng tên bucket của bạn
-      .upload(fileName, imageFile);
+      // Upload the image to Supabase storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("product-images") // Replace with your actual bucket name
+        .upload(fileName, imageFile);
 
-    if (error) {
-      toast({
-        title: "Upload failed",
-        description: error.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } else {
-      const { publicUrl } = supabase.storage
+      if (uploadError) {
+        throw new Error(`Upload failed: ${uploadError.message}`);
+      }
+
+      // Get the public URL of the uploaded image
+      const { data: publicUrlData, error: urlError } = supabase.storage
         .from("product-images")
         .getPublicUrl(fileName);
 
-      setImageUrl(publicUrl); // Lưu URL để hiển thị ảnh
+      if (urlError) {
+        throw new Error(`Error fetching public URL: ${urlError.message}`);
+      }
+
+      const publicUrl = publicUrlData.publicUrl;
+      setImageUrl(publicUrl); // Save the URL to state
+
       toast({
         title: "Upload successful",
         description: "Your image has been uploaded.",
@@ -89,44 +105,17 @@ const UploadProduct = () => {
         duration: 3000,
         isClosable: true,
       });
-    }
-  };
+      console.log("Public URL:", publicUrl);
 
-  // Xử lý thay đổi dữ liệu form
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProductData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+      // Insert product data into the Supabase "products" table
+      const { data: insertData, error: insertError } = await supabase
+        .from("products")
+        .insert({ ...productData, image: publicUrl });
 
-  // Xử lý submit toàn bộ form
-  const handleSubmit = async () => {
-    if (!imageUrl) {
-      toast({
-        title: "Missing image",
-        description: "Please upload a product image.",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+      if (insertError) {
+        throw new Error(`Error submitting product: ${insertError.message}`);
+      }
 
-    const { data, error } = await supabase
-      .from("products")
-      .insert({ ...productData, image: imageUrl });
-
-    if (error) {
-      toast({
-        title: "Error submitting product",
-        description: error.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } else {
       toast({
         title: "Product uploaded successfully",
         description: "Your product has been added.",
@@ -134,7 +123,17 @@ const UploadProduct = () => {
         duration: 3000,
         isClosable: true,
       });
-      navigate("/"); // Quay lại trang chủ
+
+      navigate("/"); // Redirect to the home page
+    } catch (error) {
+      console.error(error.message);
+      toast({
+        title: "Error",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -212,15 +211,6 @@ const UploadProduct = () => {
               </Box>
             )}
           </Center>
-
-          <Button
-            mt={4}
-            colorScheme="blue"
-            onClick={handleImageUpload}
-            isDisabled={!imageFile}
-          >
-            Upload Image
-          </Button>
         </FormControl>
 
         <Divider mb={6} />
