@@ -3,23 +3,26 @@ import {
   createRoutesFromElements, 
   Route, 
   RouterProvider 
-} from 'react-router-dom'
+} from "react-router-dom";
 
-// layouts and pages
-import RootLayout from './layouts/RootLayout'
-import Dashboard from './pages/Dashboard'
-import Create from './pages/Create'
-import Profile from './pages/Profile/Profile'
-import AboutPage from './pages/About/About'
-import Forum from './pages/Forum/Forum'
-import ProductDetail from './pages/DetailProduct/DetailProduct'
-import UploadProduct from './pages/UploadProduct/UploadProduct'
-import Payment from './pages/Payment/Payment'
-import SignIn from './pages/SignIn/SignIn'
-import SignUp from './pages/SignUp/SignUp'
-import RoleManage from './pages/RoleManagement/RoleManage'
+// Layouts and pages
+import RootLayout from "./layouts/RootLayout";
+import Dashboard from "./pages/Dashboard";
+import Create from "./pages/Create";
+import Profile from "./pages/Profile/Profile";
+import AboutPage from "./pages/About/About";
+import Forum from "./pages/Forum/Forum";
+import ProductDetail from "./pages/DetailProduct/DetailProduct";
+import UploadProduct from "./pages/UploadProduct/UploadProduct";
+import Payment from "./pages/Payment/Payment";
+import SignIn from "./pages/SignIn/SignIn";
+import SignUp from "./pages/SignUp/SignUp";
+import RoleManage from "./pages/RoleManagement/RoleManage";
 
-// router and routes
+// Import the AdminRoute component
+import AdminRoute from "./routes/AdminRoutes";
+
+// Router and routes
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
@@ -33,15 +36,17 @@ const router = createBrowserRouter(
       <Route path="Payment" element={<Payment />} />
       <Route path="SignIn" element={<SignIn />} />
       <Route path="SignUp" element={<SignUp />} />
-      <Route path="RoleManage" element={<RoleManage />} />
+
+      {/* Protected Admin Route */}
+      <Route element={<AdminRoute />}>
+        <Route path="RoleManage" element={<RoleManage />} />
+      </Route>
     </Route>
   )
-)
+);
 
 function App() {
-  return (
-    <RouterProvider router={router} />
-  )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
