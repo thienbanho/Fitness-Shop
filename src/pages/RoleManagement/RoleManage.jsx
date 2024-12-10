@@ -119,6 +119,8 @@ const RoleManage = () => {
             <option value="admin">Admin</option>
             <option value="user">User</option>
             <option value="moderator">Moderator</option>
+            <option value="vendor">Vendor</option>
+            <option value="pt">Personal Trainer</option>
           </Select>
         </FormControl>
 

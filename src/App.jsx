@@ -19,8 +19,9 @@ import SignIn from "./pages/SignIn/SignIn";
 import SignUp from "./pages/SignUp/SignUp";
 import RoleManage from "./pages/RoleManagement/RoleManage";
 
-// Import the AdminRoute component
+// Import the Routes component
 import AdminRoute from "./routes/AdminRoutes";
+import VendorRoute from "./routes/VendorRoutes";
 
 // Router and routes
 const router = createBrowserRouter(
@@ -32,7 +33,6 @@ const router = createBrowserRouter(
       <Route path="about" element={<AboutPage />} />
       <Route path="forum" element={<Forum />} />
       <Route path="DetailProduct" element={<ProductDetail />} />
-      <Route path="UploadProduct" element={<UploadProduct />} />
       <Route path="Payment" element={<Payment />} />
       <Route path="SignIn" element={<SignIn />} />
       <Route path="SignUp" element={<SignUp />} />
@@ -40,6 +40,12 @@ const router = createBrowserRouter(
       {/* Protected Admin Route */}
       <Route element={<AdminRoute />}>
         <Route path="RoleManage" element={<RoleManage />} />
+        <Route path="UploadProduct" element={<UploadProduct />} />
+      </Route>
+        
+      {/* Protected Vendor Route */}
+      <Route element={<VendorRoute />}>
+        <Route path="UploadProduct" element={<UploadProduct />} />
       </Route>
     </Route>
   )
