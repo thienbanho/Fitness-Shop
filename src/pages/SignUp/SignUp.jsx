@@ -1,28 +1,12 @@
 'use client'
 
 import React, { useState } from 'react';
-import {
-  Box,
-  Flex,
-  VStack,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Button,
-  Text,
-  Link,
-  Image,
-  Divider,
-  useColorModeValue,
-  useToast
-} from '@chakra-ui/react';
+import { Box, Flex, VStack, FormControl, FormLabel, Input, InputGroup, InputRightElement, Button, Text, Link, Image, Divider, useColorModeValue, useToast } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import supabase from "../../config/supabaseClient";
-import Logo from "../../assets/Logo.png"
+import Logo from "../../assets/Logo.png";
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -57,16 +41,14 @@ export default function SignUp() {
       return;
     }
 
-    const { data, insertError } = await supabase.from('users').insert([
-      {
-        username,
-        password,
-        email,
-        first_name: firstName,
-        last_name: lastName,
-        role: 'user',
-      },
-    ]);
+    const { data, insertError } = await supabase.from('users').insert([{
+      username,
+      password,
+      email,
+      first_name: firstName,
+      last_name: lastName,
+      role: 'user',
+    }]);
 
     if (insertError) {
       toast({
@@ -106,14 +88,12 @@ export default function SignUp() {
     }
     
     const user = userData.user;
-    await supabase.from('users').insert([
-      {
-        username: user.user_metadata.full_name || user.email,
-        password: '',
-        email: user.email,
-        role: 'user',
-      },
-    ]);
+    await supabase.from('users').insert([{
+      username: user.user_metadata.full_name || user.email,
+      password: '',
+      email: user.email,
+      role: 'user',
+    }]);
   };
 
   const handleFacebookLogin = async () => {
@@ -143,14 +123,12 @@ export default function SignUp() {
     }
     
     const user = userData.user;
-    await supabase.from('users').insert([
-      {
-        username: user.user_metadata.full_name || user.email,
-        password: '',
-        email: user.email,
-        role: 'user',
-      },
-    ]);
+    await supabase.from('users').insert([{
+      username: user.user_metadata.full_name || user.email,
+      password: '',
+      email: user.email,
+      role: 'user',
+    }]);
   };
 
   return (
@@ -160,15 +138,17 @@ export default function SignUp() {
         px={4}
         width="full"
         maxWidth="500px"
-        borderRadius={4}
+        borderRadius="lg"
         textAlign="center"
-        boxShadow="lg"
+        boxShadow="xl"
         bg={useColorModeValue('white', 'gray.700')}
+        transition="all 0.3s ease"
+        _hover={{ boxShadow: "2xl", transform: "scale(1.02)" }}
       >
-        <Box p={4}>
-          <VStack spacing={8} align="stretch">
+        <Box p={6}>
+          <VStack spacing={6} align="stretch">
             <Image src={Logo} alt="The Fitness Shop" height="60px" mx="auto" />
-            <Text fontSize="xl" fontWeight="semibold">
+            <Text fontSize="xl" fontWeight="semibold" color={useColorModeValue('gray.800', 'white')}>
               Your Fitness Hub – Everything You Need to Train, Fuel, and Succeed!
             </Text>
             <Box as="form">
@@ -200,7 +180,7 @@ export default function SignUp() {
                     <InputRightElement h={'full'}>
                       <Button
                         variant={'ghost'}
-                        onClick={() => setShowPassword((showPassword) => !showPassword)}
+                        onClick={() => setShowPassword((prevState) => !prevState)}
                       >
                         {showPassword ? <ViewIcon /> : <ViewOffIcon />}
                       </Button>
@@ -213,6 +193,7 @@ export default function SignUp() {
                   colorScheme="red"
                   width="full"
                   onClick={handleSignUp}
+                  _hover={{ bg: 'red.600' }}
                 >
                   Sign up
                 </Button>
@@ -220,12 +201,13 @@ export default function SignUp() {
             </Box>
             <VStack spacing={4} align="stretch">
               <Divider />
-              <Text textAlign="center">OR</Text>
+              <Text textAlign="center" color="gray.500">OR</Text>
               <Button
                 leftIcon={<FaFacebook />}
                 colorScheme="facebook"
                 onClick={handleFacebookLogin}
                 width="full"
+                _hover={{ bg: 'facebook.600' }}
               >
                 Sign up with Facebook
               </Button>
@@ -233,11 +215,12 @@ export default function SignUp() {
                 leftIcon={<FcGoogle />}
                 onClick={handleGoogleLogin}
                 width="full"
+                _hover={{ bg: 'gray.200' }}
               >
                 Sign up with Google
               </Button>
             </VStack>
-            <Text fontSize="sm">
+            <Text fontSize="sm" color="gray.500">
               Already have an account?{' '}
               <Link color="blue.500" href="/SignIn">
                 Sign in
@@ -249,4 +232,3 @@ export default function SignUp() {
     </Flex>
   );
 }
-

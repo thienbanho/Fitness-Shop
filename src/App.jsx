@@ -7,6 +7,7 @@ import {
 
 // Layouts and pages
 import RootLayout from "./layouts/RootLayout";
+import Home from "./pages/Home/Home"
 import Dashboard from "./pages/Dashboard";
 import Create from "./pages/Create";
 import Profile from "./pages/Profile/Profile";
@@ -30,6 +31,7 @@ const router = createBrowserRouter(
       <Route index element={<Dashboard />} />
       <Route path="create" element={<Create />} />
       <Route path="profile" element={<Profile />} />
+      <Route path="home" element={<Home />} />
       <Route path="about" element={<AboutPage />} />
       <Route path="forum" element={<Forum />} />
       <Route path="DetailProduct" element={<ProductDetail />} />

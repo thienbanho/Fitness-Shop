@@ -1,19 +1,28 @@
-import { Box, Text, VStack, Button, Flex } from "@chakra-ui/react";
+import React from "react";
+import { Box, Text, Button, Flex } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { Dumbbell, Users, ShoppingBag, Award } from "lucide-react";
-import PTSection from "/src/assets/PTSection.png"
+import PTSection from "/src/assets/PTSection.png";
+import { motion } from "framer-motion";
+
+const MotionBox = motion(Box);
+const MotionText = motion(Text);
+const MotionFlex = motion(Flex);
 
 export default function AboutPage() {
   return (
     <Box className="flex flex-col min-h-screen">
       <main className="flex-grow">
         {/* Hero Section */}
-        <Box
+        <MotionBox
           bgImage="url('/placeholder.svg?height=1080&width=1920')"
           bgSize="cover"
           bgPosition="center"
           h="50vh"
           position="relative"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
         >
           <Box bg="blackAlpha.500" position="absolute" inset="0" />
           <Flex
@@ -25,36 +34,86 @@ export default function AboutPage() {
             h="100%"
             textAlign="center"
           >
-            <Text fontSize="4xl" fontWeight="bold" color="white" mb={4}>
+            <MotionText
+              fontSize="4xl"
+              fontWeight="bold"
+              color="white"
+              mb={4}
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
               About Fitness Shop
-            </Text>
-            <Text fontSize="xl" color="white">
+            </MotionText>
+            <MotionText
+              fontSize="xl"
+              color="white"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
+            >
               Your One-Stop Destination for Fitness
-            </Text>
+            </MotionText>
           </Flex>
-        </Box>
+        </MotionBox>
 
         {/* Mission Section */}
-        <Box py={16} bg="gray.100" textAlign="center">
+        <MotionBox
+          py={16}
+          bg="gray.100"
+          textAlign="center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
           <Box maxW="2xl" mx="auto" px={4}>
-            <Text fontSize="3xl" fontWeight="bold" mb={8}>
+            <MotionText
+              fontSize="3xl"
+              fontWeight="bold"
+              mb={8}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
               Our Mission
-            </Text>
+            </MotionText>
             <Text fontSize="lg">
               At Fitness Shop, we're dedicated to helping you achieve your
               fitness goals. We provide top-quality equipment and expert
               guidance to support your journey to a healthier, stronger you.
             </Text>
           </Box>
-        </Box>
+        </MotionBox>
 
         {/* Products and Services Section */}
-        <Box py={16} bg="gray.50">
-          <Box maxW="7xl" mx="auto" px={4} >
-            <Text fontSize="3xl" fontWeight="bold" textAlign="center" mb={12}>
+        <MotionBox
+          py={16}
+          bg="gray.50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <Box maxW="7xl" mx="auto" px={4}>
+            <MotionText
+              fontSize="3xl"
+              fontWeight="bold"
+              textAlign="center"
+              mb={12}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
               What We Offer
-            </Text>
-            <Flex wrap="wrap" gap={30} columnGap={60} justify="center" >
+            </MotionText>
+            <MotionFlex
+              wrap="wrap"
+              gap={30}
+              columnGap={60}
+              justify="center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
               <ServiceCard
                 icon={<Dumbbell />}
                 title="Equipment"
@@ -75,18 +134,27 @@ export default function AboutPage() {
                 title="Nutrition"
                 description="Nutritional supplements and advice for optimal performance."
               />
-            </Flex>
+            </MotionFlex>
           </Box>
-        </Box>
+        </MotionBox>
 
         {/* Personal Training Section */}
-        <Box py={16} bg="white">
+        <MotionBox
+          py={16}
+          bg="white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
           <Flex direction={{ base: "column", md: "row" }} align="center" px={4}>
             <Box flex="1" textAlign="center" mb={{ base: 8, md: 0 }}>
-              <img
+              <motion.img
                 src={PTSection}
                 alt="Personal trainer with client"
                 style={{ borderRadius: "8px" }}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 1 }}
               />
             </Box>
             <Box flex="1" textAlign={{ base: "center", md: "left" }} pl={{ md: 8 }}>
@@ -104,14 +172,29 @@ export default function AboutPage() {
               </Button>
             </Box>
           </Flex>
-        </Box>
+        </MotionBox>
 
         {/* Call to Action Section */}
-        <Box py={16} bg="blackAlpha.800" color="white" textAlign="center">
+        <MotionBox
+          py={16}
+          bg="blackAlpha.800"
+          color="white"
+          textAlign="center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
           <Box maxW="2xl" mx="auto" px={4}>
-            <Text fontSize="3xl" fontWeight="bold" mb={4}>
+            <MotionText
+              fontSize="3xl"
+              fontWeight="bold"
+              mb={4}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
               Ready to Start Your Fitness Journey?
-            </Text>
+            </MotionText>
             <Text fontSize="xl" mb={8}>
               Explore our products or book a session with one of our expert
               trainers today!
@@ -120,12 +203,12 @@ export default function AboutPage() {
               <Button as={Link} to="/products" variant="solid" colorScheme="gray" bg="white" textColor="blackAlpha.600">
                 Shop Products
               </Button>
-              <Button as={Link} to="/" variant="solid" colorScheme="whiteAlpha" bg="grey" textColor="whiteAlpha">
+              <Button as={Link} to="/home" variant="solid" colorScheme="whiteAlpha" bg="grey" textColor="whiteAlpha">
                 Back to Home
               </Button>
             </Flex>
           </Box>
-        </Box>
+        </MotionBox>
       </main>
     </Box>
   );
@@ -133,7 +216,7 @@ export default function AboutPage() {
 
 function ServiceCard({ icon, title, description }) {
   return (
-    <Box
+    <MotionBox
       w="300px"
       bg="white"
       p={6}
@@ -142,6 +225,10 @@ function ServiceCard({ icon, title, description }) {
       textAlign="center"
       border="1px"
       borderColor="gray.200"
+      whileHover={{ scale: 1.05 }}
+      transition="all 0.3s ease-in-out"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
     >
       <Box fontSize="2xl" mb={4}>
         {icon}
@@ -152,6 +239,6 @@ function ServiceCard({ icon, title, description }) {
       <Text fontSize="md" color="gray.600">
         {description}
       </Text>
-    </Box>
+    </MotionBox>
   );
 }
