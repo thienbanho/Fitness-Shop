@@ -19,7 +19,7 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import supabase from "../../config/supabaseClient";
-import Logo from "../../assets/Logo.png"
+import Logo from "../../assets/logo.png"
 
 export default function SignIn() {
   const [email, setEmail] = useState('');

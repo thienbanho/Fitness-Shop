@@ -22,7 +22,7 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import supabase from "../../config/supabaseClient";
-import Logo from "../../assets/Logo.png"
+import Logo from "../../assets/logo.png"
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
