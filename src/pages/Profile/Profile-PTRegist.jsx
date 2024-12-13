@@ -1,6 +1,6 @@
 //!! Người dùng cần nhập thông tin ở profile user trước mới được vào đây
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   VStack,
@@ -15,16 +15,20 @@ import {
   ListItem,
   Flex,
   Textarea,
-  Select,
   Avatar,
+  useToast,
 } from "@chakra-ui/react";
 
 import Navbar from "../../components/NavBar/NavBar"; // Navbar đã có sẵn
 import Sidebar from "../../components/Sidebar/Sidebar"; // Sidebar đã có sẵn
 import Footer from "../../components/Footer/Footer"; // Footer đã có sẵn
 import supabase from '../../config/supabaseClient';
+import { useAuth } from "../../hooks/Auth"; // Import useAuth hook
 
 export default function PTRegistration() {
+  const { user, setUser } = useAuth();
+  const toast = useToast();
+
   const [formData, setFormData] = useState({
     //fullName: "", Người dùng cần nhập thông tin ở profile user trước mới được vào đây
     //phone: "",
@@ -35,6 +39,50 @@ export default function PTRegistration() {
     priceStart: "",
     priceEnd:""
   });
+
+  useEffect(() => {
+    if (user) {
+      console.log("Current user:", user);
+      const isEligible = async () => {
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("email", user.email);
+  
+        if (error) {
+          console.error("Error fetching data:", error);
+          alert("An error occurred while fetching user data.");
+          return;
+        }
+  
+        if (data && data.length > 0) {
+          const userData = data[0];
+          // Kiểm tra nếu có cột nào là null
+          const nullColumns = Object.keys(userData).filter(
+            (key) => userData[key] === null
+          );
+  
+          if (nullColumns.length > 0) {
+            alert(
+              `The following fields are missing: "${nullColumns.join(", ")}"
+              Go fucking back to profile and fill it all before regist`
+            );
+            window.location.href = "/profile";
+          }
+        } else {
+          alert("No user data found.");
+        }
+      };
+  
+      isEligible();
+    }
+  }, [user, toast]);
+  
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
 
   const [image, setImage] = useState(null);
 
