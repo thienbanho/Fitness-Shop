@@ -28,7 +28,7 @@ export default function Profile() {
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
-    phone: "",
+    phone_number: "",
     dob: "",
     gender: "",
     address:""
@@ -71,13 +71,10 @@ export default function Profile() {
               setFormData({
                 full_name: data[0].full_name || "",
                 email: data[0].email || "",
-                phone: data[0].phone || "",
-              });
-              setUserData(data);
-              setFormData({
-                full_name: data.full_name || "",
-                email: data.email || "",
-                phone: data.phone || "",
+                phone_number: data[0].phone_number || "",
+                dob: data[0].dob || "",
+                gender:data[0].gender || "",
+                address: data[0].address || ""
               });
             }
             else {
@@ -93,12 +90,6 @@ export default function Profile() {
 
       fetchUserData();
     }
-    else {console.log("No user data found in auth");
-      toast({
-        title: "No user data found",
-        status: "warning",
-        duration: 3000,
-             });}
   }, [user, toast]);
 
   const handleLogout = async () => {
@@ -179,9 +170,9 @@ export default function Profile() {
               <FormControl>
                 <FormLabel>Phone</FormLabel>
                 <Input
-                  value={formData.phone}
+                  value={formData.phone_number}
                   onChange={(e) =>
-                    setFormData({ ...formData, phone: e.target.value })
+                    setFormData({ ...formData, phone_number: e.target.value })
                   }
                 />
               </FormControl>
