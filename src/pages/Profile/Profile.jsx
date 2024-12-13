@@ -31,12 +31,15 @@ export default function Profile() {
     phone_number: "",
     dob: "",
     gender: "",
-    address:""
+    address:"",
+    user_id:"",
+    updated_at:""
   });
   const toast = useToast();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    console.log("test", formData.user_id)
   };
   // Fetch user data from Supabase
   useEffect(() => {
@@ -74,7 +77,8 @@ export default function Profile() {
                 phone_number: data[0].phone_number || "",
                 dob: data[0].dob || "",
                 gender:data[0].gender || "",
-                address: data[0].address || ""
+                address: data[0].address || "",
+                user_id: data[0].user_id || "",
               });
             }
             else {
@@ -98,14 +102,18 @@ export default function Profile() {
   };
 
   const handleUpdateProfile = async () => {
+    console.log("Test ",formData.user_id)
     const { error } = await supabase
       .from("users")
       .update({
-        full_name: formData.full_name,
-        // phone: formData.phone,
-        // updated_at: new Date(),
+        full_name: "huhu",
+        phone_number: formData.phone_number,
+        updated_at: new Date(),
+        dob: formData.dob,
+        gender: formData.gender,
+        address: formData.address,
       })
-      .eq("id", user?.id);
+      .eq("user_id", formData.user_id);
 
     if (error) {
       toast({
