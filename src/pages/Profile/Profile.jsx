@@ -39,7 +39,6 @@ export default function Profile() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    console.log("test", formData.user_id)
   };
   // Fetch user data from Supabase
   useEffect(() => {
@@ -57,7 +56,7 @@ export default function Profile() {
           const { data, error } = await supabase
           .from("users")
           .select("*")
-          .eq("email", user.email); // Hoặc .eq("id", user.id) nếu bạn sử dụng id
+          .eq("email", user.email);
 
           if (error) {
             console.error("Error fetching user data2:", error);
@@ -70,7 +69,7 @@ export default function Profile() {
           }
             else if (data && data.length > 0) {
               console.log("Fetched user data:", data[0]);
-              setUserData(data[0]); // Lưu trữ dữ liệu người dùng
+              setUserData(data[0]);
               setFormData({
                 full_name: data[0].full_name || "",
                 email: data[0].email || "",
@@ -102,7 +101,6 @@ export default function Profile() {
   };
 
   const handleUpdateProfile = async () => {
-    console.log("Test ",formData.user_id)
     const { error } = await supabase
       .from("users")
       .update({

@@ -30,14 +30,13 @@ export default function PTRegistration() {
   const toast = useToast();
 
   const [formData, setFormData] = useState({
-    //fullName: "", Người dùng cần nhập thông tin ở profile user trước mới được vào đây
-    //phone: "",
+    user_id:"",
     introduction: "",
     specialization: "",
-    workLocation: "",
-    personalPage: "",
-    priceStart: "",
-    priceEnd:""
+    work_location: "",
+    personal_page: "",
+    price_start: "",
+    price_end:"",
   });
 
   useEffect(() => {
@@ -56,10 +55,8 @@ export default function PTRegistration() {
         }
   
         if (data && data.length > 0) {
-          const userData = data[0];
-          // Kiểm tra nếu có cột nào là null
-          const nullColumns = Object.keys(userData).filter(
-            (key) => userData[key] === null
+          const nullColumns = Object.keys(data[0]).filter(
+            (key) => data[0][key] === null
           );
   
           if (nullColumns.length > 0) {
@@ -68,6 +65,11 @@ export default function PTRegistration() {
               Go fucking back to profile and fill it all before regist`
             );
             window.location.href = "/profile";
+          }
+          else {
+            setFormData({
+              user_id : data[0].user_id || ""
+            })
           }
         } else {
           alert("No user data found.");
@@ -88,6 +90,7 @@ export default function PTRegistration() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log("Updating field:", name, "with value:", value);
     setFormData({ ...formData, [name]: value });
   };
 
@@ -102,10 +105,33 @@ export default function PTRegistration() {
     }
   };
 
-  const handleSubmit = () => {
-    console.log("Form Data Submitted:", formData);
-    console.log("Uploaded Image:", image);
-    alert("Registration Submitted Successfully!");
+  const handleSubmit = async () => {
+    const { error } = await supabase
+      .from("personal_trainers")
+      .insert({
+        specialization: formData.specialization,
+        introduction: formData.introduction,
+        work_location: formData.work_location,
+        personal_page: formData.personal_page,
+        price_start: formData.price_start,
+        price_end: formData.price_end,
+        user_id: formData.user_id,
+        submited_at: new Date()
+      })
+
+    if (error) {
+      toast({
+        title: "Error regist",
+        status: "error",
+        duration: 3000,
+      });
+    } else {
+      toast({
+        title: "regist successfully",
+        status: "success",
+        duration: 3000,
+      });
+    }
   };
 
   return (
@@ -153,17 +179,17 @@ export default function PTRegistration() {
               <FormLabel>Price Range per Session</FormLabel>
               <HStack spacing={4}>
                 <Input
-                  name="priceStart"
+                  name="price_start"
                   type="number"
-                  value={formData.priceStart}
+                  value={formData.price_start}
                   onChange={handleInputChange}
                   placeholder="Start Price (VND)"
                 />
                 <Text>-</Text>
                 <Input
-                  name="priceEnd"
+                  name="price_end"
                   type="number"
-                  value={formData.priceEnd}
+                  value={formData.price_end}
                   onChange={handleInputChange}
                   placeholder="End Price (VND)"
                 />
@@ -173,8 +199,8 @@ export default function PTRegistration() {
               <FormControl>
                 <FormLabel>Work Location</FormLabel>
                 <Input
-                  name="workLocation"
-                  value={formData.workLocation}
+                  name="work_location"
+                  value={formData.work_location}
                   onChange={handleInputChange}
                   placeholder="Enter your work location (e.g., HCM, Hanoi)"
                 />
@@ -183,16 +209,16 @@ export default function PTRegistration() {
               <FormControl>
                 <FormLabel>Personal Page Link</FormLabel>
                 <Input
-                  name="personalPage"
+                  name="personal_page"
                   type="url"
-                  value={formData.personalPage}
+                  value={formData.personal_page}
                   onChange={handleInputChange}
                   placeholder="Enter your personal page link (e.g., Facebook, LinkedIn)"
                 />
               </FormControl>
 
               <FormControl>
-                <FormLabel>Upload Profile Picture (Work Relative)</FormLabel>
+                <FormLabel>Upload Profile Picture (Work Related)</FormLabel>
                 <HStack>
                   <Input
                     type="file"
