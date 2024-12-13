@@ -18,6 +18,8 @@ import Payment from "./pages/Payment/Payment";
 import SignIn from "./pages/SignIn/SignIn";
 import SignUp from "./pages/SignUp/SignUp";
 import RoleManage from "./pages/RoleManagement/RoleManage";
+import PTRegistration from "./pages/Profile/Profile-PTRegist";
+
 
 // Import the Routes component
 import AdminRoute from "./routes/AdminRoutes";
@@ -36,6 +38,7 @@ const router = createBrowserRouter(
       <Route path="Payment" element={<Payment />} />
       <Route path="SignIn" element={<SignIn />} />
       <Route path="SignUp" element={<SignUp />} />
+      <Route path="profile/PTRegistration" element={<PTRegistration />} />
 
       {/* Protected Admin Route */}
       <Route element={<AdminRoute />}>

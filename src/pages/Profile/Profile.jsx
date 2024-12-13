@@ -1,101 +1,182 @@
-'use client';
+"use client";
 
+import { useEffect, useState } from "react";
 import {
-  Heading,
-  Avatar,
   Box,
-  Center,
-  Image,
+  Container,
   Flex,
+  VStack,
   Text,
-  Stack,
   Button,
-  useColorModeValue,
-} from '@chakra-ui/react';
-import { AuthProvider, useAuth } from "../../hooks/Auth"; // Import useAuth hook
+  FormControl,
+  FormLabel,
+  Input,
+  useToast,
+} from "@chakra-ui/react";
+import { useAuth } from "../../hooks/Auth"; // Import useAuth hook
 import supabase from "../../config/supabaseClient";
+import Navbar from "../../components/NavBar/NavBar"; // Navbar Component
+import Footer from "../../components/Footer/Footer"; // Footer Component
+import Sidebar from "../../components/Sidebar/Sidebar"; // Sidebar Component
 
 export default function Profile() {
-  const { user, setUser } = useAuth(); // Use auth hook to get user info
-  const logout = async () => {
+  const { user, setUser } = useAuth();
+  const [userData, setUserData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    phone: "",
+  });
+  const toast = useToast();
+
+  // Fetch user data from Supabase
+  useEffect(() => {
+    if (user) {
+      console.log("Current user:", user);
+      const fetchUserData = async () => {
+        if (error) {
+          console.log("Error fetching user data:", error);
+          toast({
+            title: "Error fetching user data",
+            status: "error",
+            duration: 3000,
+          });
+        } else {
+          setUserData(user);
+          setFormData({
+            full_name: user.full_name || "",
+            email: user.email || "",
+            phone: user.phone || "",
+          });
+        }
+      };
+
+      fetchUserData();
+    }
+  }, [user, toast]);
+
+  const handleLogout = async () => {
     await supabase.auth.signOut();
-    setUser(null); // Update user state to null after logging out
+    setUser(null);
+  };
+
+  const handleUpdateProfile = async () => {
+    const { error } = await supabase
+      .from("users")
+      .update({
+        full_name: formData.full_name,
+        phone: formData.phone,
+        updated_at: new Date(),
+      })
+      .eq("id", user?.id);
+
+    if (error) {
+      toast({
+        title: "Error updating profile",
+        status: "error",
+        duration: 3000,
+      });
+    } else {
+      toast({
+        title: "Profile updated successfully",
+        status: "success",
+        duration: 3000,
+      });
+      setIsEditing(false);
+    }
   };
 
   if (!user) {
     return (
-      <Center py={6}>
+      <Container centerContent py={6}>
         <Text>You need to log in to see your profile.</Text>
-      </Center>
+      </Container>
     );
   }
 
   return (
-    <Center py={6}>
-      <Box
-        maxW={'270px'}
-        w={'full'}
-        bg={useColorModeValue('white', 'gray.800')}
-        boxShadow={'2xl'}
-        rounded={'md'}
-        overflow={'hidden'}
-      >
-        <Image
-          h={'120px'}
-          w={'full'}
-          src={user.avatar_url || 'https://images.unsplash.com/photo-1612865547334-09cb8cb455da?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80'} // Use the user's avatar URL if available
-          objectFit="cover"
-          alt="#"
-        />
-        <Flex justify={'center'} mt={-12}>
-          <Avatar
-            size={'xl'}
-            src={user.avatar_url || 'https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/452346596_122164584326174919_4892755229233025321_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFkCuZGcWmgueI69DCFiz53wibW2MoeTvHCJtbYyh5O8YvY9JYPHuR4Mhn6WvIKS63P-DZrX5XPXdD6EF41w1yS&_nc_ohc=hchFGJy9LoQQ7kNvgF1oINz&_nc_zt=23&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=Al9O8TIVfV5SIR_Zs4aepxr&oh=00_AYB1Zuj5DLL_VpVmfSCzK0r6MA8R56tn0Ex2az7rel2m1A&oe=674C7809'}
-            css={{
-              border: '2px solid white',
-            }}
-          />
-        </Flex>
-
-        <Box p={6}>
-          <Stack spacing={0} align={'center'} mb={5}>
-            <Heading fontSize={'2xl'} fontWeight={500} fontFamily={'body'}>
-              {user.name || 'Your Name'} {/* Display user name if available */}
-            </Heading>
-            <Text color={'gray.500'}>{user.email}</Text> {/* Display user email */}
-          </Stack>
-
-          <Stack direction={'row'} justify={'center'} spacing={6}>
-            <Stack spacing={0} align={'center'}>
-              <Text fontWeight={600}>23k</Text>
-              <Text fontSize={'sm'} color={'gray.500'}>
-                Followers
-              </Text>
-            </Stack>
-            <Stack spacing={0} align={'center'}>
-              <Text fontWeight={600}>23k</Text>
-              <Text fontSize={'sm'} color={'gray.500'}>
-                Following
-              </Text>
-            </Stack>
-          </Stack>
-
-          <Button
-            w={'full'}
-            mt={8}
-            bg={useColorModeValue('#151f21', 'gray.900')}
-            color={'white'}
-            rounded={'md'}
-            _hover={{
-              transform: 'translateY(-2px)',
-              boxShadow: 'lg',
-            }}
-            onClick={logout} // Logout on button click
-          >
-            Logout
-          </Button>
-        </Box>
+    <Flex direction="column" minHeight="100vh">
+      {/* Navbar */}
+      <Box as="header" width="100%" position="fixed" top="0" zIndex="10">
+        <Navbar />
       </Box>
-    </Center>
+
+      <Container maxW="container.xl" py={40}>
+        <Flex gap={8}>
+          {/* Sidebar */}
+          <Sidebar userData={userData} onLogout={handleLogout} />
+
+          {/* Main Content */}
+          <Box flex={1} bg="white" p={8} borderRadius="md" shadow="sm">
+            <Box mb={6}>
+              <Text fontSize="2xl" fontWeight="bold">
+                Account Information
+              </Text>
+            </Box>
+
+            <VStack spacing={6} align="stretch">
+              <FormControl>
+                <FormLabel>Full Name</FormLabel>
+                <Input
+                  value={formData.full_name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, full_name: e.target.value })
+                  }
+                />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Email</FormLabel>
+                <Input value={user.email} disabled bg="gray.50" />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Phone</FormLabel>
+                <Input
+                  value={formData.phone}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Address</FormLabel>
+                <Input
+                  value={formData.address}
+                  onChange={(e) =>
+                    setFormData({ ...formData, address: e.target.value })
+                  }
+                />
+              </FormControl>
+              <Box>
+                {isEditing ? (
+                  <Flex gap={4}>
+                    <Button colorScheme="blue" onClick={handleUpdateProfile}>
+                      Save Changes
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsEditing(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </Flex>
+                ) : (
+                  <Button colorScheme="red" onClick={() => setIsEditing(true)}>
+                    Edit Profile
+                  </Button>
+                )}
+              </Box>
+            </VStack>
+          </Box>
+        </Flex>
+      </Container>
+
+      {/* Footer */}
+      <Box as="footer" width="100%" bg="black" color="white" py="4">
+        <Footer />
+      </Box>
+    </Flex>
   );
 }
