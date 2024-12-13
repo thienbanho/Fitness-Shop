@@ -12,6 +12,8 @@ import {
   FormLabel,
   Input,
   useToast,
+  HStack,
+  Select
 } from "@chakra-ui/react";
 import { useAuth } from "../../hooks/Auth"; // Import useAuth hook
 import supabase from "../../config/supabaseClient";
@@ -27,33 +29,76 @@ export default function Profile() {
     full_name: "",
     email: "",
     phone: "",
+    dob: "",
+    gender: "",
+    address:""
   });
   const toast = useToast();
-
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
   // Fetch user data from Supabase
   useEffect(() => {
     if (user) {
       console.log("Current user:", user);
       const fetchUserData = async () => {
-        if (error) {
-          console.log("Error fetching user data:", error);
+        if (false) {
+          console.log("Error fetching user data1:", error);
           toast({
-            title: "Error fetching user data",
+            title: "Error fetching user data1",
             status: "error",
             duration: 3000,
           });
         } else {
-          setUserData(user);
-          setFormData({
-            full_name: user.full_name || "",
-            email: user.email || "",
-            phone: user.phone || "",
-          });
+          const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("email", user.email); // Hoặc .eq("id", user.id) nếu bạn sử dụng id
+
+          if (error) {
+            console.error("Error fetching user data2:", error);
+            toast({
+              title: "Error fetching user data2",
+              description: error.message,
+              status: "error",
+              duration: 3000,
+            });
+          }
+            else if (data && data.length > 0) {
+              console.log("Fetched user data:", data[0]);
+              setUserData(data[0]); // Lưu trữ dữ liệu người dùng
+              setFormData({
+                full_name: data[0].full_name || "",
+                email: data[0].email || "",
+                phone: data[0].phone || "",
+              });
+              setUserData(data);
+              setFormData({
+                full_name: data.full_name || "",
+                email: data.email || "",
+                phone: data.phone || "",
+              });
+            }
+            else {
+              console.log("No user data found in public");
+              toast({
+                title: "No user data found",
+                status: "warning",
+                duration: 3000,
+              });
+            }    
         }
       };
 
       fetchUserData();
     }
+    else {console.log("No user data found in auth");
+      toast({
+        title: "No user data found",
+        status: "warning",
+        duration: 3000,
+             });}
   }, [user, toast]);
 
   const handleLogout = async () => {
@@ -66,8 +111,8 @@ export default function Profile() {
       .from("users")
       .update({
         full_name: formData.full_name,
-        phone: formData.phone,
-        updated_at: new Date(),
+        // phone: formData.phone,
+        // updated_at: new Date(),
       })
       .eq("id", user?.id);
 
@@ -140,6 +185,66 @@ export default function Profile() {
                   }
                 />
               </FormControl>
+
+              <FormControl>
+                <HStack spacing={4}>
+                  {/* Date of Birth Input */}
+                  <Box flex={1}>
+                    <FormLabel>Date of Birth</FormLabel>
+                    <Input
+                      name="dob"
+                      type="date"
+                      value={formData.dob}
+                      onChange={(e) => {
+                        handleInputChange(e);
+
+                        // Automatically calculate age
+                        const dob = new Date(e.target.value);
+                        const today = new Date();
+                        const age = today.getFullYear() - dob.getFullYear();
+                        const monthDiff = today.getMonth() - dob.getMonth();
+
+                        // Adjust age if the birthdate hasn't occurred yet this year
+                        const calculatedAge =
+                          monthDiff < 0 ||
+                          (monthDiff === 0 && today.getDate() < dob.getDate())
+                            ? age - 1
+                            : age;
+
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          age: calculatedAge >= 0 ? calculatedAge : 0, // Ensure age is not negative
+                        }));
+                      }}
+                    />
+                  </Box>
+
+                  {/* Age Display (Read-Only) */}
+                  <Box flex={1}>
+                    <FormLabel>Age</FormLabel>
+                    <Input
+                      name="age"
+                      value={formData.age || ""}
+                      isReadOnly
+                      placeholder="Age will be calculated automatically"
+                    />
+                  </Box>
+                </HStack>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Gender</FormLabel>
+                <Select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                  placeholder="Select your gender"
+                >
+                  <option value="true">Men</option>
+                  <option value="false">Women</option>
+                </Select>
+              </FormControl>
+
               <FormControl>
                 <FormLabel>Address</FormLabel>
                 <Input

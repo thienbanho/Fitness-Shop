@@ -1,3 +1,5 @@
+//!! Người dùng cần nhập thông tin ở profile user trước mới được vào đây
+
 import React, { useState } from "react";
 import {
   Box,
@@ -20,18 +22,18 @@ import {
 import Navbar from "../../components/NavBar/NavBar"; // Navbar đã có sẵn
 import Sidebar from "../../components/Sidebar/Sidebar"; // Sidebar đã có sẵn
 import Footer from "../../components/Footer/Footer"; // Footer đã có sẵn
+import supabase from '../../config/supabaseClient';
 
 export default function PTRegistration() {
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    address: "",
+    //fullName: "", Người dùng cần nhập thông tin ở profile user trước mới được vào đây
+    //phone: "",
     introduction: "",
-    experience: "",
-    pricePerSession: "",
-    location: "",
+    specialization: "",
+    workLocation: "",
     personalPage: "",
+    priceStart: "",
+    priceEnd:""
   });
 
   const [image, setImage] = useState(null);
@@ -78,95 +80,6 @@ export default function PTRegistration() {
             </Text>
 
             <VStack spacing={4} align="stretch">
-              <FormControl>
-                <FormLabel>Full Name</FormLabel>
-                <Input
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  placeholder="Enter your full name"
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Email</FormLabel>
-                <Input
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Enter your email"
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Phone</FormLabel>
-                <Input
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder="Enter your phone number"
-                />
-              </FormControl>
-
-              <FormControl>
-                <HStack spacing={4}>
-                  {/* Date of Birth Input */}
-                  <Box flex={1}>
-                    <FormLabel>Date of Birth</FormLabel>
-                    <Input
-                      name="dob"
-                      type="date"
-                      value={formData.dob}
-                      onChange={(e) => {
-                        handleInputChange(e);
-
-                        // Automatically calculate age
-                        const dob = new Date(e.target.value);
-                        const today = new Date();
-                        const age = today.getFullYear() - dob.getFullYear();
-                        const monthDiff = today.getMonth() - dob.getMonth();
-
-                        // Adjust age if the birthdate hasn't occurred yet this year
-                        const calculatedAge =
-                          monthDiff < 0 ||
-                          (monthDiff === 0 && today.getDate() < dob.getDate())
-                            ? age - 1
-                            : age;
-
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          age: calculatedAge >= 0 ? calculatedAge : 0, // Ensure age is not negative
-                        }));
-                      }}
-                    />
-                  </Box>
-
-                  {/* Age Display (Read-Only) */}
-                  <Box flex={1}>
-                    <FormLabel>Age</FormLabel>
-                    <Input
-                      name="age"
-                      value={formData.age || ""}
-                      isReadOnly
-                      placeholder="Age will be calculated automatically"
-                    />
-                  </Box>
-                </HStack>
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Gender</FormLabel>
-                <Select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleInputChange}
-                  placeholder="Select your gender"
-                >
-                  <option value="Men">Men</option>
-                  <option value="Women">Women</option>
-                  <option value="Unknown">Unknown</option>
-                </Select>
-              </FormControl>
 
               <FormControl>
                 <FormLabel>Introduction</FormLabel>
@@ -179,37 +92,43 @@ export default function PTRegistration() {
               </FormControl>
 
               <FormControl>
-                <FormLabel>Experience</FormLabel>
+                <FormLabel>Specialization</FormLabel>
                 <Textarea
-                  name="experience"
-                  value={formData.experience}
+                  name="specialization"
+                  value={formData.specialization}
                   onChange={handleInputChange}
-                  placeholder="Describe your past experience as a trainer"
+                  placeholder="Your specialization as a trainer"
                 />
               </FormControl>
 
               <FormControl>
-                <FormLabel>Price Per Session</FormLabel>
-                <Select
-                  name="pricePerSession"
-                  value={formData.pricePerSession}
+              <FormLabel>Price Range per Session</FormLabel>
+              <HStack spacing={4}>
+                <Input
+                  name="priceStart"
+                  type="number"
+                  value={formData.priceStart}
                   onChange={handleInputChange}
-                  placeholder="Select your price range"
-                >
-                  <option value="200000">200,000 VND</option>
-                  <option value="300000">300,000 VND</option>
-                  <option value="400000">400,000 VND</option>
-                  <option value="500000">500,000 VND</option>
-                </Select>
-              </FormControl>
+                  placeholder="Start Price (VND)"
+                />
+                <Text>-</Text>
+                <Input
+                  name="priceEnd"
+                  type="number"
+                  value={formData.priceEnd}
+                  onChange={handleInputChange}
+                  placeholder="End Price (VND)"
+                />
+              </HStack>
+            </FormControl>
 
               <FormControl>
-                <FormLabel>Location</FormLabel>
+                <FormLabel>Work Location</FormLabel>
                 <Input
-                  name="location"
-                  value={formData.location}
+                  name="workLocation"
+                  value={formData.workLocation}
                   onChange={handleInputChange}
-                  placeholder="Enter your location (e.g., HCM, Hanoi)"
+                  placeholder="Enter your work location (e.g., HCM, Hanoi)"
                 />
               </FormControl>
 
@@ -225,7 +144,7 @@ export default function PTRegistration() {
               </FormControl>
 
               <FormControl>
-                <FormLabel>Upload Profile Picture</FormLabel>
+                <FormLabel>Upload Profile Picture (Work Relative)</FormLabel>
                 <HStack>
                   <Input
                     type="file"
