@@ -8,9 +8,7 @@ import {
 } from "@chakra-ui/react"
 import React from 'react'
 
-import Whey from "../../assets/Products/whey.png"
-
-export default function ProductCard() {
+const ProductCard = ({ product }) => {
   return (
     <Box
         maxW="252px"
@@ -20,42 +18,27 @@ export default function ProductCard() {
         border="solid"
     >
         {/* Product Image */}
-        <Image
-            src={Whey} 
-        />
+        <Image width="252px" height="230px" src={product.image} />
 
         {/* Product Details */}
         <Stack spacing={2} mt={3}>
             {/* Brand */}
             <Text fontWeight="bold" fontSize="lg">
-            NUTRABOLICS
+            {product.name}
             </Text>
 
             {/* Product Name */}
             <Text fontSize="md" noOfLines={2}>
-            Nutrabolics Hydropure 100% Hydrolyzed Whey Protein
+            {product.description}
             </Text>
 
             {/* Pricing Section */}
             <HStack justifyContent="space-between">
             {/* Current Price */}
             <Text fontWeight="bold" fontSize="xl" color="red.500">
-                1.750.000₫
+                {product.price}
             </Text>
-
-            {/* Original Price and Discount */}
-            <HStack spacing={2}>
-                <Text as="s" fontSize="sm" color="gray.500">
-                2.050.000₫
-                </Text>
-                <Badge colorScheme="red">-15%</Badge>
             </HStack>
-            </HStack>
-
-            {/* Additional Value */}
-            <Text fontSize="sm" color="gray.500">
-            Quà trị giá 250.000₫
-            </Text>
 
             {/* Rating */}
             <HStack spacing={1}>
@@ -70,3 +53,5 @@ export default function ProductCard() {
     </Box>
   )
 }
+
+export default ProductCard

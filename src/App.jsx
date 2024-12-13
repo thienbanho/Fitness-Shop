@@ -9,11 +9,14 @@ import {
 import RootLayout from './layouts/RootLayout'
 import Dashboard from './pages/Dashboard'
 import Create from './pages/Create'
-import Profile from './pages/Profile'
+import Profile from './pages/Profile/Profile'
 import AboutPage from './pages/About/About'
 import Forum from './pages/Forum/Forum'
 import ProductDetail from './pages/DetailProduct/DetailProduct'
-import PTRegist from './pages/PTRegist/PTRegist'
+import UploadProduct from './pages/UploadProduct/UploadProduct'
+import Payment from './pages/Payment/Payment'
+import SignIn from './pages/SignIn/SignIn'
+import SignUp from './pages/SignUp/SignUp'
 import Product from './pages/Product/Product'
 
 // router and routes
@@ -26,15 +29,18 @@ const router = createBrowserRouter(
       <Route path="about" element={<AboutPage />} />
       <Route path="forum" element={<Forum />} />
       <Route path="DetailProduct" element={<ProductDetail />} />
-
+      <Route path="UploadProduct" element={<UploadProduct />} />
+      <Route path="Payment" element={<Payment />} />
+      <Route path="SignIn" element={<SignIn />} />
+      <Route path="SignUp" element={<SignUp />} />
+      <Route path="Product" element={<Product />} />
     </Route>
   )
 )
 
 function App() {
   return (
-    //<RouterProvider router={router} />
-    <PTRegist/>
+    <RouterProvider router={router} />
   )
 }
 
