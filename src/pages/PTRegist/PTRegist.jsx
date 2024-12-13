@@ -13,11 +13,15 @@ import {
     Button,
     UnorderedList,
 } from "@chakra-ui/react";
+import Footer from "../../components/Footer/Footer";
+import WithSubnavigation from "../../components/NavBar/NavBar";
 
 export default function PTRegist() {
     return (
+        <>
+        <WithSubnavigation/>
         <Container maxW="841px" py={8}>
-            <Box borderWidth="1px" borderRadius="lg" p={6} boxShadow="lg">
+            <Box borderWidth="1px" p={6}>
                 <Text p="5px" border="solid" fontSize="2xl" fontWeight="bold" textAlign="center" mb={6}>
                 Personal Training Program Waiver & Registration Form
                 </Text>
@@ -26,59 +30,73 @@ export default function PTRegist() {
                 {/* Name and Phone */}
                 <HStack spacing={4}>
                     <FormControl>
-                    <FormLabel>Name</FormLabel>
-                    <Input placeholder="Name" />
+                        <HStack>
+                        <FormLabel fontWeight="bold">Name:</FormLabel>
+                        <Input border="none" borderBottom="solid" />
+                        </HStack>
                     </FormControl>
                     <FormControl>
-                    <FormLabel>Phone</FormLabel>
-                    <Input placeholder="Phone" />
+                        <HStack>
+                        <FormLabel fontWeight="bold" ml="20px">Phone:</FormLabel>
+                        <Input border="none" borderBottom="solid" />
+                        </HStack>
                     </FormControl>
                 </HStack>
 
                 {/* Mailing Address */}
                 <FormControl>
-                    <FormLabel>Mailing Address</FormLabel>
+                    <FormLabel fontWeight="bold">Mailing Address:</FormLabel>
                     <HStack spacing={4}>
-                    <Input placeholder="Street" />
-                    <Input placeholder="City" />
-                    <Input placeholder="Zip Code" />
+                        <FormControl>
+                            <Input border="none" borderBottom="solid" />
+                            <FormLabel>Street</FormLabel>
+                        </FormControl>
+                        <FormControl>
+                            <Input border="none" borderBottom="solid" />
+                            <FormLabel>City</FormLabel>
+                        </FormControl>
+                        <FormControl>
+                            <Input border="none" borderBottom="solid" />
+                            <FormLabel>Zip Code</FormLabel>
+                        </FormControl>
                     </HStack>
                 </FormControl>
 
                 {/* Email */}
-                <FormControl>
-                    <FormLabel>Email Address</FormLabel>
-                    <Input placeholder="Email Address" />
-                </FormControl>
+                <HStack>
+                    <FormLabel fontWeight="bold">Email Address:</FormLabel>
+                    <Input border="none" borderBottom="solid"/>
+                </HStack>
 
                 {/* Date of Birth, Age, and Gender */}
                 <HStack spacing={4}>
-                    <FormControl>
-                        <FormLabel>Date of Birth</FormLabel>
-                        <Input placeholder="Date of Birth" type="date" />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>Age</FormLabel>
-                        <Input placeholder="Age" />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>Gender</FormLabel>
-                        <Select placeholder="---Select Gender---">
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </Select>
-                    </FormControl>
+                    <HStack>
+                        <FormLabel fontWeight="bold">Date of Birth:</FormLabel>
+                        <Input border="none" borderBottom="solid"/>
+                    </HStack>
+                    <HStack>
+                        <FormLabel fontWeight="bold">Age:</FormLabel>
+                        <Input border="none" borderBottom="solid"/>
+                    </HStack>
+                    <HStack>
+                        <FormLabel fontWeight="bold">Gender:</FormLabel>
+                        <Input border="none" borderBottom="solid"></Input>
+                    </HStack>
                 </HStack>
 
                 {/* Emergency Contact */}
-                <HStack spacing={4}>
+                <HStack>
                     <FormControl>
-                        <FormLabel>Emergency Contact</FormLabel>
-                        <Input placeholder="Name" />
+                        <HStack>
+                            <FormLabel fontWeight="bold">Emergency Contact:</FormLabel>
+                            <Input border="none" borderBottom="solid"/>
+                        </HStack>
                     </FormControl>
                     <FormControl>
-                        <FormLabel>Phone</FormLabel>
-                        <Input placeholder="Emergency Contact Phone" />
+                        <HStack>
+                            <FormLabel ml="20px" fontWeight="bold">Phone:</FormLabel>
+                            <Input border="none" borderBottom="solid"/>
+                        </HStack>
                     </FormControl>
                 </HStack>
 
@@ -148,41 +166,40 @@ export default function PTRegist() {
                     </Text>
                 </FormControl>
 
-                {/* Agreement Checkbox */}
-                <Checkbox>
-                    I agree to the terms and conditions
-                </Checkbox>
-
                 {/* Signature */}
-                <HStack spacing={4}>
+                <HStack>
                     <FormControl>
-                        <FormLabel>Signature</FormLabel>
-                        <Input placeholder="Your Signature" />
+                        <HStack>
+                            <FormLabel fontWeight="bold">Signature:</FormLabel>
+                            <Input border="none" borderBottom="solid"/>
+                        </HStack>
                     </FormControl>
                     <FormControl>
-                        <FormLabel>Date</FormLabel>
-                        <Input placeholder="Date" type="date" />
+                        <HStack>
+                            <FormLabel ml="20px" fontWeight="bold">Date:</FormLabel>
+                            <Input border="none" borderBottom="solid"/>
+                        </HStack>
                     </FormControl>
                 </HStack>
 
                 <Text fontWeight="bold">Signature of Parent/Guardian - one signature required if participant is 17 years old or younger:</Text>
                 <HStack spacing={4}>
                     <FormControl>
+                        <Input border="none" borderBottom="solid" />
                         <FormLabel>Print Name</FormLabel>
-                        <Input placeholder="Name"/>
                     </FormControl>
                     <FormControl>
+                        <Input border="none" borderBottom="solid" />
                         <FormLabel>Signature</FormLabel>
-                        <Input placeholder="Signature" />
                     </FormControl>
                     <FormControl>
+                        <Input border="none" borderBottom="solid" />
                         <FormLabel>Date</FormLabel>
-                        <Input placeholder="Date" type="date" />
                     </FormControl>
                 </HStack>
                 <FormControl>
-                    <FormLabel>Address and Phone</FormLabel>
-                    <Input placeholder="Address - Phone Number" />
+                    <FormLabel fontWeight="bold">Address and Phone</FormLabel>
+                    <Input border="none" borderBottom="solid"/>
                 </FormControl>
 
                 {/* Submit Button */}
@@ -192,5 +209,7 @@ export default function PTRegist() {
                 </VStack>
             </Box>
         </Container>
+        <Footer/>
+        </>
   );
 }

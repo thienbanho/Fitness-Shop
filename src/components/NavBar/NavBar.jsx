@@ -7,24 +7,32 @@ import {
   Button,
   Stack,
   Collapse,
+  useColorModeValue,
+  useBreakpointValue,
+  useDisclosure,
   Icon,
   Popover,
   PopoverTrigger,
   PopoverContent,
-  useColorModeValue,
-  useBreakpointValue,
-  useDisclosure,
 } from "@chakra-ui/react";
-import {
-  HamburgerIcon,
-  CloseIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-} from "@chakra-ui/icons";
+import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import logo from '/src/assets/logo.png';
+import { AuthProvider, useAuth } from "../../hooks/Auth"; // Import useAuth hook
+import supabase from "../../config/supabaseClient";
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
+  const { user} = useAuth(); // Use the Auth hook to check user state
+  const logout = async () => {
+    try {
+      const response = await supabase.auth.signOut();
+      console.log(response); // Check for any errors
+      setUser(null); // Ensure the user state is cleared
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+  
 
   return (
     <Box>
@@ -46,13 +54,12 @@ export default function WithSubnavigation() {
         >
           <IconButton
             onClick={onToggle}
-            icon={
-              isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
-            }
+            icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
             variant={"ghost"}
             aria-label={"Toggle Navigation"}
           />
         </Flex>
+
         <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
           <Text
             textAlign={useBreakpointValue({ base: "center", md: "left" })}
@@ -60,12 +67,7 @@ export default function WithSubnavigation() {
             color={useColorModeValue("gray.800", "white")}
           >
             <Button as={"a"} variant={"link"} href={"/"}>
-              <Image
-                src={logo}
-                alt="Logo"
-                boxSize="50px"
-                width="100px"
-              />
+              <Image src={logo} alt="Logo" boxSize="50px" width="100px" />
             </Button>
           </Text>
 
@@ -80,29 +82,45 @@ export default function WithSubnavigation() {
           direction={"row"}
           spacing={6}
         >
-          <Button
-            as={"a"}
-            fontSize={"sm"}
-            fontWeight={400}
-            variant={"link"}
-            href={"/SignIn"}
-          >
-            Sign In
-          </Button>
-          <Button
-            as={"a"}
-            display={{ base: "none", md: "inline-flex" }}
-            fontSize={"sm"}
-            fontWeight={600}
-            color={"white"}
-            bg={"red.600"}
-            href={"/SignUp"}
-            _hover={{
-              bg: "pink.300",
-            }}
-          >
-            Sign Up
-          </Button>
+          {!user ? (
+            <>
+              <Button as={"a"} fontSize={"sm"} fontWeight={400} variant={"link"} href={"/SignIn"}>
+                Sign In
+              </Button>
+              <Button
+                as={"a"}
+                display={{ base: "none", md: "inline-flex" }}
+                fontSize={"sm"}
+                fontWeight={600}
+                color={"white"}
+                bg={"red.600"}
+                href={"/SignUp"}
+                _hover={{
+                  bg: "pink.300",
+                }}
+              >
+                Sign Up
+              </Button>
+            </>
+          ) : (
+            <>
+              <Text fontWeight={600} color={useColorModeValue("gray.600", "gray.200")}>
+                Welcome, {user.email} {/* Assuming user.name holds the name */}
+              </Text>
+              <Button
+                fontSize={"sm"}
+                fontWeight={600}
+                color={"white"}
+                bg={"red.600"}
+                onClick={logout}
+                _hover={{
+                  bg: "pink.300",
+                }}
+              >
+                Logout
+              </Button>
+            </>
+          )}
         </Stack>
       </Flex>
 
@@ -231,10 +249,7 @@ const MobileNavItem = ({ label, children, href }) => {
           textDecoration: "none",
         }}
       >
-        <Text
-          fontWeight={600}
-          color={useColorModeValue("gray.600", "gray.200")}
-        >
+        <Text fontWeight={600} color={useColorModeValue("gray.600", "gray.200")}>
           {label}
         </Text>
         {children && (

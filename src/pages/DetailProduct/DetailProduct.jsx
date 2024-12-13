@@ -31,7 +31,6 @@ const productData = {
     "https://www.wheystore.vn/images/products/2023/11/22/large/rule1-protein-5lbs_1700622059.jpg.webp", // Replace with your paths
     "https://www.wheystore.vn/images/products/2023/11/22/large/rule1-protein-5lbs_1700622059.jpg.webp", // Replace with your paths
     "https://www.wheystore.vn/images/products/2023/11/22/large/rule1-protein-5lbs_1700622059.jpg.webp", // Replace with your paths
-
   ],
   types: [
     "Chocolate Peanut Butter",
@@ -48,7 +47,8 @@ const productData = {
     "Chocolate Banana",
     "Chocolate",
     "Salted Caramel",
-    "Vanilla Milkshake","Chocolate Peanut Butter",
+    "Vanilla Milkshake",
+    "Chocolate Peanut Butter",
     "Chocolate Banana",
     "Chocolate",
     "Salted Caramel",
@@ -65,7 +65,7 @@ export default function ProductDetail() {
       <Box as="header" width="100%" position="fixed" top="0" zIndex="10">
         <Navbar />
       </Box>
-      <Box maxWidth="1200px" mx="auto" px="6" py="20" flex="1">
+      <Box maxWidth="1200px" mx="auto" px="6" py="40">
         {/* Product Header */}
         <Flex direction={{ base: "column", lg: "row" }} gap={6}>
           {/* Image Section */}
@@ -130,7 +130,7 @@ export default function ProductDetail() {
           </Box>
         </Flex>
         {/* Reviews Section */}
-          <Reviews />
+        <Reviews />
       </Box>
       {/* Footer */}
       <Box as="footer" width="100%" bg="black" color="white" py="4">
