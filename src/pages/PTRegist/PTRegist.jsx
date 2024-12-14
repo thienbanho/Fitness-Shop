@@ -14,12 +14,10 @@ import {
     UnorderedList,
 } from "@chakra-ui/react";
 import Footer from "../../components/Footer/Footer";
-import WithSubnavigation from "../../components/NavBar/NavBar";
 
 export default function PTRegist() {
     return (
         <>
-        <WithSubnavigation/>
         <Container maxW="841px" py={8}>
             <Box borderWidth="1px" p={6}>
                 <Text p="5px" border="solid" fontSize="2xl" fontWeight="bold" textAlign="center" mb={6}>

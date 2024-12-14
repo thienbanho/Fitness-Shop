@@ -123,12 +123,7 @@ const Product = () => {
 
     return (
         <Box p={4}>
-            <IconButton
-                icon={<ArrowBackIcon />}
-                onClick={() => navigate(-1)}
-                aria-label="Back"
-            />
-            <Heading mb={4}>Product List</Heading>
+            
             {/* <Sidebar />
             <VStack spacing={4}>
                 {products.map((product) => (
