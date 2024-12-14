@@ -7,6 +7,7 @@ import Footer from "../../components/Footer/Footer";
 function Home() {
   return (
     <Box bg="black" color="white" fontFamily="Arial, sans-serif">
+      {/* NavBar Section */}
       <NavBar />
       
       {/* Hero Section */}
@@ -103,7 +104,12 @@ function Home() {
       </Box>
 
       {/* Product Section */}
-      <Box id="product-section">
+      <Box 
+        id="product-section"
+        display="flex"
+        justifyContent="center"
+        overflow="hidden"
+      >
         <Link
           to="/product"
           _hover={{ textDecoration: "none" }}
@@ -179,150 +185,162 @@ function Home() {
       </Box>
 
       {/* Personal Trainer Section */}
-      <Link
-        to="/trainer"
-        _hover={{ textDecoration: "none" }}
+      <Box
+        display="flex"
+        justifyContent="center"
+        overflow="hidden"
       >
-        <Flex
-          direction={"row-reverse"}
-          py={16}
-          px={10}
-          alignItems="center"
-          bg="gray.1000"
-          _hover={{
-            bg: "gray.700",
-            transform: "scale(1.02)",
-            transition: "transform 0.3s ease, background-color 0.3s ease",
-          }}
-          cursor="pointer"
-          boxShadow="md"
-          borderRadius="lg"
+        <Link
+          to="/trainer"
+          _hover={{ textDecoration: "none" }}
         >
-          <VStack
-            align="start"
-            flex={1}
-            spacing={4}
-            pr={8}
-            ml={"16%"}
+          <Flex
+            direction={"row-reverse"}
+            py={16}
+            px={10}
+            alignItems="center"
+            bg="gray.1000"
+            _hover={{
+              bg: "gray.700",
+              transform: "scale(1.02)",
+              transition: "transform 0.3s ease, background-color 0.3s ease",
+            }}
+            cursor="pointer"
+            boxShadow="md"
+            borderRadius="lg"
           >
-            <Text fontSize="clamp(8px, 3vw, 20px)" color="gray.400">
-              PERSONAL TRAINER
-            </Text>
-
-            <Heading
-              fontSize="clamp(32px, 5vw, 72px)"
-              fontWeight="bold"
-              color="white"
-              textShadow="2px 2px 5px rgba(0, 0, 0, 0.5)"
+            <VStack
+              align="start"
+              flex={1}
+              spacing={4}
+              pr={8}
+              ml={"16%"}
             >
-              <Text as="span" color="white">Get Expert </Text>
-              <Text as="span" color="cyan.500">Guidance</Text>
-            </Heading>
+              <Text fontSize="clamp(8px, 3vw, 20px)" color="gray.400">
+                PERSONAL TRAINER
+              </Text>
 
-            <Text
-              color="gray.300"
-              fontStyle="italic"
-              fontSize="clamp(16px, 3vw, 28px)"
-              pt={4}
-            >
-              Boost Your Performance with Expert Fitness Advice
-            </Text>
+              <Heading
+                fontSize="clamp(32px, 5vw, 72px)"
+                fontWeight="bold"
+                color="white"
+                textShadow="2px 2px 5px rgba(0, 0, 0, 0.5)"
+              >
+                <Text as="span" color="white">Get Expert </Text>
+                <Text as="span" color="cyan.500">Guidance</Text>
+              </Heading>
 
-            <Text
-              color="gray.200"
-              fontSize="clamp(8px, 3vw, 18px)"
-            >
-              Whether you're just starting your fitness journey or you're a pro looking to level up,<br />
-              we provide personalized guidance to help you progress toward your goals.<br />
-              Book a session today and start your journey toward your best results!
-            </Text>
-          </VStack>
-          <Image
-            src="/src/assets/trainer.png"
-            alt="Trainer"
-            flex={1}
-            objectFit="cover"
-            maxWidth={"40%"}
-            height="auto"
-            ml="2%"
-            boxShadow="xl"
-            borderRadius="md"
-          />
-        </Flex>
-      </Link>
+              <Text
+                color="gray.300"
+                fontStyle="italic"
+                fontSize="clamp(16px, 3vw, 28px)"
+                pt={4}
+              >
+                Boost Your Performance with Expert Fitness Advice
+              </Text>
+
+              <Text
+                color="gray.200"
+                fontSize="clamp(8px, 3vw, 18px)"
+              >
+                Whether you're just starting your fitness journey or you're a pro looking to level up,<br />
+                we provide personalized guidance to help you progress toward your goals.<br />
+                Book a session today and start your journey toward your best results!
+              </Text>
+            </VStack>
+            <Image
+              src="/src/assets/trainer.png"
+              alt="Trainer"
+              flex={1}
+              objectFit="cover"
+              maxWidth={"35%"}
+              height="auto"
+              ml="2%"
+              boxShadow="xl"
+              borderRadius="md"
+            />
+          </Flex>
+        </Link>
+      </Box>
 
       {/* Forum Section */}
-      <Link
-        to="/forum"
-        _hover={{ textDecoration: "none" }}
+      <Box
+        display="flex"
+        justifyContent="center"
+        overflow="hidden"
       >
-        <Flex
-          direction={"row"}
-          py={16}
-          px={10}
-          alignItems="center"
-          bg="gray.900"
-          _hover={{
-            bg: "gray.700",
-            transform: "scale(1.02)",
-            transition: "transform 0.3s ease, background-color 0.3s ease",
-          }}
-          cursor="pointer"
-          boxShadow="md"
-          borderRadius="lg"
+        <Link
+          to="/forum"
+          _hover={{ textDecoration: "none" }}
         >
-          <VStack
-            align="start"
-            flex={1}
-            spacing={4}
-            pr={8}
-            ml={"2%"}
+          <Flex
+            direction={"row"}
+            py={16}
+            px={10}
+            alignItems="center"
+            bg="gray.900"
+            _hover={{
+              bg: "gray.700",
+              transform: "scale(1.02)",
+              transition: "transform 0.3s ease, background-color 0.3s ease",
+            }}
+            cursor="pointer"
+            boxShadow="md"
+            borderRadius="lg"
           >
-            <Text fontSize="clamp(8px, 3vw, 20px)" color="gray.400">
-              FORUM
-            </Text>
-
-            <Heading
-              fontSize="clamp(32px, 5vw, 72px)"
-              fontWeight="bold"
-              color="white"
-              textShadow="2px 2px 5px rgba(0, 0, 0, 0.5)"
+            <VStack
+              align="start"
+              flex={1}
+              spacing={4}
+              pr={8}
+              ml={"2%"}
             >
-              <Text as="span" color="white">Join our </Text>
-              <Text as="span" color="green.500">Community</Text>
-            </Heading>
+              <Text fontSize="clamp(8px, 3vw, 20px)" color="gray.400">
+                FORUM
+              </Text>
 
-            <Text
-              color="gray.300"
-              fontStyle="italic"
-              fontSize="clamp(16px, 3vw, 28px)"
-              pt={4}
-            >
-              Be Part of Our Fitness Family
-            </Text>
+              <Heading
+                fontSize="clamp(32px, 5vw, 72px)"
+                fontWeight="bold"
+                color="white"
+                textShadow="2px 2px 5px rgba(0, 0, 0, 0.5)"
+              >
+                <Text as="span" color="white">Join our </Text>
+                <Text as="span" color="green.500">Community</Text>
+              </Heading>
 
-            <Text
-              color="gray.200"
-              fontSize="clamp(8px, 3vw, 18px)"
-            >
-              Connect with others who share your fitness passion and exchange experiences.<br />
-              Get expert advice, motivation, and tips to help you stay on track.<br />
-              Our forum is the ideal space to find support and stay inspired on your fitness journey.
-            </Text>
-          </VStack>
-          <Image
-            src="/src/assets/forum.png"
-            alt="Forum"
-            flex={1}
-            objectFit="cover"
-            maxWidth={"40%"}
-            height="auto"
-            marginRight="2%"
-            boxShadow="xl"
-            borderRadius="md"
-          />
-        </Flex>
-      </Link>
+              <Text
+                color="gray.300"
+                fontStyle="italic"
+                fontSize="clamp(16px, 3vw, 28px)"
+                pt={4}
+              >
+                Be Part of Our Fitness Family
+              </Text>
+
+              <Text
+                color="gray.200"
+                fontSize="clamp(8px, 3vw, 18px)"
+              >
+                Connect with others who share your fitness passion and exchange experiences.<br />
+                Get expert advice, motivation, and tips to help you stay on track.<br />
+                Our forum is the ideal space to find support and stay inspired on your fitness journey.
+              </Text>
+            </VStack>
+            <Image
+              src="/src/assets/forum.png"
+              alt="Forum"
+              flex={1}
+              objectFit="cover"
+              maxWidth={"40%"}
+              height="auto"
+              marginRight="2%"
+              boxShadow="xl"
+              borderRadius="md"
+            />
+          </Flex>
+        </Link>
+      </Box>
 
       {/* Back to First Icon */}
       <Box
