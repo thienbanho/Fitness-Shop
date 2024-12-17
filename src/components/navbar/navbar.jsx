@@ -291,7 +291,7 @@ const NAV_ITEMS = [
       {
         label: "Shop Supplements",
         subLabel: "Browse high-quality whey, vitamins, and more",
-        href: "DetailProduct",
+        href: "Product",
       },
       {
         label: "Sell Your Products",

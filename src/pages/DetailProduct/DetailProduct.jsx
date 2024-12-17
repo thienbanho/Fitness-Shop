@@ -1,141 +1,185 @@
+import { useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Text,
-  Image,
   Flex,
+  Image,
   Heading,
-  Button,
   VStack,
   HStack,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-  Input,
-  Textarea,
-} from "@chakra-ui/react";
-import { useState } from "react";
-import Navbar from "../../components/NavBar/NavBar"; // Navbar Component
-import Footer from "../../components/Footer/Footer";
+  Button,
+  Grid,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  RadioGroup,
+  Radio,
+  Container,
+} from '@chakra-ui/react';
+import supabase from "../../config/supabaseClient";
 import Reviews from "../../components/Review/Review";
-const productData = {
-  id: 1,
-  name: "Whey Protein aowmfoaa awfwagwag",
-  price: "1.250.000 vnd",
-  description: "This is a sample description for the product.",
-  images: [
-    "https://www.wheystore.vn/images/products/2023/11/22/large/rule1-protein-5lbs_1700622059.jpg.webp", // Replace with your paths
-    "https://www.wheystore.vn/images/products/2024/01/25/large/rule-1-5lbs-2_1706177653.jpg.webp",
-    "https://www.wheystore.vn/images/products/2023/11/21/large/inforgraphic-rule1-protein-5lbs_1700622044.jpg.webp",
-    "https://www.wheystore.vn/images/products/2023/11/22/large/rule1-protein-5lbs_1700622059.jpg.webp", // Replace with your paths
-    "https://www.wheystore.vn/images/products/2023/11/22/large/rule1-protein-5lbs_1700622059.jpg.webp", // Replace with your paths
-    "https://www.wheystore.vn/images/products/2023/11/22/large/rule1-protein-5lbs_1700622059.jpg.webp", // Replace with your paths
-    "https://www.wheystore.vn/images/products/2023/11/22/large/rule1-protein-5lbs_1700622059.jpg.webp", // Replace with your paths
-  ],
-  types: [
-    "Chocolate Peanut Butter",
-    "Chocolate Banana",
-    "Chocolate",
-    "Salted Caramel",
-    "Vanilla Milkshake",
-    "Chocolate Peanut Butter",
-    "Chocolate Banana",
-    "Chocolate",
-    "Salted Caramel",
-    "Vanilla Milkshake",
-    "Chocolate Peanut Butter",
-    "Chocolate Banana",
-    "Chocolate",
-    "Salted Caramel",
-    "Vanilla Milkshake",
-    "Chocolate Peanut Butter",
-    "Chocolate Banana",
-    "Chocolate",
-    "Salted Caramel",
-    "Vanilla Milkshake",
-  ],
-};
 
 export default function ProductDetail() {
-  const [selectedImage, setSelectedImage] = useState(productData.images[0]);
+  const [searchParams] = useSearchParams();
+  const [productData, setProductData] = useState(null);
+  const [error, setError] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedType, setSelectedType] = useState('');
+  const productId = Number(searchParams.get('product_id'));
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (productId) {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('product_id', productId)
+          .single();
+
+        if (error) {
+          console.error('Error fetching product:', error);
+          setError('Failed to load product details. Please try again.');
+        } else {
+          setProductData(data);
+          // Tách cột 'type' thành một mảng
+          const typesArray = data.type?.split(', ').map((item) => item.trim()) || [];
+          setSelectedType(typesArray[0] || '');
+          setProductData({ ...data, typesArray });
+        }
+      } else {
+        setError('Invalid product ID.');
+      }
+    };
+
+    fetchProduct();
+  }, [productId]);
+
+  if (error) {
+    return <Text color="red.500">{error}</Text>;
+  }
+
+  if (!productData) {
+    return <Text>Loading...</Text>;
+  }
+
+  const isOutOfStock = productData.stock === 0;
+
+  // Mock data for multiple images
+  const productImages = [
+    productData.image,
+    productData.image, // Bạn có thể thêm nhiều hình ảnh khác nhau tại đây
+    productData.image,
+    productData.image,
+  ];
 
   return (
-    <Flex direction="column" minHeight="100vh">
-      {/* Navbar */}
-      <Box as="header" width="100%" position="fixed" top="0" zIndex="10">
-        <Navbar />
-      </Box>
-      <Box maxWidth="1200px" mx="auto" px="6" py="40">
-        {/* Product Header */}
-        <Flex direction={{ base: "column", lg: "row" }} gap={6}>
-          {/* Image Section */}
-          <Box flex="1">
+    <Container maxW="1200px" py={8}>
+      <Flex direction={{ base: 'column', md: 'row' }} gap={8}>
+        {/* Left Side - Product Images */}
+        <Box flex={{ base: '1', md: '0.4' }}>
+          <Box position="relative" mb={4}>
             <Image
-              src={selectedImage}
+              src={productImages[selectedImage]}
               alt={productData.name}
-              width="100%"
-              height="auto"
+              w="100%"
               borderRadius="md"
-              mb="4"
             />
-            {/* Thumbnail Slider */}
-            <HStack spacing="4" overflowX="auto">
-              {productData.images.map((image, index) => (
-                <Image
-                  key={index}
-                  src={image}
-                  alt={`Thumbnail ${index}`}
-                  boxSize="60px"
-                  border="2px solid"
-                  borderColor={
-                    selectedImage === image ? "blue.400" : "gray.200"
-                  }
-                  cursor="pointer"
-                  onClick={() => setSelectedImage(image)}
-                />
-              ))}
-            </HStack>
           </Box>
+          <Grid templateColumns="repeat(4, 1fr)" gap={2}>
+            {productImages.map((img, index) => (
+              <Box
+                key={index}
+                border="2px solid"
+                borderColor={selectedImage === index ? "blue.500" : "gray.200"}
+                borderRadius="md"
+                cursor="pointer"
+                onClick={() => setSelectedImage(index)}
+              >
+                <Image src={img} alt={`Product view ${index + 1}`} />
+              </Box>
+            ))}
+          </Grid>
+        </Box>
 
-          {/* Product Info */}
-          <Box flex="2">
-            <Heading as="h1" size="lg" mb="4">
+        {/* Right Side - Product Info */}
+        <Box flex={{ base: '1', md: '0.6' }}>
+          <VStack align="stretch" spacing={4}>
+            <Heading as="h1" size="xl">
               {productData.name}
             </Heading>
-            <Text fontSize="2xl" color="red.500" fontWeight="bold">
-              {productData.price}
+            
+            <Text fontSize="3xl" color="red.500" fontWeight="bold">
+              {new Intl.NumberFormat('vi-VN', { 
+                style: 'currency', 
+                currency: 'VND' 
+              }).format(productData.price)}
             </Text>
-            <Text mt="4" mb="6" color="gray.600">
-              {productData.description}
-            </Text>
+
+            <Text>{productData.description}</Text>
 
             {/* Product Types */}
-            <VStack align="start" spacing="4">
-              <Heading size="sm">Type</Heading>
-              <HStack spacing="2" wrap="wrap">
-                {productData.types.map((type, index) => (
-                  <Button key={index} variant="outline" size="sm">
-                    {type}
-                  </Button>
-                ))}
-              </HStack>
-            </VStack>
+            <Box>
+              <Text fontWeight="bold" mb={2}>Type</Text>
+              <RadioGroup value={selectedType} onChange={setSelectedType}>
+                <Grid templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)" }} gap={2}>
+                  {productData.typesArray.map((type, index) => (
+                    <Radio key={index} value={type}>
+                      {type}
+                    </Radio>
+                  ))}
+                </Grid>
+              </RadioGroup>
+            </Box>
 
-            {/* Quantity and Buttons */}
-            <HStack mt="8" spacing="4">
-              <Input type="number" width="80px" defaultValue={1} />
-              <Button colorScheme="blue">Add to Cart</Button>
-              <Button colorScheme="red">Buy Now</Button>
+            {/* Quantity Input */}
+            <HStack>
+              <Text fontWeight="bold">Quantity:</Text>
+              <NumberInput
+                defaultValue={1}
+                min={1}
+                max={productData.stock}
+                onChange={(_, num) => setQuantity(num)}
+                w="100px"
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+              <Text color={isOutOfStock ? "red.500" : "green.500"}>
+                {isOutOfStock ? "Out of Stock" : `${productData.stock} available`}
+              </Text>
             </HStack>
-          </Box>
-        </Flex>
-        {/* Reviews Section */}
-        <Reviews />
-      </Box>
-      {/* Footer */}
-      <Box as="footer" width="100%" bg="black" color="white" py="4">
-        <Footer />
-      </Box>
-    </Flex>
+
+            {/* Buttons */}
+            <HStack spacing={4}>
+              <Button
+                colorScheme="blue"
+                size="lg"
+                flex="1"
+                isDisabled={isOutOfStock}
+              >
+                Add to Cart
+              </Button>
+              <Button
+                colorScheme="red"
+                size="lg"
+                flex="1"
+                isDisabled={isOutOfStock}
+              >
+                Buy Now
+              </Button>
+            </HStack>
+          </VStack>
+        </Box>
+      </Flex>
+      {/* Reviews Section */}
+      <Reviews />
+    </Container>
   );
 }
