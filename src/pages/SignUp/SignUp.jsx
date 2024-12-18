@@ -1,4 +1,5 @@
 'use client'
+'use client'
 
 import React, { useState } from 'react';
 import { Box, Flex, VStack, FormControl, FormLabel, Input, InputGroup, InputRightElement, Button, Text, Link, Image, Divider, useColorModeValue, useToast } from '@chakra-ui/react';
@@ -8,6 +9,7 @@ import { FaFacebook } from "react-icons/fa";
 import supabase from "../../config/supabaseClient";
 import Logo from "../../assets/logo.png"
 
+export default function SignUp() {
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -156,9 +158,16 @@ export default function SignUp() {
                 <FormControl isRequired>
                   <FormLabel>First Name</FormLabel>
                   <Input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                  <Input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                 </FormControl>
                 <FormControl>
+                <FormControl>
                   <FormLabel>Last Name</FormLabel>
+                  <Input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Username</FormLabel>
+                  <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
                   <Input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                 </FormControl>
                 <FormControl isRequired>
@@ -218,6 +227,7 @@ export default function SignUp() {
                 _hover={{ bg: 'gray.200' }}
               >
                 Sign up with Google
+                Sign up with Google
               </Button>
             </VStack>
             <Text fontSize="sm" color="gray.500">
@@ -228,6 +238,7 @@ export default function SignUp() {
             </Text>
           </VStack>
         </Box>
+      </Box>
       </Box>
     </Flex>
   );

@@ -161,6 +161,8 @@ export default function Forum() {
           aria-label="Go back to Home"
           icon={<ArrowBackIcon />}
           onClick={() => navigate('/')}
+          icon={<ArrowBackIcon />}
+          onClick={() => navigate('/')}
           colorScheme="blue"
           variant="outline"
         />
@@ -183,6 +185,8 @@ export default function Forum() {
             Topics
           </Heading>
           <List spacing={3}>
+            {topics.map((topic) => (
+              <ListItem key={topic.topic_id}>
             {topics.map((topic) => (
               <ListItem key={topic.topic_id}>
                 <Button
@@ -214,7 +218,9 @@ export default function Forum() {
                 {selectedTopic.title}
               </Heading>
               {posts.map((post) => (
+              {posts.map((post) => (
                 <Box
+                  key={post.post_id}
                   key={post.post_id}
                   borderWidth={1}
                   borderRadius="lg"
@@ -230,6 +236,7 @@ export default function Forum() {
                   </Text>
                   <Text>{post.content}</Text>
                   <Text fontSize="sm" color="gray.500">
+                    {new Date(post.created_at).toLocaleString()}
                     {new Date(post.created_at).toLocaleString()}
                   </Text>
                 </Box>
@@ -258,5 +265,6 @@ export default function Forum() {
         </Box>
       </Flex>
     </Box>
+  );
   );
 }

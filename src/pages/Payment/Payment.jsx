@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import NavBar from "../../components/NavBar/NavBar";
 import { orderData } from "./PaymentData"; // Adjusted import
 import { Box, Heading, Text, Flex, FormControl, FormLabel, Input, Select, Button, VStack, HStack, Radio, RadioGroup, Divider, Center, SimpleGrid, useToast } from "@chakra-ui/react";
 

@@ -11,10 +11,12 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setError('');
     setError('');
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -23,6 +25,7 @@ export default function SignIn() {
     });
 
     if (error) {
+      setError(error.message);
       setError(error.message);
     } else {
       window.location.href = '/profile';
@@ -178,6 +181,8 @@ export default function SignIn() {
           </VStack>
         </Box>
       </Box>
+      </Box>
     </Flex>
   );
 }
+
