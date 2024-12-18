@@ -1,36 +1,50 @@
-import { Box, Flex, Link, VStack, Text } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+import React from "react";
+import { Box, VStack, Link, Divider, Button, Text, Avatar } from "@chakra-ui/react";
+import { NavLink, useLocation } from "react-router-dom";
 
-export default function Sidebar() {
+const Sidebar = ({ userData, onLogout }) => {
+  const location = useLocation();
+
+  const linkStyles = (path) => ({
+    fontWeight: location.pathname === path ? "bold" : "medium",
+    color: location.pathname === path ? "black" : "gray.600",
+  });
+
   return (
-    <Box
-      as="aside"
-      position="fixed"
-      left="0"
-      top="0"
-      w="250px"
-      h="100vh"
-      bg="teal.500"
-      color="white"
-      p="20px"
-    >
-      <Text fontSize="xl" fontWeight="bold" mb="20px">
-        Sidebar
-      </Text>
-      <VStack align="start" spacing="15px">
-        <Link as={RouterLink} to="/" fontWeight="bold" _hover={{ color: "gray.300" }}>
-          Home
-        </Link>
-        <Link as={RouterLink} to="/dashboard" fontWeight="bold" _hover={{ color: "gray.300" }}>
-          Dashboard
-        </Link>
-        <Link as={RouterLink} to="/profile" fontWeight="bold" _hover={{ color: "gray.300" }}>
-          Profile
-        </Link>
-        <Link as={RouterLink} to="/settings" fontWeight="bold" _hover={{ color: "gray.300" }}>
-          Settings
-        </Link>
+    <Box w="300px" bg="gray.50" p={6} borderRadius="md">
+      <VStack spacing={6} align="stretch">
+        {/* User Info */}
+        <Box textAlign="center">
+          <Avatar size="xl" name={userData?.full_name} mb={4} />
+          <Text fontSize="lg" fontWeight="bold">
+            {userData?.full_name}
+          </Text>
+          <Text color="gray.600">{userData?.email}</Text>
+        </Box>
+
+        <Divider />
+
+        {/* Navigation Links */}
+        <VStack align="stretch" spacing={3}>
+          <NavLink to="/profile" style={linkStyles("/profile")}>
+            Account Information
+          </NavLink>
+          <NavLink to="/profile/orders" style={linkStyles("/profile/orders")}>
+            List of Orders
+          </NavLink>
+          <NavLink to="/profile/PTRegistration" style={linkStyles("/profile/PTRegistration")}>
+            PT Registration
+          </NavLink>
+          <NavLink to="/profile/coupon-wallet" style={linkStyles("/profile/coupon-wallet")}>
+            Coupon Wallet
+          </NavLink>
+          <Button variant="outline" colorScheme="red" onClick={onLogout}>
+            Sign Out
+          </Button>
+        </VStack>
       </VStack>
     </Box>
   );
-}
+};
+
+export default Sidebar;
