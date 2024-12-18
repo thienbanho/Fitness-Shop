@@ -20,6 +20,7 @@ import RoleManage from "./pages/RoleManagement/RoleManage";
 import PTRegistration from "./pages/Profile/Profile-PTRegist";
 import Product from "./pages/Product/Product";
 import ReceiptForm from "./pages/ProductReceipt/ReceiptForm";
+import ReceiptConfirm from "./pages/ProductReceipt/ReceiptConfirm";
 
 // Import the Routes component
 import AdminRoute from "./routes/AdminRoutes";
@@ -43,6 +44,7 @@ const router = createBrowserRouter(
       <Route path="Product" element={<Product />} />
       <Route path="UploadProduct" element={<UploadProduct />} />
       <Route path="ReceiptForm" element={<ReceiptForm />} />
+      <Route path="ReceiptConfirm" element={<ReceiptConfirm />} />
 
 
       {/* Protected Admin Route */}

@@ -3,7 +3,6 @@ import {
     Box,
     VStack,
     Input,
-    Flex,
     Image,
     Text,
     Heading,
@@ -12,12 +11,12 @@ import {
     FormLabel,
     useToast,
 } from "@chakra-ui/react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/Auth";
 import supabase from "../../config/supabaseClient";
 
 const ReceiptForm = () => {
-    const { user } = useAuth();
+    const { user } = useAuth(); // Get current user from Auth context
     const [product, setProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [fullName, setFullName] = useState("");
@@ -25,40 +24,68 @@ const ReceiptForm = () => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [totalPrice, setTotalPrice] = useState(0);
     const toast = useToast();
-    
+
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const productId = params.get("product_id");
     const productQuantity = params.get("quantity");
 
+    const navigate = useNavigate(); // Hook to navigate to another page
+
     useEffect(() => {
-        const fetchProduct = async () => {
-            if (productId) {
-                const { data, error } = await supabase
-                    .from('products')
-                    .select('product_id, name, price, image, description')
-                    .eq('product_id', productId)
-                    .single();
+        if (user && user.email) {
+            console.log('User email:', user.email);
 
-                if (error) {
-                    console.error('Error fetching product:', error);
-                    toast({
-                        title: "Error",
-                        description: "Failed to load product details. Please try again.",
-                        status: "error",
-                        duration: 5000,
-                        isClosable: true,
-                    });
-                } else {
-                    setProduct(data);
-                    setQuantity(productQuantity);
-                    setTotalPrice(data.price * productQuantity);
+            const fetchProduct = async () => {
+                if (productId) {
+                    const { data, error } = await supabase
+                        .from('products')
+                        .select('product_id, name, price, image, description')
+                        .eq('product_id', productId)
+                        .single();
+
+                    if (error) {
+                        console.error('Error fetching product:', error);
+                        toast({
+                            title: "Error",
+                            description: "Failed to load product details. Please try again.",
+                            status: "error",
+                            duration: 5000,
+                            isClosable: true,
+                        });
+                    } else {
+                        setProduct(data);
+                        setQuantity(productQuantity);
+                        setTotalPrice(data.price * productQuantity);
+                    }
                 }
-            }
-        };
+            };
 
-        fetchProduct();
-    }, [productId, productQuantity]);
+            fetchProduct();
+        } else {
+            console.error("User is not authenticated.");
+        }
+    }, [user, productId, productQuantity]);
+
+    const fetchUserId = async (email) => {
+        const { data, error } = await supabase
+            .from('users')
+            .select('user_id')
+            .eq('email', email)
+            .single();
+
+        if (error) {
+            toast({
+                title: "Error",
+                description: "Failed to fetch user details. Please try again.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+            return null;
+        }
+        return data?.user_id;
+    };
 
     if (!user) {
         return (
@@ -68,16 +95,94 @@ const ReceiptForm = () => {
         );
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission here
-        toast({
-            title: "Order Submitted",
-            description: "Your order has been submitted successfully.",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-        });
+
+        // Ensure all required fields are filled
+        if (!fullName || !address || !phoneNumber) {
+            toast({
+                title: "Missing Information",
+                description: "Please fill out all fields before submitting your order.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        try {
+            // Get user ID from email (using user.email)
+            const userId = await fetchUserId(user.email);
+            if (!userId) {
+                return; // User ID not found, stop the submission
+            }
+
+            // Insert receipt data into 'receipts' table
+            const { data: receiptData, error: receiptError } = await supabase
+                .from('receipts')
+                .insert([{
+                    user_id: userId, // Use userId fetched from users table
+                    total: totalPrice,
+                    status: 'pending',
+                    payment_method: 'cash on delivery', // You can make this dynamic if needed
+                    shipping_address: address,
+                }])
+                .select() // Ensure the inserted data is returned
+                .single();
+            
+            console.log('Receipt data:', receiptData);
+            if (receiptError) {
+                throw new Error(receiptError.message);
+            }
+
+            console.log('Receipt data inserted:', receiptData);
+
+            // Check if receiptData contains the correct receipt_id
+            if (!receiptData || !receiptData.receipt_id) {
+                throw new Error("Receipt ID is missing after insertion.");
+            }
+
+            // Insert receipt item(s) into 'receipt_items' table
+            const { error: itemsError } = await supabase
+                .from('receipt_items')
+                .insert([{
+                    receipt_id: receiptData.receipt_id, // Ensure receipt_id is correctly passed
+                    product_id: product.product_id,
+                    quantity: quantity,
+                    price: product.price,
+                    total: totalPrice,
+                }]);
+
+            if (itemsError) {
+                throw new Error(itemsError.message);
+            }
+
+            // Show success toast
+            toast({
+                title: "Order Submitted",
+                description: "Your order has been successfully submitted.",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+            });
+
+            // Redirect to the ReceiptConfirm page with the receipt_id as a query parameter
+            navigate(`/ReceiptConfirm?receipt_id=${receiptData.receipt_id}`);
+
+            // Optionally, reset form fields or perform other actions
+            setFullName("");
+            setAddress("");
+            setPhoneNumber("");
+        } catch (error) {
+            console.error("Error submitting order:", error);
+            toast({
+                title: "Error",
+                description: error.message || "An error occurred while submitting your order.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+        }
     };
 
     if (!product) {
