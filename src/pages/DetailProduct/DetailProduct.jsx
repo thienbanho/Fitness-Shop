@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
@@ -30,6 +31,7 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [selectedType, setSelectedType] = useState('');
   const productId = Number(searchParams.get('product_id'));
+  const navigate = useNavigate(); // Initialize the useNavigate hook
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -75,6 +77,11 @@ export default function ProductDetail() {
     productData.image,
     productData.image,
   ];
+
+  const handleBuyNow = () => {
+    // Navigate to the ReceiptForm with the product_id and quantity as query parameters
+    navigate(`/ReceiptForm?product_id=${productId}&quantity=${quantity}`);
+  };
 
   return (
     <Container maxW="1200px" py={8}>
@@ -171,6 +178,7 @@ export default function ProductDetail() {
                 size="lg"
                 flex="1"
                 isDisabled={isOutOfStock}
+                onClick={handleBuyNow} // Handle Buy Now click
               >
                 Buy Now
               </Button>

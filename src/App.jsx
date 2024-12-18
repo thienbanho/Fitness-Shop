@@ -19,10 +19,12 @@ import SignUp from "./pages/SignUp/SignUp";
 import RoleManage from "./pages/RoleManagement/RoleManage";
 import PTRegistration from "./pages/Profile/Profile-PTRegist";
 import Product from "./pages/Product/Product";
+import ReceiptForm from "./pages/ProductReceipt/ReceiptForm";
 
 // Import the Routes component
 import AdminRoute from "./routes/AdminRoutes";
 import VendorRoute from "./routes/VendorRoutes";
+
 
 // Router and routes
 const router = createBrowserRouter(
@@ -40,7 +42,7 @@ const router = createBrowserRouter(
       <Route path="Profile/PTRegistration" element={<PTRegistration />} />
       <Route path="Product" element={<Product />} />
       <Route path="UploadProduct" element={<UploadProduct />} />
-
+      <Route path="ReceiptForm" element={<ReceiptForm />} />
 
 
       {/* Protected Admin Route */}
