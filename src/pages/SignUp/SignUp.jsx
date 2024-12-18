@@ -10,7 +10,6 @@ import supabase from "../../config/supabaseClient";
 import Logo from "../../assets/logo.png"
 
 export default function SignUp() {
-export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -161,7 +160,6 @@ export default function SignUp() {
                   <Input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                 </FormControl>
                 <FormControl>
-                <FormControl>
                   <FormLabel>Last Name</FormLabel>
                   <Input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                 </FormControl>
@@ -238,7 +236,6 @@ export default function SignUp() {
             </Text>
           </VStack>
         </Box>
-      </Box>
       </Box>
     </Flex>
   );

@@ -11,7 +11,6 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
 
   const handleSignIn = async (e) => {
@@ -180,7 +179,6 @@ export default function SignIn() {
             </Text>
           </VStack>
         </Box>
-      </Box>
       </Box>
     </Flex>
   );

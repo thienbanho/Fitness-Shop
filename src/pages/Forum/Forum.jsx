@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Box, VStack, Heading, Text, Button, Stack, Textarea, useToast, List, ListItem, Flex, IconButton, } from '@chakra-ui/react';
+import {
+  Box,
+  VStack,
+  Heading,
+  Text,
+  Button,
+  Stack,
+  Textarea,
+  useToast,
+  List,
+  ListItem,
+  Flex,
+  IconButton,
+} from '@chakra-ui/react';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../config/supabaseClient';
-import { useAuth } from "../../hooks/Auth";
+import { useAuth } from '../../hooks/Auth';
 
 export default function Forum() {
   const { user } = useAuth(); // Use the Auth hook to check user state
   const [topics, setTopics] = useState([]);
-  const [user_public, setUser] = useState([]);
+  const [user_public, setUser] = useState(null);
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState({ content: '' });
@@ -17,12 +30,12 @@ export default function Forum() {
 
   useEffect(() => {
     if (user?.email) {
-      const doSomething = async () => {
+      const fetchUser = async () => {
         const { data: userData, error: userError } = await supabase
           .from('users')
           .select('*')
-          .eq('email', user.email); // match by email
-  
+          .eq('email', user.email);
+
         if (userError) {
           toast({
             title: 'Error fetching user data.',
@@ -31,15 +44,13 @@ export default function Forum() {
             duration: 3000,
             isClosable: true,
           });
-        } else {
-          console.log('Fetched users:', userData);
-          if (userData) setUser(userData[0]);
+        } else if (userData.length) {
+          setUser(userData[0]);
         }
       };
-  
-      doSomething();
+      fetchUser();
     }
-    
+
     const fetchTopics = async () => {
       const { data, error } = await supabase.from('forum_topics').select('*');
       if (error) {
@@ -54,7 +65,7 @@ export default function Forum() {
         setTopics(data);
       }
     };
-  
+
     fetchTopics();
   }, [user, toast]);
 
@@ -99,9 +110,8 @@ export default function Forum() {
         user_id: user_public.user_id,
         content: newPost.content,
         created_at: new Date().toISOString(),
-        user_name: user_public.username
+        user_name: user_public.username,
       });
-      console.log(data);
 
       if (error) {
         toast({
@@ -119,7 +129,7 @@ export default function Forum() {
             user_id: user_public.user_id,
             content: newPost.content,
             created_at: new Date().toISOString(),
-            user_name: user_public.username
+            user_name: user_public.username,
           },
         ]);
 
@@ -151,7 +161,7 @@ export default function Forum() {
           Fitness Forum
         </Heading>
         <Stack>
-          {!user_public ? null : (
+          {user_public && (
             <Text fontWeight={600} fontStyle="italic" color="gray.700">
               You're interacting as: {user_public.username || 'error'}
             </Text>
@@ -161,18 +171,12 @@ export default function Forum() {
           aria-label="Go back to Home"
           icon={<ArrowBackIcon />}
           onClick={() => navigate('/')}
-          icon={<ArrowBackIcon />}
-          onClick={() => navigate('/')}
           colorScheme="blue"
           variant="outline"
         />
       </Flex>
 
-      <Flex
-        flexDirection={{ base: 'column', md: 'row' }}
-        gap={6}
-        alignItems={{ base: 'stretch', md: 'flex-start' }}
-      >
+      <Flex flexDirection={{ base: 'column', md: 'row' }} gap={6}>
         <Box
           width={{ base: '100%', md: '30%' }}
           padding={5}
@@ -185,8 +189,6 @@ export default function Forum() {
             Topics
           </Heading>
           <List spacing={3}>
-            {topics.map((topic) => (
-              <ListItem key={topic.topic_id}>
             {topics.map((topic) => (
               <ListItem key={topic.topic_id}>
                 <Button
@@ -218,9 +220,7 @@ export default function Forum() {
                 {selectedTopic.title}
               </Heading>
               {posts.map((post) => (
-              {posts.map((post) => (
                 <Box
-                  key={post.post_id}
                   key={post.post_id}
                   borderWidth={1}
                   borderRadius="lg"
@@ -236,7 +236,6 @@ export default function Forum() {
                   </Text>
                   <Text>{post.content}</Text>
                   <Text fontSize="sm" color="gray.500">
-                    {new Date(post.created_at).toLocaleString()}
                     {new Date(post.created_at).toLocaleString()}
                   </Text>
                 </Box>
@@ -265,6 +264,5 @@ export default function Forum() {
         </Box>
       </Flex>
     </Box>
-  );
   );
 }
