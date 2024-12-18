@@ -200,7 +200,7 @@ export default function AboutPage() {
               trainers today!
             </Text>
             <Flex justify="center" gap={4}>
-              <Button as={Link} to="/products" variant="solid" colorScheme="gray" bg="white" textColor="blackAlpha.600">
+              <Button as={Link} to="/Product" variant="solid" colorScheme="gray" bg="white" textColor="blackAlpha.600">
                 Shop Products
               </Button>
               <Button as={Link} to="/home" variant="solid" colorScheme="whiteAlpha" bg="grey" textColor="whiteAlpha">

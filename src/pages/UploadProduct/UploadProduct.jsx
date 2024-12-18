@@ -4,9 +4,6 @@ import { FiUpload } from "react-icons/fi";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../config/supabaseClient";
-import { ArrowBackIcon } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
-import supabase from "../../config/supabaseClient";
 
 const UploadProduct = () => {
   const navigate = useNavigate();
@@ -20,121 +17,6 @@ const UploadProduct = () => {
     type: "",
   });
 
-  const [imageFile, setImageFile] = useState(null); // To store the image file
-  const [imageUrl, setImageUrl] = useState(null);   // To store the uploaded image URL
-
-  // Handle file selection
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageFile(file);
-        setImageUrl(reader.result); // Display the image preview
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProductData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  // Handle form submission
-  const handleSubmit = async () => {
-    if (!imageFile) {
-      console.log("No file selected");
-      toast({
-        title: "No file selected",
-        description: "Please select an image to upload.",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    try {
-      // Generate a unique file name for the image
-      const fileName = `${Date.now()}_${imageFile.name}`;
-      console.log("Uploading file with name:", fileName);
-
-      // Upload the image to Supabase storage
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("product-images") // Replace with your actual bucket name
-        .upload(fileName, imageFile);
-
-      if (uploadError) {
-        throw new Error(`Upload failed: ${uploadError.message}`);
-      }
-
-      // Get the public URL of the uploaded image
-      const { data: publicUrlData, error: urlError } = supabase.storage
-        .from("product-images")
-        .getPublicUrl(fileName);
-
-      if (urlError) {
-        throw new Error(`Error fetching public URL: ${urlError.message}`);
-      }
-
-      const publicUrl = publicUrlData.publicUrl;
-      setImageUrl(publicUrl); // Save the URL to state
-
-      toast({
-        title: "Upload successful",
-        description: "Your image has been uploaded.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      console.log("Public URL:", publicUrl);
-
-      // Insert product data into the Supabase "products" table
-      const { data: insertData, error: insertError } = await supabase
-        .from("products")
-        .insert({ ...productData, image: publicUrl });
-
-      if (insertError) {
-        throw new Error(`Error submitting product: ${insertError.message}`);
-      }
-
-      toast({
-        title: "Product uploaded successfully",
-        description: "Your product has been added.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-
-      navigate("/"); // Redirect to the home page
-    } catch (error) {
-      console.error(error.message);
-      toast({
-        title: "Error",
-        description: error.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-  const navigate = useNavigate();
-  const toast = useToast();
-
-  const [productData, setProductData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    stock: "",
-    type: "",
-  });
-
-  const [imageFile, setImageFile] = useState(null); // To store the image file
   const [imageUrl, setImageUrl] = useState(null);   // To store the uploaded image URL
 
   // Handle file selection

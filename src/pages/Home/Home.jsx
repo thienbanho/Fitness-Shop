@@ -1,13 +1,10 @@
 import React from "react";
 import { Box, Flex, Image, Text, VStack, Heading, Button } from "@chakra-ui/react";
 import { Link } from 'react-router-dom';
-import NavBar from "../../components/NavBar/NavBar";
-import Footer from "../../components/Footer/Footer";
 
 function Home() {
   return (
     <Box bg="black" color="white" fontFamily="Arial, sans-serif">
-      <NavBar />
       
       {/* Hero Section */}
       <Box
@@ -348,8 +345,6 @@ function Home() {
         />
       </Box>
 
-      {/* Footer Section */}
-      <Footer />
     </Box>
   );
 }

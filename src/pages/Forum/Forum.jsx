@@ -155,7 +155,7 @@ export default function Forum() {
   };
 
   return (
-    <Box maxWidth="1200px" margin="auto" padding={6} bg="gray.100" borderRadius="md">
+    <Box maxWidth="1200px" minHeight="500px" margin="auto" padding={6} bg="gray.100" borderRadius="md">
       <Flex justifyContent="space-between" alignItems="center" marginBottom={6}>
         <Heading as="h1" size="2xl" textAlign="center" color="black" fontFamily="Arial, sans-serif">
           Fitness Forum

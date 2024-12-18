@@ -8,8 +8,6 @@ import {
 // Layouts and pages
 import RootLayout from "./layouts/RootLayout";
 import Home from "./pages/Home/Home"
-import Dashboard from "./pages/Dashboard";
-import Create from "./pages/Create";
 import Profile from "./pages/Profile/Profile";
 import AboutPage from "./pages/About/About";
 import Forum from "./pages/Forum/Forum";
@@ -20,7 +18,7 @@ import SignIn from "./pages/SignIn/SignIn";
 import SignUp from "./pages/SignUp/SignUp";
 import RoleManage from "./pages/RoleManagement/RoleManage";
 import PTRegistration from "./pages/Profile/Profile-PTRegist";
-
+import Product from "./pages/Product/Product";
 
 // Import the Routes component
 import AdminRoute from "./routes/AdminRoutes";
@@ -30,17 +28,20 @@ import VendorRoute from "./routes/VendorRoutes";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
-      <Route index element={<Dashboard />} />
-      <Route path="create" element={<Create />} />
-      <Route path="profile" element={<Profile />} />
-      <Route path="home" element={<Home />} />
-      <Route path="about" element={<AboutPage />} />
-      <Route path="forum" element={<Forum />} />
+      <Route index element={<Home />} />
+      <Route path="Profile" element={<Profile />} />
+      <Route path="Home" element={<Home />} />
+      <Route path="About" element={<AboutPage />} />
+      <Route path="Forum" element={<Forum />} />
       <Route path="DetailProduct" element={<ProductDetail />} />
       <Route path="Payment" element={<Payment />} />
       <Route path="SignIn" element={<SignIn />} />
       <Route path="SignUp" element={<SignUp />} />
-      <Route path="profile/PTRegistration" element={<PTRegistration />} />
+      <Route path="Profile/PTRegistration" element={<PTRegistration />} />
+      <Route path="Product" element={<Product />} />
+      <Route path="UploadProduct" element={<UploadProduct />} />
+
+
 
       {/* Protected Admin Route */}
       <Route element={<AdminRoute />}>
