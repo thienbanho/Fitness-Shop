@@ -1,24 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  VStack,
-  Heading,
-  Text,
-  Button,
-  Stack,
-  Input,
-  Textarea,
-  useToast,
-  List,
-  ListItem,
-  Flex,
-  IconButton,
-} from '@chakra-ui/react';
+import { Box, VStack, Heading, Text, Button, Stack, Textarea, useToast, List, ListItem, Flex, IconButton, } from '@chakra-ui/react';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../config/supabaseClient';
 import { useAuth } from "../../hooks/Auth";
-
 
 export default function Forum() {
   const { user } = useAuth(); // Use the Auth hook to check user state
@@ -48,8 +33,7 @@ export default function Forum() {
           });
         } else {
           console.log('Fetched users:', userData);
-          if (userData)
-            setUser(userData[0]);
+          if (userData) setUser(userData[0]);
         }
       };
   
@@ -72,10 +56,8 @@ export default function Forum() {
     };
   
     fetchTopics();
-  }, [user, toast]); // Run the effect again when 'user' changes
-  
-  
-  
+  }, [user, toast]);
+
   const handleTopicSelect = async (topic) => {
     setSelectedTopic(topic);
     const { data, error } = await supabase
@@ -97,11 +79,9 @@ export default function Forum() {
     }
   };
 
-  
-
   const handleNewPostSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!user_public || !user_public.user_id || !user_public.username) {
       toast({
         title: 'Error',
@@ -112,7 +92,7 @@ export default function Forum() {
       });
       return;
     }
-  
+
     if (selectedTopic && newPost.content) {
       const { data, error } = await supabase.from('forum_posts').insert({
         topic_id: selectedTopic.topic_id,
@@ -122,7 +102,7 @@ export default function Forum() {
         user_name: user_public.username
       });
       console.log(data);
-  
+
       if (error) {
         toast({
           title: 'Error submitting post.',
@@ -135,7 +115,6 @@ export default function Forum() {
         setPosts((prev) => [
           ...prev,
           {
-            //post_id: data[0].post_id,
             topic_id: selectedTopic.topic_id,
             user_id: user_public.user_id,
             content: newPost.content,
@@ -143,9 +122,9 @@ export default function Forum() {
             user_name: user_public.username
           },
         ]);
-  
+
         setNewPost({ content: '' });
-  
+
         toast({
           title: 'Post submitted.',
           description: "We've added your post to the discussion.",
@@ -164,20 +143,17 @@ export default function Forum() {
       });
     }
   };
-  
 
   return (
-    <Box maxWidth="1200px" margin="auto" padding={4}>
+    <Box maxWidth="1200px" margin="auto" padding={6} bg="gray.100" borderRadius="md">
       <Flex justifyContent="space-between" alignItems="center" marginBottom={6}>
-        <Heading as="h1" size="2xl" textAlign="center">
+        <Heading as="h1" size="2xl" textAlign="center" color="black" fontFamily="Arial, sans-serif">
           Fitness Forum
         </Heading>
         <Stack>
-          {!user_public ? (
-            <></>
-          ) : (
-            <Text fontWeight={600}>
-              You're interact with name {user_public.username || 'error'} {/* Show user's email or name */}
+          {!user_public ? null : (
+            <Text fontWeight={600} fontStyle="italic" color="gray.700">
+              You're interacting as: {user_public.username || 'error'}
             </Text>
           )}
         </Stack>
@@ -197,12 +173,13 @@ export default function Forum() {
       >
         <Box
           width={{ base: '100%', md: '30%' }}
-          padding={4}
+          padding={5}
           border="1px solid #ddd"
           borderRadius="md"
-          bg="gray.50"
+          bg="white"
+          boxShadow="xl"
         >
-          <Heading as="h2" size="lg" marginBottom={4}>
+          <Heading as="h2" size="lg" marginBottom={4} color="blue.500">
             Topics
           </Heading>
           <List spacing={3}>
@@ -214,6 +191,7 @@ export default function Forum() {
                   justifyContent="flex-start"
                   width="100%"
                   textAlign="left"
+                  _hover={{ color: 'green.500' }}
                 >
                   {topic.title}
                 </Button>
@@ -224,14 +202,15 @@ export default function Forum() {
 
         <Box
           width={{ base: '100%', md: '70%' }}
-          padding={4}
+          padding={5}
           border="1px solid #ddd"
           borderRadius="md"
-          bg="gray.50"
+          bg="white"
+          boxShadow="xl"
         >
           {selectedTopic ? (
             <VStack align="stretch" spacing={6}>
-              <Heading as="h2" size="lg">
+              <Heading as="h2" size="lg" color="green">
                 {selectedTopic.title}
               </Heading>
               {posts.map((post) => (
@@ -242,8 +221,13 @@ export default function Forum() {
                   padding={4}
                   bg="white"
                   boxShadow="md"
+                  mb={4}
+                  transition="all 0.3s ease"
+                  _hover={{ boxShadow: 'xl', bg: 'blue.50' }}
                 >
-                  <Text fontWeight="bold">{post.user_id === user_public.user_id ? 'You' : post.user_name}</Text>
+                  <Text fontWeight="bold" color="black">
+                    {post.user_id === user_public.user_id ? 'You' : post.user_name}
+                  </Text>
                   <Text>{post.content}</Text>
                   <Text fontSize="sm" color="gray.500">
                     {new Date(post.created_at).toLocaleString()}
@@ -257,15 +241,19 @@ export default function Forum() {
                     value={newPost.content}
                     onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
                     required
+                    bg="gray.50"
+                    borderColor="gray.300"
+                    _hover={{ borderColor: 'blue.500' }}
+                    _focus={{ borderColor: 'blue.500' }}
                   />
-                  <Button type="submit" colorScheme="blue">
+                  <Button type="submit" colorScheme="blue" width="full" borderRadius="md">
                     Post Reply
                   </Button>
                 </VStack>
               </Box>
             </VStack>
           ) : (
-            <Text>Select a topic to view the discussion.</Text>
+            <Text color="gray.500">Select a topic to view the discussion.</Text>
           )}
         </Box>
       </Flex>

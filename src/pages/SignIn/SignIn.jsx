@@ -1,21 +1,7 @@
 'use client'
 
 import { useState } from 'react';
-import { 
-  Box, 
-  Flex, 
-  VStack,
-  FormControl,
-  FormLabel,
-  Input,
-  Checkbox,
-  Button,
-  Text,
-  Link,
-  Image,
-  Divider,
-  useColorModeValue
-} from '@chakra-ui/react';
+import { Box, Flex, VStack, FormControl, FormLabel, Input, Checkbox, Button, Text, Link, Image, Divider, useColorModeValue, useBreakpointValue } from '@chakra-ui/react';
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import supabase from "../../config/supabaseClient";
@@ -60,14 +46,12 @@ export default function SignIn() {
     }
     
     const user = userData.user;
-    await supabase.from('users').insert([
-      {
-        username: user.user_metadata.full_name || user.email,
-        password: '',
-        email: user.email,
-        role: 'user',
-      },
-    ]);
+    await supabase.from('users').insert([{
+      username: user.user_metadata.full_name || user.email,
+      password: '',
+      email: user.email,
+      role: 'user',
+    }]);
   };
 
   const handleFacebookLogin = async () => {
@@ -90,14 +74,12 @@ export default function SignIn() {
     }
     
     const user = userData.user;
-    await supabase.from('users').insert([
-      {
-        username: user.user_metadata.full_name || user.email,
-        password: '',
-        email: user.email,
-        role: 'user',
-      },
-    ]);
+    await supabase.from('users').insert([{
+      username: user.user_metadata.full_name || user.email,
+      password: '',
+      email: user.email,
+      role: 'user',
+    }]);
   };
 
   return (
@@ -106,16 +88,18 @@ export default function SignIn() {
         borderWidth={1}
         px={4}
         width="full"
-        maxWidth="500px"
-        borderRadius={4}
+        maxWidth={{ base: '100%', sm: '400px', lg: '500px' }}
+        borderRadius="md"
         textAlign="center"
-        boxShadow="lg"
+        boxShadow="xl"
         bg={useColorModeValue('white', 'gray.700')}
+        transition="all 0.3s ease"
+        _hover={{ boxShadow: "2xl", transform: "scale(1.02)" }}
       >
-        <Box p={4}>
-          <VStack spacing={8} align="stretch" >
+        <Box p={6}>
+          <VStack spacing={6} align="stretch">
             <Image src={Logo} alt="The Fitness Shop" height="60px" mx="auto" />
-            <Text fontSize="xl" fontWeight="semibold">
+            <Text fontSize="xl" fontWeight="semibold" color={useColorModeValue('gray.800', 'white')}>
               Your Fitness Hub – Everything You Need to Train, Fuel, and Succeed!
             </Text>
             <Box as="form" onSubmit={handleSignIn}>
@@ -128,6 +112,8 @@ export default function SignIn() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    placeholder="Enter your email or phone number"
+                    _placeholder={{ color: 'gray.500' }}
                   />
                 </FormControl>
                 <FormControl>
@@ -138,12 +124,15 @@ export default function SignIn() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    placeholder="Enter your password"
+                    _placeholder={{ color: 'gray.500' }}
                   />
                 </FormControl>
                 <Flex justify="space-between" align="center">
                   <Checkbox
                     isChecked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
+                    colorScheme="red"
                   >
                     Remember me
                   </Checkbox>
@@ -151,20 +140,22 @@ export default function SignIn() {
                     Forgot Password?
                   </Link>
                 </Flex>
-                {error && <Text color="red.500">{error}</Text>}
-                <Button type="submit" colorScheme="red" width="full">
+                {error && <Text color="red.500" fontSize="sm">{error}</Text>}
+                <Button type="submit" colorScheme="red" width="full" size="lg" isLoading={false}>
                   Login
                 </Button>
               </VStack>
             </Box>
             <VStack spacing={4} align="stretch">
               <Divider />
-              <Text textAlign="center">OR</Text>
+              <Text textAlign="center" color="gray.500">OR</Text>
               <Button
                 leftIcon={<FaFacebook />}
                 colorScheme="facebook"
                 onClick={handleFacebookLogin}
                 width="full"
+                size="lg"
+                _hover={{ bg: 'facebook.600' }}
               >
                 Facebook
               </Button>
@@ -172,11 +163,13 @@ export default function SignIn() {
                 leftIcon={<FcGoogle />}
                 onClick={handleGoogleLogin}
                 width="full"
+                size="lg"
+                _hover={{ bg: 'gray.200' }}
               >
                 Google
               </Button>
             </VStack>
-            <Text fontSize="sm">
+            <Text fontSize="sm" color="gray.500">
               Don't have an account yet?{' '}
               <Link color="blue.500" href="/signup">
                 Sign up
@@ -188,4 +181,3 @@ export default function SignIn() {
     </Flex>
   );
 }
-

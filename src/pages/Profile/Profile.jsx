@@ -1,5 +1,7 @@
 "use client";
 
+import { Heading, Avatar, Box, Center, Image, Flex, Text, Stack, Button, useColorModeValue } from '@chakra-ui/react';
+import { useAuth } from "../../hooks/Auth"; // Import useAuth hook
 import { useEffect, useState } from "react";
 import {
   Box,
