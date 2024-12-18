@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from "react";
 import {
     Box,
-    IconButton,
-    Heading,
     VStack,
-    useToast,
     Input,
-    Checkbox,
-    Flex, 
-    GridItem, 
-    Image, 
-    SimpleGrid, 
-    Text, 
-    useBreakpointValue, 
+    Flex,
+    Image,
+    SimpleGrid,
+    Text,
+    Heading,
+    Slider,
+    SliderTrack,
+    SliderFilledTrack,
+    SliderThumb,
+    useToast,
+    Link,
 } from "@chakra-ui/react";
-import { ArrowBackIcon } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
+import { useBreakpointValue } from "@chakra-ui/react";
 import supabase from "../../config/supabaseClient";
-
 import ProductCard from "../../components/ProductCard/ProductCard";
-import Sidebar from "../../components/Sidebar/Sidebar";
-import WithSubnavigation from "../../components/NavBar/NavBar";
 
-// category
+// Category Images
 import WheyProteinImage from "../../assets/ProductTypes/whey-protein.png";
 import MassGainerImage from "../../assets/ProductTypes/mass-gainer.png";
 import BCAAImage from "../../assets/ProductTypes/bcaa.png";
@@ -37,67 +34,14 @@ const categories = [
     { title: "Tăng sức mạnh", image: PreWorkout },
     { title: "Vitamin - D3&K2 - Dầu Cá", image: VitaminsImage },
     { title: "Thực phẩm chức năng", image: SupplementsImage },
-  ];
-
-// const CategorySection = () => {
-//     const isDesktop = useBreakpointValue({ base: false, md: true });
-//     const [isExpanded, setIsExpanded] = useState(false);
-
-//     return (
-//         <Box maxW="1298px" border="solid" py={4} px="30px" bg="white" boxShadow="md">
-//             {isDesktop || isExpanded ? (
-//                 <>
-//                     <Text fontSize="xl" fontWeight="bold" textAlign="center" mb={4}>
-//                         DANH MỤC NỔI BẬT
-//                     </Text>
-//                     <Flex
-//                         direction="row"
-//                         align="center"
-//                         justify="space-between"
-//                         wrap="wrap"
-//                         gap={4}
-//                     >
-//                         {categories.map((category, index) => (
-//                             <VStack
-//                                 key={index}
-//                                 spacing={2}
-//                                 align="center"
-//                                 w="auto"
-//                                 _hover={{ cursor: "pointer" }}
-//                             >
-//                                 <Box
-//                                     bg="white"
-//                                     borderRadius="full"
-//                                     display="flex"
-//                                     justifyContent="center"
-//                                     alignItems="center"
-//                                 >
-//                                     <Image
-//                                         src={category.image}
-//                                         alt={category.title}
-//                                         boxSize="80px"
-//                                     />
-//                                 </Box>
-//                                 <Text fontSize="sm" fontWeight="medium" textAlign="center">
-//                                     {category.title}
-//                                 </Text>
-//                             </VStack>
-//                         ))}
-//                     </Flex>
-//                 </>
-//             ) : (
-//                 <Button onClick={() => setIsExpanded(true)} w="full" colorScheme="blue">
-//                     Hiển thị danh mục
-//                 </Button>
-//             )}
-//         </Box>
-//     );
-// };
+];
 
 const Product = () => {
     const [products, setProducts] = useState([]);
+    const [priceRange, setPriceRange] = useState(50000000);
+    const [brand, setBrand] = useState("");
+    const [kind, setKind] = useState("");
     const toast = useToast();
-    const navigate = useNavigate();
     const isHorizontal = useBreakpointValue({ base: false, md: true });
 
     useEffect(() => {
@@ -105,7 +49,6 @@ const Product = () => {
             const { data, error } = await supabase.from("products").select("*");
 
             if (error) {
-                console.error(error);
                 toast({
                     title: "Error fetching products",
                     description: error.message,
@@ -114,7 +57,7 @@ const Product = () => {
                     isClosable: true,
                 });
             } else {
-                setProducts(data); // Lưu dữ liệu vào state
+                setProducts(data);
             }
         };
 
@@ -122,132 +65,134 @@ const Product = () => {
     }, [toast]);
 
     return (
-        <Box p={4}>
-            
-            {/* <Sidebar />
-            <VStack spacing={4}>
-                {products.map((product) => (
-                    <ProductCard key={product.product_id} product={product} />
-                ))}
-            </VStack> */}
-            <Box mx="108px" mt="50px" mb="100px" align="center">
-                <Box maxW="1298px" border="solid" py={4} px="30px" bg="white" boxShadow="md">
-                    <Text fontSize="xl" fontWeight="bold" textAlign="center" mb={4}>
-                        DANH MỤC NỔI BẬT
-                    </Text>
-                    <Flex
-                        direction={isHorizontal ? "row" : "column"}
-                        align={isHorizontal ? "center" : "flex-start"}
-                        justify={isHorizontal ? "space-between" : "center"}
-                        wrap={isHorizontal ? "nowrap" : "wrap"}
-                        gap={4}
-                    >
-                        {categories.map((category, index) => (
+        <Box p={4} bg="#F9F9F9" minH="100vh">
+            {/* Category Section */}
+            <Box maxW="1298px" mx="auto" py={6} px={4} bg="white" borderRadius="lg" shadow="md">
+                <Text fontSize="xl" fontWeight="bold" textAlign="center" mb={6}>
+                    Danh Mục Nổi Bật
+                </Text>
+                <Flex
+                    direction={isHorizontal ? "row" : "column"}
+                    justifyContent="center"
+                    alignItems="center"
+                    wrap="wrap"
+                    gap={6}
+                >
+                    {categories.map((category, index) => (
                         <VStack
                             key={index}
                             spacing={2}
                             align="center"
-                            w={isHorizontal ? "auto" : "100%"}
-                            _hover={{cursor: "pointer"}}
+                            _hover={{ cursor: "pointer", transform: "scale(1.05)" }}
+                            transition="transform 0.2s"
                         >
-                            <Box
-                            bg="white"
-                            borderRadius="full"
-                            display="flex"
-                            justifyContent="center"
-                            alignItems="center"
-                            >
-                            <Image
-                                src={category.image}
-                                alt={category.title}
-                                boxSize="80px"
-                            />
-                            </Box>
+                            <Image src={category.image} alt={category.title} boxSize="80px" />
                             <Text fontSize="sm" fontWeight="medium" textAlign="center">
-                            {category.title}
+                                {category.title}
                             </Text>
                         </VStack>
-                        ))}
-                    </Flex>
-                </Box>
-                
-                <Flex mt="60px" verticalAlign="center">
-                    <Box
-                        maxW="298px"
-                        h={{sm: "auto", m: "auto", lg: "848px"}}
-                        p={{lg: "30px", sm:"20px"}}
-                        ml={{sm: "-70px", lg: "0px"}}
-                        bg="white"
-                        border="solid"
-                        mr={{lg: "100px", sm: "50px"}}
-                    >
-                        {/* Search Section */}
-                        <VStack pb="30px" align="flex-start" spacing={4}>
-                            <Heading mt="30px" as="h3" size="md" color="blue.600">
+                    ))}
+                </Flex>
+            </Box>
+
+            {/* Filter and Products Section */}
+            <Flex mt={10} maxW="1298px" mx="auto" gap={8} direction={{ base: "column", md: "row" }}>
+                {/* Filter Section */}
+                <Box bg="white" p={6} borderRadius="lg" shadow="md" flexShrink={0} width={{ base: "100%", md: "300px" }}>
+                    <VStack spacing={6} align="stretch">
+                        {/* Search */}
+                        <Box>
+                            <Heading size="sm" mb={2} color="blue.600">
                                 Search
                             </Heading>
                             <Input
-                                placeholder="Search..."
+                                placeholder="Search products..."
                                 variant="outline"
                                 size="sm"
                                 borderRadius="md"
-                                bg="#D9D9D9"
-                                border="solid"
                             />
-                        </VStack>
+                        </Box>
 
-                        {/* Filter Section */}
-                        <VStack gap="40px" align="flex-start" spacing={4}>
-                            <Heading mt="30px" as="h3" size="md" color="blue.600">
-                                Filter
+                        {/* Price Range */}
+                        <Box>
+                            <Heading size="sm" mb={2} color="blue.600">
+                                Price Range
                             </Heading>
-
-                            {/* Filter Categories */}
-                            <Box ml={{lg: "20px", sm:"0px"}}>
-                            <Text fontWeight="bold" fontSize="20px" mb={2}>
-                                Price
+                            <Slider
+                                defaultValue={50000000}
+                                min={10000}
+                                max={100000000}
+                                step={10000}
+                                onChange={(val) => setPriceRange(val)}
+                            >
+                                <SliderTrack bg="gray.200">
+                                    <SliderFilledTrack bg="blue.500" />
+                                </SliderTrack>
+                                <SliderThumb boxSize={4} />
+                            </Slider>
+                            <Text fontSize="sm" mt={2} color="gray.600">
+                                Up to {priceRange.toLocaleString()} VND
                             </Text>
-                            <VStack align="flex-start" spacing={2}>
-                                <Checkbox size="lg">Option 1</Checkbox>
-                                <Checkbox size="lg">Option 2</Checkbox>
-                                <Checkbox size="lg">Option 3</Checkbox>
-                                <Checkbox size="lg">Option 4</Checkbox>
-                            </VStack>
-                            </Box>
+                        </Box>
 
-                            <Box ml={{lg: "20px", sm:"0px"}}>
-                            <Text fontWeight="bold" fontSize="20px" mb={2}>
+                        {/* Brand */}
+                        <Box>
+                            <Heading size="sm" mb={2} color="blue.600">
                                 Brand
-                            </Text>
-                            <VStack align="flex-start" spacing={2}>
-                                <Checkbox size="lg">Option 1</Checkbox>
-                                <Checkbox size="lg">Option 2</Checkbox>
-                                <Checkbox size="lg">Option 3</Checkbox>
-                                <Checkbox size="lg">Option 4</Checkbox>
-                            </VStack>
-                            </Box>
+                            </Heading>
+                            <Input
+                                placeholder="Type brand..."
+                                variant="outline"
+                                size="sm"
+                                borderRadius="md"
+                                value={brand}
+                                onChange={(e) => setBrand(e.target.value)}
+                            />
+                        </Box>
 
-                            <Box ml={{lg: "20px", sm:"0px"}}>
-                            <Text fontWeight="bold" fontSize="20px" mb={2}>
+                        {/* Kind */}
+                        <Box>
+                            <Heading size="sm" mb={2} color="blue.600">
                                 Kind
-                            </Text>
-                            <VStack align="flex-start" spacing={2}>
-                                <Checkbox size="lg">Option 1</Checkbox>
-                                <Checkbox size="lg">Option 2</Checkbox>
-                                <Checkbox size="lg">Option 3</Checkbox>
-                                <Checkbox size="lg">Option 4</Checkbox>
-                            </VStack>
-                            </Box>
-                        </VStack>
-                    </Box>
+                            </Heading>
+                            <Input
+                                placeholder="Type kind..."
+                                variant="outline"
+                                size="sm"
+                                borderRadius="md"
+                                value={kind}
+                                onChange={(e) => setKind(e.target.value)}
+                            />
+                        </Box>
+                    </VStack>
+                </Box>
 
-                    <SimpleGrid  columnGap="100px" rowGap="100px" maxW={{lg: "700px", xl: "1000px" , sm: "250px"}} minChildWidth="252px">
-                        {products.map((product) => (
-                            <ProductCard key={product.product_id} product={product} />
-                        ))}
-                    </SimpleGrid>
-                </Flex>  
-            </Box>
+                {/* Products Section */}
+                <SimpleGrid
+                    columns={{ base: 1, sm: 2, md: 3 }}
+                    spacing={6}
+                    flex="1"
+                    minChildWidth="250px"
+                >
+                    {products.map((product) => (
+                        <Link key={product.product_id} href={`/DetailProduct?product_id=${product.product_id}`} style={{ textDecoration: "none" }}>
+                            <Box
+                                bg="white"
+                                p={4}
+                                borderRadius="lg"
+                                boxShadow="sm"
+                                transition="all 0.2s ease-in-out"
+                                _hover={{
+                                    boxShadow: "lg",
+                                    transform: "translateY(-5px)",
+                                }}
+                            >
+                                <ProductCard product={product} />
+                            </Box>
+                        </Link>
+                    ))}
+                </SimpleGrid>
+            </Flex>
         </Box>
     );
 };
