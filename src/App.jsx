@@ -21,10 +21,14 @@ import PTRegistration from "./pages/Profile/Profile-PTRegist";
 import Product from "./pages/Product/Product";
 import ReceiptForm from "./pages/ProductReceipt/ReceiptForm";
 import ReceiptConfirm from "./pages/ProductReceipt/ReceiptConfirm";
+import ReceiptList from "./pages/ProductReceipt/ReceiptList";
+import MyProducts from "./pages/UploadProduct/MyProduct";
+import SellerReceiptManage from "./pages/SellerReceiptManage/SellerReceiptManage";
 
 // Import the Routes component
 import AdminRoute from "./routes/AdminRoutes";
 import VendorRoute from "./routes/VendorRoutes";
+import LoginRoute from "./routes/LoggedInRoutes";
 
 
 // Router and routes
@@ -42,20 +46,26 @@ const router = createBrowserRouter(
       <Route path="SignUp" element={<SignUp />} />
       <Route path="Profile/PTRegistration" element={<PTRegistration />} />
       <Route path="Product" element={<Product />} />
-      <Route path="UploadProduct" element={<UploadProduct />} />
       <Route path="ReceiptForm" element={<ReceiptForm />} />
       <Route path="ReceiptConfirm" element={<ReceiptConfirm />} />
 
-
+      {/* Protected Login Route */}
+      <Route element={<LoginRoute />}>
+        <Route path="ReceiptList" element={<ReceiptList />} />
+      </Route>
       {/* Protected Admin Route */}
       <Route element={<AdminRoute />}>
         <Route path="RoleManage" element={<RoleManage />} />
         <Route path="UploadProduct" element={<UploadProduct />} />
+        <Route path="MyProducts" element={<MyProducts />} />
+        <Route path="SellerReceiptManage" element={<SellerReceiptManage />} />
       </Route>
         
       {/* Protected Vendor Route */}
       <Route element={<VendorRoute />}>
         <Route path="UploadProduct" element={<UploadProduct />} />
+        <Route path="MyProducts" element={<MyProducts />} />
+        <Route path="SellerReceiptManage" element={<SellerReceiptManage />} />
       </Route>
     </Route>
   )

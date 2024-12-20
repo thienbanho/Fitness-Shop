@@ -4,11 +4,13 @@ import { FiUpload } from "react-icons/fi";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../config/supabaseClient";
+import { useAuth } from "../../hooks/Auth"; // Assuming useAuth hook exists
 
 const UploadProduct = () => {
   const navigate = useNavigate();
   const toast = useToast();
-
+  const { user } = useAuth(); // Get the authenticated user
+  
   const [productData, setProductData] = useState({
     name: "",
     description: "",
@@ -18,6 +20,7 @@ const UploadProduct = () => {
   });
 
   const [imageUrl, setImageUrl] = useState(null);   // To store the uploaded image URL
+  const [imageFile, setImageFile] = useState(null); // To store the image file
 
   // Handle file selection
   const handleFileChange = (e) => {
@@ -41,10 +44,31 @@ const UploadProduct = () => {
     }));
   };
 
+  // Fetch user_id based on the logged-in user's email
+  const fetchUserId = async (email) => {
+    const { data, error } = await supabase
+      .from("users")
+      .select("user_id")
+      .eq("email", email)
+      .single();
+
+    if (error) {
+      toast({
+        title: "Error fetching user ID",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return null;
+    }
+
+    return data?.user_id;
+  };
+
   // Handle form submission
   const handleSubmit = async () => {
     if (!imageFile) {
-      console.log("No file selected");
       toast({
         title: "No file selected",
         description: "Please select an image to upload.",
@@ -56,6 +80,10 @@ const UploadProduct = () => {
     }
 
     try {
+      // Fetch the seller's user_id based on the logged-in user's email
+      const userId = await fetchUserId(user.email);
+      if (!userId) return;
+
       // Generate a unique file name for the image
       const fileName = `${Date.now()}_${imageFile.name}`;
       console.log("Uploading file with name:", fileName);
@@ -90,10 +118,14 @@ const UploadProduct = () => {
       });
       console.log("Public URL:", publicUrl);
 
-      // Insert product data into the Supabase "products" table
+      // Insert product data into the Supabase "products" table, including seller_id
       const { data: insertData, error: insertError } = await supabase
         .from("products")
-        .insert({ ...productData, image: publicUrl });
+        .insert({
+          ...productData,
+          image: publicUrl,
+          seller_id: userId, // Include seller_id here
+        });
 
       if (insertError) {
         throw new Error(`Error submitting product: ${insertError.message}`);
@@ -182,7 +214,7 @@ const UploadProduct = () => {
                   height="auto"
                   maxW="100%"
                   maxH="300px"
-                  objectFit="contain" // Giữ nguyên tỷ lệ ảnh
+                  objectFit="contain"
                   transition="all 0.3s ease"
                   _hover={{ transform: "scale(1.05)" }}
                 />
