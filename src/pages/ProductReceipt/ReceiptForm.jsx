@@ -151,6 +151,7 @@ const ReceiptForm = () => {
                     quantity: quantity,
                     price: product.price,
                     total: totalPrice,
+                    status : 'pending',
                 }]);
 
             if (itemsError) {

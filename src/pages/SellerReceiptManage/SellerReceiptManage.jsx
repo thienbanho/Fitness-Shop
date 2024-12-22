@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Box, Heading, Text, VStack, Flex, Button, Spinner, useToast } from "@chakra-ui/react";
-import { useAuth } from "../../hooks/Auth"; // Assuming you have an Auth context or hook
+import {
+  Box,
+  Heading,
+  Text,
+  VStack,
+  Flex,
+  Spinner,
+  useToast,
+  Select,
+} from "@chakra-ui/react";
+import { useAuth } from "../../hooks/Auth";
 import supabase from "../../config/supabaseClient";
 
 const SellerReceiptManage = () => {
@@ -65,7 +74,6 @@ const SellerReceiptManage = () => {
             )
           )
         `)
-        // Ensure that the seller_id from products matches the userId
         .eq("receipt_items.products.seller_id", userId);
 
       if (error) {
@@ -121,7 +129,7 @@ const SellerReceiptManage = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!user?.email) {
-        return; // Ensure user is available before fetching data
+        return;
       }
 
       setLoading(true);
@@ -153,46 +161,55 @@ const SellerReceiptManage = () => {
       {receipts.length > 0 ? (
         <VStack spacing={8} align="start">
           {receipts.map((receipt) => (
-            <Box key={receipt.receipt_id} bg="white" p={6} borderRadius="md" boxShadow="lg" width="100%" maxW="700px">
-              <Text fontSize="lg" color="gray.700">Receipt ID: {receipt.receipt_id}</Text>
+            <Box
+              key={receipt.receipt_id}
+              bg="white"
+              p={6}
+              borderRadius="md"
+              boxShadow="lg"
+              width="100%"
+              maxW="700px"
+            >
+              <Text fontSize="lg" color="gray.700">
+                Receipt ID: {receipt.receipt_id}
+              </Text>
               <Text color="gray.500">Total: ${receipt.total}</Text>
               <Text color="gray.500">Status: {receipt.status}</Text>
 
-              <VStack mt={4} spacing={4} align="start">
-                {receipt.receipt_items.map((item) => {
-                  const product = item.products;
-                  if (product && product.seller_id === user.user_id) {
-                    return (
-                      <Box key={item.item_id} borderWidth="1px" borderRadius="md" p={4} width="100%">
-                        <Text fontSize="md" color="gray.700">
-                          Product: {product.name}
-                        </Text>
-                        <Text color="gray.500">Quantity: {item.quantity}</Text>
-                        <Text color="gray.500">Price: ${item.price}</Text>
-                        <Text color="gray.500">Item Status: {item.status}</Text>
-                        <Flex mt={2}>
-                          <Button size="sm" colorScheme="blue" onClick={() => updateItemStatus(item.item_id, "Delivered")}>
-                            Delivered
-                          </Button>
-                          <Button size="sm" colorScheme="red" ml={2} onClick={() => updateItemStatus(item.item_id, "Canceled")}>
-                            Canceled
-                          </Button>
-                          <Button size="sm" colorScheme="green" ml={2} onClick={() => updateItemStatus(item.item_id, "Successful")}>
-                            Successful
-                          </Button>
-                        </Flex>
-                      </Box>
-                    );
-                  }
-                  return null;
-                })}
+              <VStack align="start" mt={4} spacing={2}>
+                {receipt.receipt_items.map((item) => (
+                  <Box key={item.item_id}>
+                    <Text color="gray.600">
+                      Product:{" "}
+                      {item.products?.name
+                        ? item.products.name
+                        : "Unknown Product"}{" "}
+                      (Quantity: {item.quantity})
+                    </Text>
+                    <Text color="gray.600">Item Total: ${item.total}</Text>
+                    <Select
+                      mt={2}
+                      placeholder="Change status"
+                      value={item.status}
+                      onChange={(e) =>
+                        updateItemStatus(item.item_id, e.target.value)
+                      }
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Delivered">Delivered</option>
+                      <option value="Successful">Successful</option>
+                    </Select>
+                  </Box>
+                ))}
               </VStack>
             </Box>
           ))}
         </VStack>
       ) : (
         <Flex justify="center" align="center" minH="300px">
-          <Text fontSize="xl" color="gray.600">No receipts found for your products.</Text>
+          <Text fontSize="xl" color="gray.600">
+            No receipts found for your products.
+          </Text>
         </Flex>
       )}
     </Box>

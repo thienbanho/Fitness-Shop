@@ -25,6 +25,15 @@ const ReceiptConfirm = () => {
     const params = new URLSearchParams(location.search);
     const receiptId = params.get("receipt_id");
 
+    const calculateReceiptStatus = (receiptItems) => {
+        const allDelivered = receiptItems.every((item) => item.status === "Delivered");
+        const allSuccessful = receiptItems.every((item) => item.status === "Successful");
+
+        if (allDelivered) return "Delivered";
+        if (allSuccessful) return "Successful";
+        return "Pending"; // Default status
+    };
+
     useEffect(() => {
         if (receiptId) {
             const fetchReceipt = async () => {
@@ -35,8 +44,7 @@ const ReceiptConfirm = () => {
                         .select("*")
                         .eq("receipt_id", receiptId)
                         .single();
-                    
-                    console.log('Receipt data:', receiptData);
+
                     if (receiptError) {
                         throw new Error(receiptError.message);
                     }
@@ -44,12 +52,15 @@ const ReceiptConfirm = () => {
                     // Fetch receipt items and associated products
                     const { data: receiptItems, error: itemsError } = await supabase
                         .from("receipt_items")
-                        .select("product_id, quantity, total")
+                        .select("product_id, quantity, total, status") // Fetch status for each item
                         .eq("receipt_id", receiptId);
 
                     if (itemsError) {
                         throw new Error(itemsError.message);
                     }
+
+                    // Calculate receipt status based on items
+                    const newStatus = calculateReceiptStatus(receiptItems);
 
                     // Get product details for each product_id in receipt_items
                     const productPromises = receiptItems.map(async (item) => {
@@ -71,8 +82,8 @@ const ReceiptConfirm = () => {
 
                     const products = await Promise.all(productPromises);
 
-                    // Set state with fetched data
-                    setReceipt(receiptData);
+                    // Set state with fetched data and new status
+                    setReceipt({ ...receiptData, status: newStatus });
                     setProducts(products);
                     setLoading(false);
                 } catch (error) {
