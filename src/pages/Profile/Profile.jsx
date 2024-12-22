@@ -31,63 +31,55 @@ export default function Profile() {
     phone_number: "",
     dob: "",
     gender: "",
-    address:"",
-    user_id:"",
-    updated_at:""
+    address: "",
+    user_id: "",
+    updated_at: "",
+    balance: "", // Add balance to formData
   });
   const toast = useToast();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
   // Fetch user data from Supabase
   useEffect(() => {
     if (user) {
       console.log("Current user:", user);
       const fetchUserData = async () => {
-        if (false) {
-          console.log("Error fetching user data1:", error);
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("email", user.email); // Assuming balance is stored in 'users' table
+
+        if (error) {
+          console.error("Error fetching user data:", error);
           toast({
-            title: "Error fetching user data1",
+            title: "Error fetching user data",
+            description: error.message,
             status: "error",
             duration: 3000,
           });
+        } else if (data && data.length > 0) {
+          console.log("Fetched user data:", data[0]);
+          setUserData(data[0]);
+          setFormData({
+            full_name: data[0].full_name || "",
+            email: data[0].email || "",
+            phone_number: data[0].phone_number || "",
+            dob: data[0].dob || "",
+            gender: data[0].gender || "",
+            address: data[0].address || "",
+            user_id: data[0].user_id || "",
+            balance: data[0].balance || "0", // Store balance in formData
+          });
         } else {
-          const { data, error } = await supabase
-          .from("users")
-          .select("*")
-          .eq("email", user.email);
-
-          if (error) {
-            console.error("Error fetching user data2:", error);
-            toast({
-              title: "Error fetching user data2",
-              description: error.message,
-              status: "error",
-              duration: 3000,
-            });
-          }
-            else if (data && data.length > 0) {
-              console.log("Fetched user data:", data[0]);
-              setUserData(data[0]);
-              setFormData({
-                full_name: data[0].full_name || "",
-                email: data[0].email || "",
-                phone_number: data[0].phone_number || "",
-                dob: data[0].dob || "",
-                gender:data[0].gender || "",
-                address: data[0].address || "",
-                user_id: data[0].user_id || "",
-              });
-            }
-            else {
-              console.log("No user data found in public");
-              toast({
-                title: "No user data found",
-                status: "warning",
-                duration: 3000,
-              });
-            }    
+          console.log("No user data found");
+          toast({
+            title: "No user data found",
+            status: "warning",
+            duration: 3000,
+          });
         }
       };
 
@@ -104,7 +96,7 @@ export default function Profile() {
     const { error } = await supabase
       .from("users")
       .update({
-        full_name: "huhu",
+        full_name: formData.full_name,
         phone_number: formData.phone_number,
         updated_at: new Date(),
         dob: formData.dob,
@@ -192,54 +184,24 @@ export default function Profile() {
                       name="dob"
                       type="date"
                       value={formData.dob}
-                      onChange={(e) => {
-                        handleInputChange(e);
-
-                        // Automatically calculate age
-                        const dob = new Date(e.target.value);
-                        const today = new Date();
-                        const age = today.getFullYear() - dob.getFullYear();
-                        const monthDiff = today.getMonth() - dob.getMonth();
-
-                        // Adjust age if the birthdate hasn't occurred yet this year
-                        const calculatedAge =
-                          monthDiff < 0 ||
-                          (monthDiff === 0 && today.getDate() < dob.getDate())
-                            ? age - 1
-                            : age;
-
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          age: calculatedAge >= 0 ? calculatedAge : 0, // Ensure age is not negative
-                        }));
-                      }}
+                      onChange={(e) => handleInputChange(e)}
                     />
                   </Box>
 
-                  {/* Age Display (Read-Only) */}
+                  {/* Gender */}
                   <Box flex={1}>
-                    <FormLabel>Age</FormLabel>
-                    <Input
-                      name="age"
-                      value={formData.age || ""}
-                      isReadOnly
-                      placeholder="Age will be calculated automatically"
-                    />
+                    <FormLabel>Gender</FormLabel>
+                    <Select
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleInputChange}
+                      placeholder="Select your gender"
+                    >
+                      <option value="true">Men</option>
+                      <option value="false">Women</option>
+                    </Select>
                   </Box>
                 </HStack>
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Gender</FormLabel>
-                <Select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleInputChange}
-                  placeholder="Select your gender"
-                >
-                  <option value="true">Men</option>
-                  <option value="false">Women</option>
-                </Select>
               </FormControl>
 
               <FormControl>
@@ -251,6 +213,13 @@ export default function Profile() {
                   }
                 />
               </FormControl>
+
+              {/* Balance (Read-Only) */}
+              <FormControl>
+                <FormLabel>Balance</FormLabel>
+                <Input value={formData.balance} isReadOnly bg="gray.50" />
+              </FormControl>
+
               <Box>
                 {isEditing ? (
                   <Flex gap={4}>
