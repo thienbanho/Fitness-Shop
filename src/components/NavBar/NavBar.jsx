@@ -19,10 +19,54 @@ import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@ch
 import logo from '/src/assets/logo.png';
 import { AuthProvider, useAuth } from "../../hooks/Auth"; // Import useAuth hook
 import supabase from "../../config/supabaseClient";
+import { useEffect, useState } from "react";
+const fetchUserRole = async (email) => {
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .select("role")
+      .eq("email", email)
+      .single();
+
+    if (error) {
+      toast({
+        title: "Error fetching user ID",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return null;
+    }
+
+    return data?.role;
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: error.message,
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+    return null;
+  }
+};
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
   const { user} = useAuth(); // Use the Auth hook to check user state
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    const getRole = async () => {
+      if (user && user.email) {
+        const userRole = await fetchUserRole(user.email);
+        setRole(userRole);
+      }
+    };
+    getRole();
+  }, [user]);
+
   const logout = async () => {
     try {
       const response = await supabase.auth.signOut();
@@ -33,6 +77,119 @@ export default function WithSubnavigation() {
     }
   };
   
+  const getNavItems = () => {
+    if (role === 'vendor') {
+      return [
+        {
+          label: "Product",
+          href: "Product",
+          children: [
+            {
+              label: "My Product",
+              subLabel: "show my products",
+              href: "MyProduct",
+            },
+            {
+              label: "Sell Your Products",
+              subLabel: "List your fitness products for others to buy",
+              href: "UploadProduct",
+            },
+          ],
+        },
+        // {
+        //   label: "Personal Trainers",
+        //   children: [
+        //     {
+        //       label: "Hire Personal Trainers",
+        //       subLabel: "Connect with experts for personalized training",
+        //       href: "#",
+        //     },
+        //     {
+        //       label: "Become a Trainer",
+        //       subLabel: "Join our platform as a certified trainer",
+        //       href: "#",
+        //     },
+        //   ],
+        // },
+        {
+          label: "Forum",
+          href: "Forum",
+        },
+        {
+          label: "About",
+          href: "About",
+        },
+      ];
+    }
+
+    if (role === 'user') {
+      return [
+        {
+          label: "Shop",
+          href: "Product",
+        },
+        {
+          label: "Personal Trainers",
+          children: [
+            {
+              label: "Hire Personal Trainers",
+              subLabel: "Connect with experts for personalized training",
+              href: "#",
+            },
+            {
+              label: "Become a Trainer",
+              subLabel: "Join our platform as a certified trainer",
+              href: "#",
+            },
+          ],
+        },
+        {
+          label: "Forum",
+          href: "Forum",
+        },
+        {
+          label: "About",
+          href: "About",
+        },
+      ];
+    }
+
+    if (role === 'admin') {
+      return [
+        {
+          label: "Roles Management",
+          href: "RoleManage",
+        },
+        {
+          label: "Forum",
+          href: "Forum",
+        },
+        {
+          label: "About",
+          href: "About",
+        },
+      ];
+    }
+
+    if(role === null){
+      return [
+        {
+          label: "Shop",
+          href: "Product",
+        },
+        {
+          label: "Forum",
+          href: "Forum",
+        },
+        {
+          label: "About",
+          href: "About",
+        },
+      ];
+    }
+    return []; // Default to empty if no role
+  };
+
 
   return (
     <Box>
@@ -72,7 +229,7 @@ export default function WithSubnavigation() {
           </Text>
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
-            <DesktopNav />
+          <DesktopNav navItems={getNavItems()} />
           </Flex>
         </Flex>
 
@@ -125,20 +282,20 @@ export default function WithSubnavigation() {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav />
+      <MobileNav navItems={getNavItems()} />
       </Collapse>
     </Box>
   );
 }
 
-const DesktopNav = () => {
+const DesktopNav = ({ navItems }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
 
   return (
     <Stack direction={"row"} spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
+      {navItems.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
@@ -220,14 +377,14 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
   );
 };
 
-const MobileNav = () => {
+const MobileNav = ({ navItems }) => {
   return (
     <Stack
       bg={useColorModeValue("white", "gray.800")}
       p={4}
       display={{ md: "none" }}
     >
-      {NAV_ITEMS.map((navItem) => (
+      {navItems.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>
@@ -284,44 +441,3 @@ const MobileNavItem = ({ label, children, href }) => {
   );
 };
 
-const NAV_ITEMS = [
-  {
-    label: "Product",
-    href: "Product",
-    children: [
-      {
-        label: "Shop Supplements",
-        subLabel: "Browse high-quality whey, vitamins, and more",
-        href: "DetailProduct",
-      },
-      {
-        label: "Sell Your Products",
-        subLabel: "List your fitness products for others to buy",
-        href: "UploadProduct",
-      },
-    ],
-  },
-  {
-    label: "Personal Trainers",
-    children: [
-      {
-        label: "Hire Personal Trainers",
-        subLabel: "Connect with experts for personalized training",
-        href: "#",
-      },
-      {
-        label: "Become a Trainer",
-        subLabel: "Join our platform as a certified trainer",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Forum",
-    href: "Forum",
-  },
-  {
-    label: "About",
-    href: "About",
-  },
-];
