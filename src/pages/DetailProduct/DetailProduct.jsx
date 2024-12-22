@@ -11,14 +11,9 @@ import {
   HStack,
   Button,
   Grid,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  Container,
   RadioGroup,
   Radio,
-  Container,
 } from '@chakra-ui/react';
 import supabase from "../../config/supabaseClient";
 import Reviews from "../../components/Review/Review";
@@ -47,7 +42,7 @@ export default function ProductDetail() {
           setError('Failed to load product details. Please try again.');
         } else {
           setProductData(data);
-          // Tách cột 'type' thành một mảng
+          // Split 'type' column into an array
           const typesArray = data.type?.split(', ').map((item) => item.trim()) || [];
           setSelectedType(typesArray[0] || '');
           setProductData({ ...data, typesArray });
@@ -73,7 +68,7 @@ export default function ProductDetail() {
   // Mock data for multiple images
   const productImages = [
     productData.image,
-    productData.image, // Bạn có thể thêm nhiều hình ảnh khác nhau tại đây
+    productData.image, // You can add more images here
     productData.image,
     productData.image,
   ];
@@ -118,7 +113,7 @@ export default function ProductDetail() {
             <Heading as="h1" size="xl">
               {productData.name}
             </Heading>
-            
+
             <Text fontSize="3xl" color="red.500" fontWeight="bold">
               {new Intl.NumberFormat('vi-VN', { 
                 style: 'currency', 
@@ -142,26 +137,11 @@ export default function ProductDetail() {
               </RadioGroup>
             </Box>
 
-            {/* Quantity Input */}
-            <HStack>
-              <Text fontWeight="bold">Quantity:</Text>
-              <NumberInput
-                defaultValue={1}
-                min={1}
-                max={productData.stock}
-                onChange={(_, num) => setQuantity(num)}
-                w="100px"
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-              <Text color={isOutOfStock ? "red.500" : "green.500"}>
-                {isOutOfStock ? "Out of Stock" : `${productData.stock} available`}
-              </Text>
-            </HStack>
+            {/* Remove Quantity and Stock Availability */}
+            {/* Removed the availability message below */}
+            <Text color={isOutOfStock ? "red.500" : "transparent"}>
+              {isOutOfStock ? "Out of Stock" : ""}
+            </Text>
 
             {/* Buttons */}
             <HStack spacing={4}>

@@ -153,9 +153,6 @@ const MyProducts = () => {
                   <Text mt={2} fontWeight="bold">
                     Price: ${product.price}
                   </Text>
-                  <Text mt={2} color="gray.600">
-                    Stock: {product.stock}
-                  </Text>
                 </Box>
               </Flex>
             </Box>
