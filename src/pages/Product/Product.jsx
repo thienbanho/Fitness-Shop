@@ -16,6 +16,7 @@ import {
     Link,
 } from "@chakra-ui/react";
 import { useBreakpointValue } from "@chakra-ui/react";
+import { useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation from react-router-dom
 import supabase from "../../config/supabaseClient";
 import ProductCard from "../../components/ProductCard/ProductCard";
 
@@ -41,12 +42,21 @@ const Product = () => {
     const [priceRange, setPriceRange] = useState(50000000);
     const [brand, setBrand] = useState("");
     const [kind, setKind] = useState("");
+    const [searchQuery, setSearchQuery] = useState(""); // New state for search query
     const toast = useToast();
     const isHorizontal = useBreakpointValue({ base: false, md: true });
+    const navigate = useNavigate(); // Use navigate for routing
+    const location = useLocation(); // Use location to access query parameters
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const { data, error } = await supabase.from("products").select("*");
+            const queryParams = new URLSearchParams(location.search); // Get the search query from URL
+            const search = queryParams.get("search") || ""; // Get the 'search' query parameter
+
+            const { data, error } = await supabase
+                .from("products")
+                .select("*")
+                .ilike("name", `%${search}%`); // Filter products by search query
 
             if (error) {
                 toast({
@@ -62,7 +72,14 @@ const Product = () => {
         };
 
         fetchProducts();
-    }, [toast]);
+    }, [location.search, toast]); // Fetch products when the search query changes
+
+    // Handle search and update URL
+    const handleSearch = (e) => {
+        if (e.key === 'Enter' && searchQuery) {
+            navigate(`/Product?search=${searchQuery}`); // Update URL with search query
+        }
+    };
 
     return (
         <Box p={4} bg="#F9F9F9" minH="100vh">
@@ -110,6 +127,9 @@ const Product = () => {
                                 variant="outline"
                                 size="sm"
                                 borderRadius="md"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)} // Update search query state
+                                onKeyDown={handleSearch} // Handle search on Enter key press
                             />
                         </Box>
 

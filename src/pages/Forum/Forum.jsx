@@ -219,27 +219,37 @@ export default function Forum() {
               <Heading as="h2" size="lg" color="green">
                 {selectedTopic.title}
               </Heading>
-              {posts.map((post) => (
-                <Box
-                  key={post.post_id}
-                  borderWidth={1}
-                  borderRadius="lg"
-                  padding={4}
-                  bg="white"
-                  boxShadow="md"
-                  mb={4}
-                  transition="all 0.3s ease"
-                  _hover={{ boxShadow: 'xl', bg: 'blue.50' }}
-                >
-                  <Text fontWeight="bold" color="black">
-                    {post.user_id === user_public.user_id ? 'You' : post.user_name}
-                  </Text>
-                  <Text>{post.content}</Text>
-                  <Text fontSize="sm" color="gray.500">
-                    {new Date(post.created_at).toLocaleString()}
-                  </Text>
-                </Box>
-              ))}
+
+              {/* Scrollable Posts Section */}
+              <Box
+                maxHeight="400px"  // Set max height to make it scrollable
+                overflowY="auto"
+                paddingRight={2}
+              >
+                {posts.map((post) => (
+                  <Box
+                    key={post.post_id}
+                    borderWidth={1}
+                    borderRadius="lg"
+                    padding={4}
+                    bg="white"
+                    boxShadow="md"
+                    mb={4}
+                    transition="all 0.3s ease"
+                    _hover={{ boxShadow: 'xl', bg: 'blue.50' }}
+                  >
+                    <Text fontWeight="bold" color="black">
+                      {post.user_id === user_public.user_id ? 'You' : post.user_name}
+                    </Text>
+                    <Text>{post.content}</Text>
+                    <Text fontSize="sm" color="gray.500">
+                      {new Date(post.created_at).toLocaleString()}
+                    </Text>
+                  </Box>
+                ))}
+              </Box>
+
+              {/* New Post Section */}
               <Box as="form" onSubmit={handleNewPostSubmit}>
                 <VStack spacing={4} align="stretch">
                   <Textarea

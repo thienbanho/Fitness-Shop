@@ -15,7 +15,6 @@ const ProductCard = ({ product }) => {
         h="auto"
         overflow="hidden"
         p={4}
-        border="solid"
     >
         {/* Product Image */}
         <Image width="252px" height="230px" src={product.image} />
