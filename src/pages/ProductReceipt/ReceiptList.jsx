@@ -54,6 +54,7 @@ const ReceiptList = () => {
             if (items.length === 0) return null; // No items found for the receipt
 
             // Determine if all items have the same status
+            const allCancelled = items.every((item) => item.status === "Cancel");
             const allDelivered = items.every((item) => item.status === "Delivered");
             const allSuccessful = items.every((item) => item.status === "Successful");
 
@@ -61,7 +62,9 @@ const ReceiptList = () => {
                 return "Delivered";
             } else if (allSuccessful) {
                 return "Successful";
-            }
+            } else if (allCancelled) {
+                return "Cancelled";
+            } else
 
             return "Pending"; // Default status if neither condition is met
         } catch (error) {

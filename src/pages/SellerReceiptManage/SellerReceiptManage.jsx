@@ -195,6 +195,7 @@ const SellerReceiptManage = () => {
                         updateItemStatus(item.item_id, e.target.value)
                       }
                     >
+                      <option value="Cancel">Cancel</option>
                       <option value="Pending">Pending</option>
                       <option value="Delivered">Delivered</option>
                       <option value="Successful">Successful</option>
