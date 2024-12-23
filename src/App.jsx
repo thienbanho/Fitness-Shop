@@ -56,9 +56,6 @@ const router = createBrowserRouter(
       {/* Protected Admin Route */}
       <Route element={<AdminRoute />}>
         <Route path="RoleManage" element={<RoleManage />} />
-        <Route path="UploadProduct" element={<UploadProduct />} />
-        <Route path="MyProducts" element={<MyProducts />} />
-        <Route path="SellerReceiptManage" element={<SellerReceiptManage />} />
       </Route>
         
       {/* Protected Vendor Route */}

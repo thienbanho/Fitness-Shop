@@ -1,22 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Input,
-  Textarea,
-  FormControl,
-  FormLabel,
-  Select,
-  VStack,
-  Heading,
-  Center,
-  useToast,
-  Image,
-  Flex,
-  IconButton,
-  Divider,
-  ScaleFade,
-} from "@chakra-ui/react";
+import {Box, Button, Input, Textarea, FormControl, FormLabel, Select, VStack, Heading, Center, useToast, Image, Flex, IconButton, Divider, ScaleFade} from "@chakra-ui/react";
 import { FiUpload } from "react-icons/fi";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +15,7 @@ const UploadProduct = () => {
     name: "",
     description: "",
     price: "",
+    stock: "",
     type: "",
   });
 
@@ -199,6 +183,11 @@ const UploadProduct = () => {
           p={8}
           borderRadius="md"
           boxShadow="lg"
+          transition="all 0.3s ease"
+          _hover={{
+            boxShadow: "xl",
+            transform: "translateY(-5px)",
+          }}
         >
           {/* Product Images */}
           <FormControl mb={6}>
@@ -215,6 +204,7 @@ const UploadProduct = () => {
               overflow="hidden"
               maxW="full"
               maxH="full"
+              transition="all 0.3s ease"
             >
               {imageUrl ? (
                 <Image
@@ -225,6 +215,8 @@ const UploadProduct = () => {
                   maxW="100%"
                   maxH="300px"
                   objectFit="contain"
+                  transition="all 0.3s ease"
+                  _hover={{ transform: "scale(1.05)" }}
                 />
               ) : (
                 <Box>
@@ -257,6 +249,8 @@ const UploadProduct = () => {
                 placeholder="Enter product name"
                 value={productData.name}
                 onChange={handleInputChange}
+                _hover={{ borderColor: "blue.400" }}
+                transition="all 0.3s ease"
               />
             </FormControl>
 
@@ -267,6 +261,8 @@ const UploadProduct = () => {
                 placeholder="Describe your product"
                 value={productData.description}
                 onChange={handleInputChange}
+                _hover={{ borderColor: "blue.400" }}
+                transition="all 0.3s ease"
               />
             </FormControl>
 
@@ -278,6 +274,21 @@ const UploadProduct = () => {
                 placeholder="0.00"
                 value={productData.price}
                 onChange={handleInputChange}
+                _hover={{ borderColor: "blue.400" }}
+                transition="all 0.3s ease"
+              />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>Stock Quantity</FormLabel>
+              <Input
+                name="stock"
+                type="number"
+                placeholder="0"
+                value={productData.stock}
+                onChange={handleInputChange}
+                _hover={{ borderColor: "blue.400" }}
+                transition="all 0.3s ease"
               />
             </FormControl>
 
@@ -288,6 +299,8 @@ const UploadProduct = () => {
                 placeholder="Select product type"
                 value={productData.type}
                 onChange={handleInputChange}
+                _hover={{ borderColor: "blue.400" }}
+                transition="all 0.3s ease"
               >
                 <option value="protein">Protein</option>
                 <option value="supplement">Supplement</option>
@@ -303,7 +316,13 @@ const UploadProduct = () => {
             colorScheme="red"
             width="100%"
             size="lg"
+            variant="solid"
             onClick={handleSubmit}
+            transition="all 0.3s ease"
+            _hover={{
+              transform: "translateY(-2px)",
+              boxShadow: "lg",
+            }}
           >
             Upload Product
           </Button>

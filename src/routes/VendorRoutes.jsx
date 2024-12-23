@@ -29,7 +29,7 @@ const VendorRoute = () => {
                     throw new Error("Error fetching user role.");
                 }
 
-                setIsVendor(data.role === "vendor");
+                setIsVendor(data.role === "vendor" || data.role === "admin");
             } catch (error) {
                 toast({
                     title: "Access Denied",

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { 
-  Box, Heading, Text, VStack, Image, Flex, Spinner, useToast, IconButton, Button 
-} from "@chakra-ui/react";
-import { ArrowBackIcon, DeleteIcon } from "@chakra-ui/icons";
+import { Box, Heading, Text, VStack, Image, Flex, Spinner, useToast, IconButton } from "@chakra-ui/react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../config/supabaseClient";
 import { useAuth } from "../../hooks/Auth"; // Assuming you have an Auth context or hook
@@ -43,38 +41,6 @@ const MyProducts = () => {
         isClosable: true,
       });
       return null;
-    }
-  };
-
-  const deleteProduct = async (productId) => {
-    try {
-      const { error } = await supabase
-        .from("products")
-        .delete()
-        .eq("product_id", productId); // Corrected to product_id
-
-      if (error) {
-        throw new Error(error.message);
-      }
-      console.log("Deleted product with ID:", productId);
-      // Remove the deleted product from the state
-      setProducts(products.filter((product) => product.product_id !== productId));
-
-      toast({
-        title: "Product deleted",
-        description: "The product has been deleted successfully.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: "Error deleting product",
-        description: error.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
     }
   };
 
@@ -156,7 +122,7 @@ const MyProducts = () => {
         <VStack spacing={8} align="start">
           {products.map((product) => (
             <Box
-              key={product.product_id} // Corrected to product_id
+              key={product.id}
               bg="white"
               p={6}
               borderRadius="md"
@@ -177,7 +143,7 @@ const MyProducts = () => {
                   mr={[0, 4]}
                   mb={[4, 0]}
                 />
-                <Box flex="1">
+                <Box>
                   <Heading fontSize="xl" color="gray.700">
                     {product.name}
                   </Heading>
@@ -187,15 +153,10 @@ const MyProducts = () => {
                   <Text mt={2} fontWeight="bold">
                     Price: ${product.price}
                   </Text>
+                  <Text mt={2} color="gray.600">
+                    Stock: {product.stock}
+                  </Text>
                 </Box>
-                <Button
-                  leftIcon={<DeleteIcon />}
-                  colorScheme="red"
-                  variant="outline"
-                  onClick={() => deleteProduct(product.product_id)} // Corrected to product_id
-                >
-                  Delete
-                </Button>
               </Flex>
             </Box>
           ))}

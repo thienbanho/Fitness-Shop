@@ -54,26 +54,9 @@ const SellerReceiptManage = () => {
     try {
       const { data, error } = await supabase
         .from("receipts")
-        .select(`
-          receipt_id,
-          total,
-          created_date,
-          status,
-          receipt_items(
-            item_id,
-            quantity,
-            price,
-            total,
-            status,
-            product_id,
-            products (
-              product_id,
-              name,
-              seller_id,
-              price
-            )
-          )
-        `)
+        .select(
+          "receipt_id, total, created_date, status, receipt_items (item_id, quantity, price, total, status, product_id, products (product_id, name, seller_id, price))"
+        )
         .eq("receipt_items.products.seller_id", userId);
 
       if (error) {
@@ -93,15 +76,43 @@ const SellerReceiptManage = () => {
     }
   };
 
-  const updateItemStatus = async (itemId, newStatus) => {
+  const updateItemStatus = async (itemId, newStatus, productId, quantity) => {
     try {
-      const { error } = await supabase
+      // Update the item status
+      const { error: updateError } = await supabase
         .from("receipt_items")
         .update({ status: newStatus })
         .eq("item_id", itemId);
 
-      if (error) {
-        throw new Error(error.message);
+      if (updateError) {
+        throw new Error(updateError.message);
+      }
+
+      // If the status is "Successful", update the product stock
+      if (newStatus === "Successful") {
+        // Get the current stock of the product
+        const { data: productData, error: stockError } = await supabase
+          .from("products")
+          .select("stock")
+          .eq("product_id", productId)
+          .single();
+
+        if (stockError) {
+          throw new Error(stockError.message);
+        }
+
+        const currentStock = productData?.stock || 0;
+        const newStock = currentStock - quantity;
+
+        // Update the stock with the new value
+        const { error: updateStockError } = await supabase
+          .from("products")
+          .update({ stock: newStock })
+          .eq("product_id", productId);
+
+        if (updateStockError) {
+          throw new Error(updateStockError.message);
+        }
       }
 
       toast({
@@ -112,6 +123,7 @@ const SellerReceiptManage = () => {
         isClosable: true,
       });
 
+      // Refetch the receipts
       const userId = await fetchUserId(user.email);
       const updatedReceipts = await fetchReceipts(userId);
       setReceipts(updatedReceipts);
@@ -181,9 +193,7 @@ const SellerReceiptManage = () => {
                   <Box key={item.item_id}>
                     <Text color="gray.600">
                       Product:{" "}
-                      {item.products?.name
-                        ? item.products.name
-                        : "Unknown Product"}{" "}
+                      {item.products?.name ? item.products.name : "Unknown Product"}{" "}
                       (Quantity: {item.quantity})
                     </Text>
                     <Text color="gray.600">Item Total: ${item.total}</Text>
@@ -192,8 +202,9 @@ const SellerReceiptManage = () => {
                       placeholder="Change status"
                       value={item.status}
                       onChange={(e) =>
-                        updateItemStatus(item.item_id, e.target.value)
+                        updateItemStatus(item.item_id, e.target.value, item.product_id, item.quantity)
                       }
+                      isDisabled={item.status === "Successful"} // Disable if status is "Successful"
                     >
                       <option value="Cancel">Cancel</option>
                       <option value="Pending">Pending</option>
