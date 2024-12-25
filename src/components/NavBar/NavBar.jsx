@@ -19,10 +19,54 @@ import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@ch
 import logo from '/src/assets/logo.png';
 import { AuthProvider, useAuth } from "../../hooks/Auth"; // Import useAuth hook
 import supabase from "../../config/supabaseClient";
+import { Children, useEffect, useState } from "react";
+const fetchUserRole = async (email) => {
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .select("role")
+      .eq("email", email)
+      .single();
+
+    if (error) {
+      toast({
+        title: "Error fetching user ID",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return null;
+    }
+
+    return data?.role;
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: error.message,
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+    return null;
+  }
+};
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
   const { user} = useAuth(); // Use the Auth hook to check user state
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    const getRole = async () => {
+      if (user && user.email) {
+        const userRole = await fetchUserRole(user.email);
+        setRole(userRole);
+      }
+    };
+    getRole();
+  }, [user]);
+
   const logout = async () => {
     try {
       const response = await supabase.auth.signOut();
@@ -33,6 +77,155 @@ export default function WithSubnavigation() {
     }
   };
   
+  const getNavItems = () => {
+    if (role === 'vendor') {
+      return [
+        {
+          label: "Product",
+          href: "Product"
+        },
+        {
+          label: "Personal Trainers",
+          href: "#"
+        },
+        {
+          label: "Forum",
+          href: "Forum",
+        },
+        {
+          label: "About",
+          href: "About",
+        },
+        {
+          label: "Vendor",
+          children: [
+            {
+              label: "Profile",
+              href: "Profile"
+            },
+            {
+              label: "Seller Receipt Management",
+              href: "SellerReceiptManage"
+            },
+            {
+              label: "Upload Product",
+              href: "UploadProduct"
+            },
+            {
+              label: "My Products",
+              href: "MyProducts"
+            }
+          ]
+        },
+        {
+          label: "Receipt List",
+          href: "ReceiptList"
+        }
+      ];
+    }
+
+    if (role === 'user') {
+      return [
+        {
+          label: "Product",
+          href: "Product"
+        },
+        {
+          label: "Personal Trainers",
+          href: "#"
+        },
+        {
+          label: "Forum",
+          href: "Forum",
+        },
+        {
+          label: "About",
+          href: "About",
+        },
+        {
+          label: "My Profile",
+          href: "Profile"
+        },
+        {
+          label: "Receipt List",
+          href: "ReceiptList"
+        }
+      ];
+    }
+
+    if (role === 'admin') {
+      return [
+        {
+          label: "Product",
+          href: "Product"
+        },
+        {
+          label: "Personal Trainers",
+          href: "#"
+        },
+        {
+          label: "Forum",
+          href: "Forum",
+        },
+        {
+          label: "About",
+          href: "About",
+        },
+        {
+          label: "Admin",
+          children: [
+            {
+              label: "Profile",
+              href: "Profile"
+            },
+            {
+              label: "Role Management",
+              href: "RoleManage"
+            },
+            {
+              label: "Seller Receipt Management",
+              href: "SellerReceiptManage"
+            },
+            {
+              label: "Upload Product",
+              href: "UploadProduct"
+            },
+            {
+              label: "My Products",
+              href: "MyProducts"
+            }
+          ]
+        },
+        {
+          label: "Receipt List",
+          href: "ReceiptList"
+        }
+      ];
+    }
+
+    if(role === null){
+      return [
+        {
+          label: "Product",
+          href: "Product"
+        },
+        {
+          label: "Personal Trainers",
+          href: "#"
+        },
+        {
+          label: "Forum",
+          href: "Forum",
+        },
+        {
+          label: "About",
+          href: "About",
+        },
+      ];
+    }
+    return [];
+  };
+
 
   return (
     <Box>
@@ -72,7 +265,7 @@ export default function WithSubnavigation() {
           </Text>
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
-            <DesktopNav />
+          <DesktopNav navItems={getNavItems()} />
           </Flex>
         </Flex>
 
@@ -125,22 +318,22 @@ export default function WithSubnavigation() {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav />
+      <MobileNav navItems={getNavItems()} />
       </Collapse>
     </Box>
   );
 }
 
-const DesktopNav = () => {
+const DesktopNav = ({ navItems }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
 
   return (
     <Stack direction={"row"} spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
+      {navItems.map((navItem) => (
         <Box key={navItem.label}>
-          <Popover trigger={"hover"} placement={"bottom-start"}>
+          <Popover trigger={"click"} placement={"bottom-start"}>
             <PopoverTrigger>
               <Box
                 as="a"
@@ -220,14 +413,14 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
   );
 };
 
-const MobileNav = () => {
+const MobileNav = ({ navItems }) => {
   return (
     <Stack
       bg={useColorModeValue("white", "gray.800")}
       p={4}
       display={{ md: "none" }}
     >
-      {NAV_ITEMS.map((navItem) => (
+      {navItems.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>
@@ -283,45 +476,3 @@ const MobileNavItem = ({ label, children, href }) => {
     </Stack>
   );
 };
-
-const NAV_ITEMS = [
-  {
-    label: "Product",
-    href: "Product",
-    children: [
-      {
-        label: "Shop Supplements",
-        subLabel: "Browse high-quality whey, vitamins, and more",
-        href: "DetailProduct",
-      },
-      {
-        label: "Sell Your Products",
-        subLabel: "List your fitness products for others to buy",
-        href: "UploadProduct",
-      },
-    ],
-  },
-  {
-    label: "Personal Trainers",
-    children: [
-      {
-        label: "Hire Personal Trainers",
-        subLabel: "Connect with experts for personalized training",
-        href: "#",
-      },
-      {
-        label: "Become a Trainer",
-        subLabel: "Join our platform as a certified trainer",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Forum",
-    href: "Forum",
-  },
-  {
-    label: "About",
-    href: "About",
-  },
-];
