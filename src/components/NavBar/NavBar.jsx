@@ -203,6 +203,27 @@ export default function WithSubnavigation() {
       ];
     }
 
+    if(role === 'Personal Trainer'){
+      return [
+        {
+          label: "Product",
+          href: "Product"
+        },
+        {
+          label: "Personal Trainers",
+          href: "PTRequestsManagement"
+        },
+        {
+          label: "Forum",
+          href: "Forum",
+        },
+        {
+          label: "About",
+          href: "About",
+        },
+      ];
+    }
+
     if(role === null){
       return [
         {
