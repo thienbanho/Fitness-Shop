@@ -12,6 +12,7 @@ import {
   ListItem,
   Flex,
   IconButton,
+  Input,
 } from '@chakra-ui/react';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +26,8 @@ export default function Forum() {
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState({ content: '' });
+  const [isAdmin, setIsAdmin] = useState(false); // State to track if the user is an admin
+  const [newTopic, setNewTopic] = useState(''); // State to store the new topic title
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -46,6 +49,9 @@ export default function Forum() {
           });
         } else if (userData.length) {
           setUser(userData[0]);
+          if (userData[0].role === 'admin') {
+            setIsAdmin(true);
+          }
         }
       };
       fetchUser();
@@ -154,6 +160,50 @@ export default function Forum() {
     }
   };
 
+  const handleAddTopic = async () => {
+    if (newTopic) {
+      const { data, error } = await supabase.from('forum_topics').insert({
+        title: newTopic,
+        created_at: new Date().toISOString(),
+      });
+  
+      if (error) {
+        toast({
+          title: 'Error adding topic.',
+          description: error.message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        if (Array.isArray(topics) && data !== null && data.length) {
+          console.log('New Topic Data:', data);
+          setTopics((prev) => [...prev, data[0]]);
+        } else {
+          console.error('Topics data is invalid:', topics);
+        }
+        setNewTopic('');
+        toast({
+          title: 'New Topic Added.',
+          description: 'The new topic has been successfully added.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } else {
+      toast({
+        title: 'Missing Title',
+        description: 'Please enter a title for the new topic.',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+  
+  
+
   return (
     <Box maxWidth="1200px" minHeight="500px" margin="auto" padding={6} bg="gray.100" borderRadius="md">
       <Flex justifyContent="space-between" alignItems="center" marginBottom={6}>
@@ -204,6 +254,24 @@ export default function Forum() {
               </ListItem>
             ))}
           </List>
+          {isAdmin && (
+            <>
+              <Input
+                value={newTopic}
+                onChange={(e) => setNewTopic(e.target.value)}
+                placeholder="Enter new topic title"
+                marginTop={4}
+                mb={2}
+              />
+              <Button
+                onClick={handleAddTopic}
+                colorScheme="blue"
+                width="full"
+              >
+                Add New Topic
+              </Button>
+            </>
+          )}
         </Box>
 
         <Box
@@ -216,7 +284,7 @@ export default function Forum() {
         >
           {selectedTopic ? (
             <VStack align="stretch" spacing={6}>
-              <Heading as="h2" size="lg" color="green">
+              <Heading as="h2" size="lg" color="blue.500">
                 {selectedTopic.title}
               </Heading>
 
