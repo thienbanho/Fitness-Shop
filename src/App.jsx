@@ -24,7 +24,7 @@ import ReceiptConfirm from "./pages/ProductReceipt/ReceiptConfirm";
 import ReceiptList from "./pages/ProductReceipt/ReceiptList";
 import MyProducts from "./pages/UploadProduct/MyProduct";
 import SellerReceiptManage from "./pages/SellerReceiptManage/SellerReceiptManage";
-
+import PTList from "./pages/PT/PTList";
 // Import the Routes component
 import AdminRoute from "./routes/AdminRoutes";
 import VendorRoute from "./routes/VendorRoutes";
@@ -48,7 +48,7 @@ const router = createBrowserRouter(
       <Route path="Product" element={<Product />} />
       <Route path="ReceiptForm" element={<ReceiptForm />} />
       <Route path="ReceiptConfirm" element={<ReceiptConfirm />} />
-
+      <Route path="PTList" element={<PTList />} />
       {/* Protected Login Route */}
       <Route element={<LoginRoute />}>
         <Route path="ReceiptList" element={<ReceiptList />} />
