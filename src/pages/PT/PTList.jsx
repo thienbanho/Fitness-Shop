@@ -38,13 +38,13 @@ export default function PTList() {
                 const { data, error } = await supabase
                     .from('personal_trainers')
                     .select(`
-          user_id,
-          introduction,
-          specialization,
-          price_start,
-          price_end,
-          users: user_id (username, full_name)
-        `);
+                        user_id,
+                        introduction,
+                        specialization,
+                        price_start,
+                        price_end,
+                        users: user_id (username, full_name)
+                    `);
 
                 if (error) {
                     console.error('Error fetching personal trainers:', error);
