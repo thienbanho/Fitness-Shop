@@ -86,7 +86,7 @@ export default function WithSubnavigation() {
         },
         {
           label: "Personal Trainers",
-          href: "#"
+          href: "PTList"
         },
         {
           label: "Forum",
@@ -132,7 +132,7 @@ export default function WithSubnavigation() {
         },
         {
           label: "Personal Trainers",
-          href: "#"
+          href: "PTList"
         },
         {
           label: "Forum",
@@ -161,7 +161,7 @@ export default function WithSubnavigation() {
         },
         {
           label: "Personal Trainers",
-          href: "#"
+          href: "PTList"
         },
         {
           label: "Forum",
@@ -211,7 +211,7 @@ export default function WithSubnavigation() {
         },
         {
           label: "Personal Trainers",
-          href: "#"
+          href: "PTList"
         },
         {
           label: "Forum",
