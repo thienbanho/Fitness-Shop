@@ -14,20 +14,21 @@ import {
   IconButton,
   Input,
 } from '@chakra-ui/react';
-import { ArrowBackIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon, DeleteIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../config/supabaseClient';
 import { useAuth } from '../../hooks/Auth';
 
 export default function Forum() {
-  const { user } = useAuth(); // Use the Auth hook to check user state
+  const { user } = useAuth();
   const [topics, setTopics] = useState([]);
   const [user_public, setUser] = useState(null);
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState({ content: '' });
-  const [isAdmin, setIsAdmin] = useState(false); // State to track if the user is an admin
-  const [newTopic, setNewTopic] = useState(''); // State to store the new topic title
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [newTopic, setNewTopic] = useState('');
+  const [hoveredTopic, setHoveredTopic] = useState(null); // Track the hovered topic
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -200,9 +201,31 @@ export default function Forum() {
         isClosable: true,
       });
     }
+    window.location.reload();
   };
-  
-  
+
+  const handleDeleteTopic = async (topic_id) => {
+    const { data, error } = await supabase.from('forum_topics').delete().eq('topic_id', topic_id);
+
+    if (error) {
+      toast({
+        title: 'Error deleting topic.',
+        description: error.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      setTopics((prev) => prev.filter((topic) => topic.topic_id !== topic_id));
+      toast({
+        title: 'Topic Deleted.',
+        description: 'The topic has been deleted successfully.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <Box maxWidth="1200px" minHeight="500px" margin="auto" padding={6} bg="gray.100" borderRadius="md">
@@ -240,17 +263,31 @@ export default function Forum() {
           </Heading>
           <List spacing={3}>
             {topics.map((topic) => (
-              <ListItem key={topic.topic_id}>
-                <Button
-                  onClick={() => handleTopicSelect(topic)}
-                  variant="ghost"
-                  justifyContent="flex-start"
-                  width="100%"
-                  textAlign="left"
-                  _hover={{ color: 'green.500' }}
-                >
-                  {topic.title}
-                </Button>
+              <ListItem
+                key={topic.topic_id}
+                onMouseEnter={() => setHoveredTopic(topic.topic_id)}
+                onMouseLeave={() => setHoveredTopic(null)}
+              >
+                <Flex justifyContent="space-between" alignItems="center">
+                  <Button
+                    onClick={() => handleTopicSelect(topic)}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    width="90%"
+                    textAlign="left"
+                    _hover={{ color: 'green.500' }}
+                  >
+                    {topic.title}
+                  </Button>
+                  {isAdmin && hoveredTopic === topic.topic_id && (
+                    <IconButton
+                      icon={<DeleteIcon />}
+                      aria-label="Delete Topic"
+                      colorScheme="red"
+                      onClick={() => handleDeleteTopic(topic.topic_id)}
+                    />
+                  )}
+                </Flex>
               </ListItem>
             ))}
           </List>
