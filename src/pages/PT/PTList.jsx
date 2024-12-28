@@ -5,7 +5,7 @@ import { useAuth } from "../../hooks/Auth"; // Import useAuth hook
 
 export default function PTList() {
     const toast = useToast();
-    const { user, setUser } = useAuth();
+    const { user } = useAuth();
     const [trainers, setTrainers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeForm, setActiveForm] = useState(null);
@@ -31,8 +31,8 @@ export default function PTList() {
                     return;
                 }
                 setFormData({
-                    id : data[0].user_id || ""
-                  })
+                    id: data[0].user_id || ""
+                })
             };
             const fetchPTs = async () => {
                 const { data, error } = await supabase
@@ -59,8 +59,46 @@ export default function PTList() {
         }
     }, [user, toast]);
 
-    const handleRequestClick = (trainerId) => {
-        setActiveForm(trainerId);
+    const checkContractExists = async (trainerId) => {
+        const { data: contractData, error: contractError } = await supabase
+            .from('pt_contracts')
+            .select('*')
+            .eq('customer_id', formData.id)
+            .eq('trainer_id', trainerId);
+    
+        const { data: requestData, error: requestError } = await supabase
+            .from('pt_requests')
+            .select('*')
+            .eq('customer_id', formData.id)
+            .eq('trainer_id', trainerId);
+    
+        if (contractError || requestError) {
+            console.error('Error checking contract or request:', contractError || requestError);
+            return false;
+        }
+    
+        console.log("Contract Data:", contractData);
+        console.log("Request Data:", requestData);
+    
+        // Nếu có hợp đồng hoặc yêu cầu, trả về true
+        return contractData.length > 0 || requestData.length > 0; // Nếu đã có hợp đồng hoặc yêu cầu thì trả về true
+    };
+    
+
+    const handleRequestClick = async (trainerId) => {
+        const contractExists = await checkContractExists(trainerId);
+
+        if (contractExists) {
+            toast({
+                title: 'Contract Exists',
+                description: 'You already have a contract/request with this trainer.',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+        } else {
+            setActiveForm(trainerId);
+        }
     };
 
     const handleInputChange = (e) => {
@@ -70,7 +108,8 @@ export default function PTList() {
 
     const handleSubmitRequest = async (e, trainerId) => {
         e.preventDefault();
-        console.log("Toi dang test", formData);
+        console.log("Submitting request:", formData);
+
         const { error } = await supabase
             .from('pt_requests')
             .insert({
@@ -80,10 +119,24 @@ export default function PTList() {
                 goal: formData.goal,
                 current_condition: formData.current_condition
             });
+
         if (error) {
             console.error('Error submitting request:', error);
+            toast({
+                title: 'Error',
+                description: 'There was an error submitting your request.',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
         } else {
-            alert('Request submitted successfully!');
+            toast({
+                title: 'Request Submitted',
+                description: 'Your request has been successfully submitted.',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
             setActiveForm(null);
         }
     };
