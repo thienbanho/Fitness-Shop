@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Image,
   Box,
@@ -16,10 +17,11 @@ import {
   PopoverContent,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { FaShoppingCart, FaUser, FaReceipt } from "react-icons/fa";
 import logo from '/src/assets/logo.png';
-import { AuthProvider, useAuth } from "../../hooks/Auth"; // Import useAuth hook
+import { useAuth } from "../../hooks/Auth";
 import supabase from "../../config/supabaseClient";
-import { Children, useEffect, useState } from "react";
+
 const fetchUserRole = async (email) => {
   try {
     const { data, error } = await supabase
@@ -29,32 +31,20 @@ const fetchUserRole = async (email) => {
       .single();
 
     if (error) {
-      toast({
-        title: "Error fetching user ID",
-        description: error.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      console.error("Error fetching user role:", error);
       return null;
     }
 
     return data?.role;
   } catch (error) {
-    toast({
-      title: "Error",
-      description: error.message,
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
+    console.error("Error:", error);
     return null;
   }
 };
 
-export default function WithSubnavigation() {
+export default function NavBar() {
   const { isOpen, onToggle } = useDisclosure();
-  const { user} = useAuth(); // Use the Auth hook to check user state
+  const { user } = useAuth();
   const [role, setRole] = useState(null);
 
   useEffect(() => {
@@ -67,16 +57,6 @@ export default function WithSubnavigation() {
     getRole();
   }, [user]);
 
-  const logout = async () => {
-    try {
-      const response = await supabase.auth.signOut();
-      console.log(response); // Check for any errors
-      setUser(null); // Ensure the user state is cleared
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
-  
   const getNavItems = () => {
     if (role === 'vendor') {
       return [
@@ -117,10 +97,6 @@ export default function WithSubnavigation() {
             }
           ]
         },
-        {
-          label: "Receipt List",
-          href: "ReceiptList"
-        }
       ];
     }
 
@@ -146,10 +122,6 @@ export default function WithSubnavigation() {
           label: "My Profile",
           href: "Profile"
         },
-        {
-          label: "Receipt List",
-          href: "ReceiptList"
-        }
       ];
     }
 
@@ -196,10 +168,6 @@ export default function WithSubnavigation() {
             }
           ]
         },
-        {
-          label: "Receipt List",
-          href: "ReceiptList"
-        }
       ];
     }
 
@@ -247,11 +215,10 @@ export default function WithSubnavigation() {
     return [];
   };
 
-
   return (
     <Box>
       <Flex
-        bg={useColorModeValue("white", "black.800")}
+        bg={useColorModeValue("white", "gray.800")}
         color={useColorModeValue("gray.600", "white")}
         minH={"80px"}
         py={{ base: 2 }}
@@ -286,7 +253,7 @@ export default function WithSubnavigation() {
           </Text>
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
-          <DesktopNav navItems={getNavItems()} />
+            <DesktopNav navItems={getNavItems()} />
           </Flex>
         </Flex>
 
@@ -318,28 +285,34 @@ export default function WithSubnavigation() {
             </>
           ) : (
             <>
-              <Text fontWeight={600} color={useColorModeValue("gray.600", "gray.200")}>
-                Welcome, {user.email} {/* Assuming user.name holds the name */}
-              </Text>
-              <Button
-                fontSize={"sm"}
-                fontWeight={600}
-                color={"white"}
-                bg={"red.600"}
-                onClick={logout}
-                _hover={{
-                  bg: "pink.300",
-                }}
-              >
-                Logout
-              </Button>
+              <IconButton
+                as="a"
+                href="/cart"
+                aria-label="Shopping Cart"
+                icon={<FaShoppingCart />}
+                variant="ghost"
+              />
+              <IconButton
+                as="a"
+                href="/ReceiptList"
+                aria-label="Receipt List"
+                icon={<FaReceipt />}
+                variant="ghost"
+              />
+              <IconButton
+                as="a"
+                href="/profile"
+                aria-label="User Profile"
+                icon={<FaUser />}
+                variant="ghost"
+              />
             </>
           )}
         </Stack>
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-      <MobileNav navItems={getNavItems()} />
+        <MobileNav navItems={getNavItems()} />
       </Collapse>
     </Box>
   );
@@ -351,45 +324,55 @@ const DesktopNav = ({ navItems }) => {
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
 
   return (
-    <Stack direction={"row"} spacing={4}>
+    <Stack direction={"row"} spacing={4} align="center">
       {navItems.map((navItem) => (
-        <Box key={navItem.label}>
-          <Popover trigger={"click"} placement={"bottom-start"}>
-            <PopoverTrigger>
-              <Box
-                as="a"
-                p={3}
-                display="flex"
-                href={navItem.href ?? "#"}
-                fontSize={"m"}
-                fontWeight={500}
-                color={linkColor}
-                _hover={{
-                  textDecoration: "none",
-                  color: linkHoverColor,
-                }}
-              >
-                {navItem.label}
-              </Box>
-            </PopoverTrigger>
+        <Box key={navItem.label || navItem.href}>
+          {navItem.icon ? (
+            <IconButton
+              as="a"
+              href={navItem.href}
+              aria-label={navItem.ariaLabel}
+              icon={<Icon as={navItem.icon} />}
+              variant="ghost"
+            />
+          ) : (
+            <Popover trigger={"click"} placement={"bottom-start"}>
+              <PopoverTrigger>
+                <Box
+                  as="a"
+                  p={3}
+                  display="flex"
+                  href={navItem.href ?? "#"}
+                  fontSize={"m"}
+                  fontWeight={500}
+                  color={linkColor}
+                  _hover={{
+                    textDecoration: "none",
+                    color: linkHoverColor,
+                  }}
+                >
+                  {navItem.label}
+                </Box>
+              </PopoverTrigger>
 
-            {navItem.children && (
-              <PopoverContent
-                border={0}
-                boxShadow={"xl"}
-                bg={popoverContentBgColor}
-                p={4}
-                rounded={"xl"}
-                minW={"sm"}
-              >
-                <Stack>
-                  {navItem.children.map((child) => (
-                    <DesktopSubNav key={child.label} {...child} />
-                  ))}
-                </Stack>
-              </PopoverContent>
-            )}
-          </Popover>
+              {navItem.children && (
+                <PopoverContent
+                  border={0}
+                  boxShadow={"xl"}
+                  bg={popoverContentBgColor}
+                  p={4}
+                  rounded={"xl"}
+                  minW={"sm"}
+                >
+                  <Stack>
+                    {navItem.children.map((child) => (
+                      <DesktopSubNav key={child.label} {...child} />
+                    ))}
+                  </Stack>
+                </PopoverContent>
+              )}
+            </Popover>
+          )}
         </Box>
       ))}
     </Stack>
@@ -442,7 +425,21 @@ const MobileNav = ({ navItems }) => {
       display={{ md: "none" }}
     >
       {navItems.map((navItem) => (
-        <MobileNavItem key={navItem.label} {...navItem} />
+        navItem.icon ? (
+          <Box key={navItem.href} py={2}>
+            <IconButton
+              as="a"
+              href={navItem.href}
+              aria-label={navItem.ariaLabel}
+              icon={<Icon as={navItem.icon} />}
+              variant="ghost"
+              width="full"
+              justifyContent="flex-start"
+            />
+          </Box>
+        ) : (
+          <MobileNavItem key={navItem.label} {...navItem} />
+        )
       ))}
     </Stack>
   );
@@ -497,3 +494,4 @@ const MobileNavItem = ({ label, children, href }) => {
     </Stack>
   );
 };
+

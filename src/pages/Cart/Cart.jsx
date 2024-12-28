@@ -203,7 +203,7 @@ export default function Cart() {
   };
 
   return (
-    <Container maxW="container.lg" py={8}>
+    <Container maxW="container.lg" py={8} minHeight="100vh">
       <VStack spacing={6} align="stretch">
         <Heading size="lg">Your Cart</Heading>
 
