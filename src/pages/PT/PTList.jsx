@@ -1,7 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Input, List, ListItem, Spinner, Text, VStack, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Spinner,
+  Text,
+  VStack,
+  useToast,
+  Container,
+  Heading,
+  SimpleGrid,
+  Avatar,
+  Badge,
+  Flex,
+  Divider,
+  useColorModeValue,
+  Collapse,
+  Icon,
+  Textarea,
+} from '@chakra-ui/react';
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import supabase from "../../config/supabaseClient";
-import { useAuth } from "../../hooks/Auth"; // Import useAuth hook
+import { useAuth } from "../../hooks/Auth";
 
 export default function PTList() {
     const toast = useToast();
@@ -10,7 +32,7 @@ export default function PTList() {
     const [loading, setLoading] = useState(true);
     const [activeForm, setActiveForm] = useState(null);
     const [formData, setFormData] = useState({
-        id: 'asd',
+        id: '',
         wanted_time: '',
         goal: '',
         current_condition: '',
@@ -27,12 +49,19 @@ export default function PTList() {
 
                 if (error) {
                     console.error("Error fetching data:", error);
-                    alert("An error occurred while fetching user data.");
+                    toast({
+                        title: "Error",
+                        description: "An error occurred while fetching user data.",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                    });
                     return;
                 }
-                setFormData({
+                setFormData(prevState => ({
+                    ...prevState,
                     id: data[0].user_id || ""
-                })
+                }));
             };
             const fetchPTs = async () => {
                 const { data, error } = await supabase
@@ -48,6 +77,13 @@ export default function PTList() {
 
                 if (error) {
                     console.error('Error fetching personal trainers:', error);
+                    toast({
+                        title: "Error",
+                        description: "Failed to load personal trainers.",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                    });
                 } else {
                     setTrainers(data);
                 }
@@ -80,10 +116,8 @@ export default function PTList() {
         console.log("Contract Data:", contractData);
         console.log("Request Data:", requestData);
     
-        // Nếu có hợp đồng hoặc yêu cầu, trả về true
-        return contractData.length > 0 || requestData.length > 0; // Nếu đã có hợp đồng hoặc yêu cầu thì trả về true
+        return contractData.length > 0 || requestData.length > 0;
     };
-    
 
     const handleRequestClick = async (trainerId) => {
         const contractExists = await checkContractExists(trainerId);
@@ -141,61 +175,105 @@ export default function PTList() {
         }
     };
 
+    const bgColor = useColorModeValue("white", "gray.700");
+    const borderColor = useColorModeValue("gray.200", "gray.600");
+
     return (
-        <Box p={4}>
-            <Text fontSize="2xl" mb={4}>Personal Trainers List</Text>
+        <Container maxW="container.xl" py={8}>
+            <Heading as="h1" size="2xl" mb={8} textAlign="center">
+                Personal Trainers
+            </Heading>
             {loading ? (
-                <Spinner size="xl" />
+                <Flex justify="center" align="center" minH="50vh">
+                    <Spinner size="xl" />
+                </Flex>
             ) : (
-                <List spacing={4}>
+                <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
                     {trainers.map((trainer) => (
-                        <ListItem key={trainer.user_id} p={4} borderWidth="1px" borderRadius="md">
-                            <Text><strong>Username:</strong> {trainer.users.username}</Text>
-                            <Text><strong>Full Name:</strong> {trainer.users.full_name}</Text>
-                            <Text><strong>Introduction:</strong> {trainer.introduction}</Text>
-                            <Text><strong>Specialization:</strong> {trainer.specialization}</Text>
-                            <Text><strong>Price Range:</strong> ${trainer.price_start} - ${trainer.price_end}</Text>
-                            <Button mt={2} colorScheme="teal" onClick={() => handleRequestClick(trainer.user_id)}>
-                                Request
-                            </Button>
-                            {activeForm === trainer.user_id && (
-                                <Box mt={4} p={4} borderWidth="1px" borderRadius="md" shadow="md">
-                                    <Text fontSize="lg" mb={4}>Submit Your Request</Text>
+                        <Box
+                            key={trainer.user_id}
+                            borderWidth="1px"
+                            borderRadius="lg"
+                            overflow="hidden"
+                            boxShadow="lg"
+                            bg={bgColor}
+                            borderColor={borderColor}
+                        >
+                            <Box p={6}>
+                                <Flex align="center" mb={4}>
+                                    <Avatar size="xl" name={trainer.users.full_name} mr={4} />
+                                    <Box>
+                                        <Heading as="h3" size="lg">
+                                            {trainer.users.full_name}
+                                        </Heading>
+                                        <Text color="gray.500" fontSize="md">@{trainer.users.username}</Text>
+                                    </Box>
+                                </Flex>
+                                <Text fontSize="md" mb={4}>
+                                    {trainer.introduction}
+                                </Text>
+                                <Divider my={4} />
+                                <SimpleGrid columns={2} spacing={4} mb={4}>
+                                    <Box>
+                                        <Text fontWeight="bold">Specialization</Text>
+                                        <Badge colorScheme="teal" fontSize="md">{trainer.specialization}</Badge>
+                                    </Box>
+                                    <Box>
+                                        <Text fontWeight="bold">Price Range</Text>
+                                        <Text fontSize="md">${trainer.price_start} - ${trainer.price_end}</Text>
+                                    </Box>
+                                </SimpleGrid>
+                                <Button
+                                    colorScheme="blue"
+                                    width="full"
+                                    onClick={() => handleRequestClick(trainer.user_id)}
+                                >
+                                    Request Training
+                                </Button>
+                            </Box>
+                            <Collapse in={activeForm === trainer.user_id} animateOpacity>
+                                <Box p={6} borderTopWidth="1px" borderColor={borderColor}>
+                                    <Heading as="h4" size="md" mb={4}>
+                                        Submit Your Request
+                                    </Heading>
                                     <form onSubmit={(e) => handleSubmitRequest(e, trainer.user_id)}>
                                         <VStack spacing={4}>
                                             <FormControl isRequired>
-                                                <FormLabel>Wanted Time</FormLabel>
+                                                <FormLabel>Preferred Time</FormLabel>
                                                 <Input
                                                     type="text"
                                                     name="wanted_time"
                                                     value={formData.wanted_time}
                                                     onChange={handleInputChange}
+                                                    placeholder="e.g. Weekdays after 6PM"
                                                 />
                                             </FormControl>
                                             <FormControl isRequired>
-                                                <FormLabel>Goal</FormLabel>
-                                                <Input
-                                                    type="text"
+                                                <FormLabel>Your Goal</FormLabel>
+                                                <Textarea
                                                     name="goal"
                                                     value={formData.goal}
                                                     onChange={handleInputChange}
+                                                    placeholder="Describe your fitness goals"
+                                                    rows={3}
                                                 />
                                             </FormControl>
                                             <FormControl isRequired>
                                                 <FormLabel>Current Condition</FormLabel>
-                                                <Input
-                                                    type="text"
+                                                <Textarea
                                                     name="current_condition"
                                                     value={formData.current_condition}
                                                     onChange={handleInputChange}
+                                                    placeholder="Describe your current fitness level and any health conditions"
+                                                    rows={3}
                                                 />
                                             </FormControl>
-                                            <Button type="submit" colorScheme="teal" width="full">
-                                                Submit
+                                            <Button type="submit" colorScheme="blue" width="full">
+                                                Submit Request
                                             </Button>
                                             <Button
                                                 type="button"
-                                                colorScheme="red"
+                                                variant="outline"
                                                 width="full"
                                                 onClick={() => setActiveForm(null)}
                                             >
@@ -204,12 +282,12 @@ export default function PTList() {
                                         </VStack>
                                     </form>
                                 </Box>
-                            )}
-                        </ListItem>
+                            </Collapse>
+                        </Box>
                     ))}
-                </List>
+                </SimpleGrid>
             )}
-        </Box>
+        </Container>
     );
-};
+}
 
