@@ -1,10 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, VStack, Link, Divider, Button, Text, Avatar } from "@chakra-ui/react";
 import { NavLink, useLocation } from "react-router-dom";
-
+import supabase from '../../config/supabaseClient';
+import { useAuth } from "../../hooks/Auth"; // Import useAuth hook
 
 const Sidebar = ({ userData, onLogout }) => {
   const location = useLocation();
+  const { user, setUser } = useAuth();
+
+  const [userRole, setUserRole] = useState();
+
+  useEffect(() => {
+    if (user) {
+      console.log("Current user:", user);
+      const isEligible = async () => {
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("email", user.email);
+
+        if (error) {
+          console.error("Error fetching data:", error);
+          alert("An error occurred while fetching user data.");
+          return;
+        }
+        setUserRole(data[0].role);
+      }
+      isEligible();
+    }
+  }, [user]);
+  console.log("role:", userRole);
 
   const linkStyles = (path) => ({
     fontWeight: location.pathname === path ? "bold" : "medium",
@@ -33,9 +58,15 @@ const Sidebar = ({ userData, onLogout }) => {
           <NavLink to="/profile/orders" style={linkStyles("/profile/orders")}>
             List of Orders
           </NavLink>
-          <NavLink to="/profile/PTRegistration" style={linkStyles("/profile/PTRegistration")}>
-            PT Registration
-          </NavLink>
+          {userRole === "pt" || userRole === "admin" ? (
+            <NavLink to="/PTContracts" style={linkStyles("/PTContracts")}>
+              Your Contracts
+            </NavLink>
+          ) : (
+            <NavLink to="/profile/PTRegistration" style={linkStyles("/profile/PTRegistration")}>
+              PT Registration
+            </NavLink>
+          )}
           <NavLink to="/profile/coupon-wallet" style={linkStyles("/profile/coupon-wallet")}>
             Coupon Wallet
           </NavLink>
