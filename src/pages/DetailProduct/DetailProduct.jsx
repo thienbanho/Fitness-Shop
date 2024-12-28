@@ -22,8 +22,11 @@ import {
 } from '@chakra-ui/react';
 import supabase from "../../config/supabaseClient";
 import Reviews from "../../components/Review/Review";
+import { useAuth } from "../../hooks/Auth";
+
 
 export default function ProductDetail() {
+  const { user } = useAuth(); // Get current user from Auth context
   const [searchParams] = useSearchParams();
   const [productData, setProductData] = useState(null);
   const [error, setError] = useState(null);
@@ -82,6 +85,12 @@ export default function ProductDetail() {
     // Navigate to the ReceiptForm with the product_id and quantity as query parameters
     navigate(`/ReceiptForm?product_id=${productId}&quantity=${quantity}`);
   };
+
+  const handleAddToCart = () => {
+    // Navigate to the ReceiptForm with the product_id and quantity as query parameters
+    navigate(`/CartForm?product_id=${productId}&quantity=${quantity}`);
+  };
+  
 
   return (
     <Container maxW="1200px" py={8}>
@@ -169,6 +178,7 @@ export default function ProductDetail() {
                 colorScheme="blue"
                 size="lg"
                 flex="1"
+                onClick={handleAddToCart}
                 isDisabled={isOutOfStock}
               >
                 Add to Cart
@@ -178,7 +188,7 @@ export default function ProductDetail() {
                 size="lg"
                 flex="1"
                 isDisabled={isOutOfStock}
-                onClick={handleBuyNow} // Handle Buy Now click
+                onClick={handleBuyNow}
               >
                 Buy Now
               </Button>

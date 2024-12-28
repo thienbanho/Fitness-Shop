@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
     Box,
     VStack,
+    HStack,
     Input,
     Image,
     Text,
@@ -10,15 +11,20 @@ import {
     FormControl,
     FormLabel,
     useToast,
+    Container,
+    Divider,
+    SimpleGrid,
+    Badge,
+    Skeleton,
 } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/Auth";
 import supabase from "../../config/supabaseClient";
 
 const ReceiptForm = () => {
-    const { user } = useAuth(); // Get current user from Auth context
-    const [product, setProduct] = useState(null);
-    const [quantity, setQuantity] = useState(1);
+    const { user } = useAuth();
+    const [products, setProducts] = useState([]);
+    const [quantity, setQuantity] = useState([]);
     const [fullName, setFullName] = useState("");
     const [address, setAddress] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
@@ -26,26 +32,34 @@ const ReceiptForm = () => {
     const toast = useToast();
 
     const location = useLocation();
-    const params = new URLSearchParams(location.search);
-    const productId = params.get("product_id");
-    const productQuantity = params.get("quantity");
+    const queryParams = new URLSearchParams(location.search);
 
-    const navigate = useNavigate(); // Hook to navigate to another page
+    const items = [];
+    for (const [key, value] of queryParams.entries()) {
+        if (key === "product_id") {
+            items.push({ product_id: parseInt(value), quantity: 0 });
+        } else if (key === "quantity") {
+            items[items.length - 1].quantity = parseInt(value);
+        }
+    }
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (user && user.email) {
             console.log('User email:', user.email);
 
-            const fetchProduct = async () => {
-                if (productId) {
+            const fetchProducts = async () => {
+                const productIds = items.map(item => item.product_id);
+                
+                if (productIds.length > 0) {
                     const { data, error } = await supabase
                         .from('products')
                         .select('product_id, name, price, image, description')
-                        .eq('product_id', productId)
-                        .single();
+                        .in('product_id', productIds);
 
                     if (error) {
-                        console.error('Error fetching product:', error);
+                        console.error('Error fetching products:', error);
                         toast({
                             title: "Error",
                             description: "Failed to load product details. Please try again.",
@@ -54,18 +68,21 @@ const ReceiptForm = () => {
                             isClosable: true,
                         });
                     } else {
-                        setProduct(data);
-                        setQuantity(productQuantity);
-                        setTotalPrice(data.price * productQuantity);
+                        setProducts(data);
+                        setQuantity(items.map(item => item.quantity));
+                        const total = data.reduce((acc, product, index) => {
+                            return acc + product.price * items[index].quantity;
+                        }, 0);
+                        setTotalPrice(total);
                     }
                 }
             };
 
-            fetchProduct();
+            fetchProducts();
         } else {
             console.error("User is not authenticated.");
         }
-    }, [user, productId, productQuantity]);
+    }, [user, items]);
 
     const fetchUserId = async (email) => {
         const { data, error } = await supabase
@@ -89,16 +106,20 @@ const ReceiptForm = () => {
 
     if (!user) {
         return (
-            <div>
-                <h1>Please sign in to access this page</h1>
-            </div>
+            <Container maxW="lg" centerContent>
+                <Box textAlign="center" py={10} px={6}>
+                    <Heading as="h2" size="xl">
+                        Please sign in to access this page
+                    </Heading>
+                    <Text mt={4}>You need to be logged in to view and submit orders.</Text>
+                </Box>
+            </Container>
         );
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Ensure all required fields are filled
         if (!fullName || !address || !phoneNumber) {
             toast({
                 title: "Missing Information",
@@ -111,23 +132,21 @@ const ReceiptForm = () => {
         }
 
         try {
-            // Get user ID from email (using user.email)
             const userId = await fetchUserId(user.email);
             if (!userId) {
-                return; // User ID not found, stop the submission
+                return;
             }
 
-            // Insert receipt data into 'receipts' table
             const { data: receiptData, error: receiptError } = await supabase
                 .from('receipts')
                 .insert([{
-                    user_id: userId, // Use userId fetched from users table
+                    user_id: userId,
                     total: totalPrice,
                     status: 'pending',
-                    payment_method: 'cash on delivery', // You can make this dynamic if needed
+                    payment_method: 'cash on delivery',
                     shipping_address: address,
                 }])
-                .select() // Ensure the inserted data is returned
+                .select()
                 .single();
             
             console.log('Receipt data:', receiptData);
@@ -137,28 +156,27 @@ const ReceiptForm = () => {
 
             console.log('Receipt data inserted:', receiptData);
 
-            // Check if receiptData contains the correct receipt_id
             if (!receiptData || !receiptData.receipt_id) {
                 throw new Error("Receipt ID is missing after insertion.");
             }
 
-            // Insert receipt item(s) into 'receipt_items' table
+            const itemsToInsert = products.map((product, index) => ({
+                receipt_id: receiptData.receipt_id,
+                product_id: product.product_id,
+                quantity: quantity[index],
+                price: product.price,
+                total: product.price * quantity[index],
+                status : 'pending',
+            }));
+
             const { error: itemsError } = await supabase
                 .from('receipt_items')
-                .insert([{
-                    receipt_id: receiptData.receipt_id, // Ensure receipt_id is correctly passed
-                    product_id: product.product_id,
-                    quantity: quantity,
-                    price: product.price,
-                    total: totalPrice,
-                    status : 'pending',
-                }]);
+                .insert(itemsToInsert);
 
             if (itemsError) {
                 throw new Error(itemsError.message);
             }
 
-            // Show success toast
             toast({
                 title: "Order Submitted",
                 description: "Your order has been successfully submitted.",
@@ -167,10 +185,8 @@ const ReceiptForm = () => {
                 isClosable: true,
             });
 
-            // Redirect to the ReceiptConfirm page with the receipt_id as a query parameter
             navigate(`/ReceiptConfirm?receipt_id=${receiptData.receipt_id}`);
 
-            // Optionally, reset form fields or perform other actions
             setFullName("");
             setAddress("");
             setPhoneNumber("");
@@ -186,69 +202,112 @@ const ReceiptForm = () => {
         }
     };
 
-    if (!product) {
-        return <Text>Loading product information...</Text>;
+    if (products.length === 0) {
+        return (
+            <Container maxW="lg" centerContent>
+                <VStack spacing={4} align="stretch" w="full">
+                    <Skeleton height="60px" />
+                    <Skeleton height="200px" />
+                    <Skeleton height="40px" />
+                    <Skeleton height="40px" />
+                    <Skeleton height="40px" />
+                </VStack>
+            </Container>
+        );
     }
 
     return (
-        <Box maxW="lg" mx="auto" mt={10} p={5} borderWidth={1} borderRadius="md">
-            <Heading as="h2" size="lg" mb={4}>Product Receipt</Heading>
-            <VStack spacing={6} align="stretch">
-                <Box>
-                    <Heading as="h3" size="md">{product.name}</Heading>
-                    <Image src={product.image} alt={product.name} mb={4} borderRadius="md" />
-                    <Text>{product.description}</Text>
-                    <Text mt={2}>
-                        <strong>Quantity:</strong> {quantity}
-                    </Text>
-                    <Text mt={2} fontSize="xl" color="green.500">
-                        Total: {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(totalPrice)}
-                    </Text>
-                </Box>
-                <Box as="form" onSubmit={handleSubmit}>
-                    <FormControl id="fullName" isRequired>
-                        <FormLabel>Full Name</FormLabel>
-                        <Input
-                            type="text"
-                            value={fullName}
-                            onChange={(e) => setFullName(e.target.value)}
-                            placeholder="Enter your full name"
-                        />
-                    </FormControl>
-
-                    <FormControl id="address" isRequired mt={4}>
-                        <FormLabel>Address</FormLabel>
-                        <Input
-                            type="text"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                            placeholder="Enter your address"
-                        />
-                    </FormControl>
-
-                    <FormControl id="phoneNumber" isRequired mt={4}>
-                        <FormLabel>Phone Number</FormLabel>
-                        <Input
-                            type="text"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            placeholder="Enter your phone number"
-                        />
-                    </FormControl>
-
-                    <Button
-                        mt={6}
-                        colorScheme="blue"
-                        size="lg"
-                        width="full"
-                        type="submit"
-                    >
-                        Submit Order
-                    </Button>
-                </Box>
+        <Container maxW="container.xl" py={10}>
+            <VStack spacing={8} align="stretch">
+                <Heading as="h1" size="2xl" textAlign="center">
+                    Order Summary
+                </Heading>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
+                    <VStack spacing={6} align="stretch">
+                        <Heading as="h2" size="lg">
+                            Products
+                        </Heading>
+                        {products.map((product, index) => (
+                            <Box key={product.product_id} borderWidth={1} borderRadius="lg" p={4} shadow="md">
+                                <HStack spacing={4} align="start">
+                                    <Image 
+                                        src={product.image} 
+                                        alt={product.name} 
+                                        boxSize="100px" 
+                                        objectFit="cover" 
+                                        borderRadius="md"
+                                    />
+                                    <VStack align="start" flex={1}>
+                                        <Heading as="h3" size="md">{product.name}</Heading>
+                                        <Text fontSize="sm" color="gray.600">{product.description}</Text>
+                                        <HStack justify="space-between" w="full">
+                                            <Badge colorScheme="purple">Qty: {quantity[index]}</Badge>
+                                            <Text fontWeight="bold" color="green.500">
+                                                {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(product.price * quantity[index])}
+                                            </Text>
+                                        </HStack>
+                                    </VStack>
+                                </HStack>
+                            </Box>
+                        ))}
+                        <Divider />
+                        <HStack justify="space-between">
+                            <Text fontSize="xl" fontWeight="bold">Total</Text>
+                            <Text fontSize="xl" fontWeight="bold" color="green.500">
+                                {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(totalPrice)}
+                            </Text>
+                        </HStack>
+                    </VStack>
+                    <VStack spacing={6} align="stretch">
+                        <Heading as="h2" size="lg">
+                            Shipping Information
+                        </Heading>
+                        <Box as="form" onSubmit={handleSubmit} borderWidth={1} borderRadius="lg" p={6} shadow="md">
+                            <VStack spacing={4}>
+                                <FormControl id="fullName" isRequired>
+                                    <FormLabel>Full Name</FormLabel>
+                                    <Input
+                                        type="text"
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                        placeholder="Enter your full name"
+                                    />
+                                </FormControl>
+                                <FormControl id="address" isRequired>
+                                    <FormLabel>Address</FormLabel>
+                                    <Input
+                                        type="text"
+                                        value={address}
+                                        onChange={(e) => setAddress(e.target.value)}
+                                        placeholder="Enter your address"
+                                    />
+                                </FormControl>
+                                <FormControl id="phoneNumber" isRequired>
+                                    <FormLabel>Phone Number</FormLabel>
+                                    <Input
+                                        type="text"
+                                        value={phoneNumber}
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
+                                        placeholder="Enter your phone number"
+                                    />
+                                </FormControl>
+                                <Button
+                                    mt={4}
+                                    colorScheme="blue"
+                                    size="lg"
+                                    width="full"
+                                    type="submit"
+                                >
+                                    Submit Order
+                                </Button>
+                            </VStack>
+                        </Box>
+                    </VStack>
+                </SimpleGrid>
             </VStack>
-        </Box>
+        </Container>
     );
 };
 
 export default ReceiptForm;
+
