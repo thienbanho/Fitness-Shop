@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, List, ListItem, Spinner, Text, VStack, useToast } from '@chakra-ui/react';
 import supabase from "../../config/supabaseClient";
 import { useAuth } from "../../hooks/Auth";
+import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 
 export default function PTRequestManagement() {
     const toast = useToast();
@@ -9,6 +10,7 @@ export default function PTRequestManagement() {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [public_user_id, setPublicUserId] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (user) {
@@ -91,10 +93,13 @@ export default function PTRequestManagement() {
 
             toast({
                 title: 'Request Accepted',
-                description: 'The request has been successfully accepted.',
+                description: 'See your contracts in your profile.',
                 status: 'success',
-                duration: 5000,
+                duration: 10000,
                 isClosable: true,
+                onClick: () => {
+                    navigate('/PTContracts');
+                }
             });
 
             // Update the UI
