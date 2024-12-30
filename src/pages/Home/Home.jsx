@@ -1,11 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import { Box, Flex, Image, Text, VStack, Heading, Button } from "@chakra-ui/react";
 import { Link } from 'react-router-dom';
+import { useAuth } from "../../hooks/Auth";
+import supabase from "../../config/supabaseClient";
 
 function Home() {
+  const { user } = useAuth();
+  console.log("Hehe: ", user);
+
+  useEffect(() => {
+    if (!user) return;
+    const insertUsers = async () => {
+      await supabase.from('users').insert([{
+        username: user.email,
+        full_name: user.user_metadata?.full_name || user.email,
+        password: '',
+        email: user.email,
+        role: 'user',
+      }]);
+    }
+    insertUsers();
+  });
+
   return (
     <Box bg="black" color="white" fontFamily="Arial, sans-serif">
-      
+
       {/* Hero Section */}
       <Box
         id="hero-section"
@@ -47,7 +66,7 @@ function Home() {
             <Text as="span" fontSize="40" color="green">TRANSFORM </Text>
             <Text as="span" fontSize="60" color="white">YOUR LIFE</Text>
           </Heading>
-          
+
           <Heading fontSize="150" mt={5}>
             <Text as="span" color="black">STRONG</Text>
             <Text as="span" color="red.600">ER</Text>
@@ -67,7 +86,7 @@ function Home() {
           <Text fontSize="15" color="black" mb={4}>
             WE ARE HERE FOR YOU
           </Text>
-          
+
           <Heading
             fontSize="25"
             fontWeight="bold"
@@ -80,7 +99,7 @@ function Home() {
             <br />
             WHO WILL EMPOWER YOUR FITNESS JOURNEY
           </Heading>
-          
+
           <Button
             bg="black"
             color="white"

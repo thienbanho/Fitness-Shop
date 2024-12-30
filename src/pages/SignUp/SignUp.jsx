@@ -9,6 +9,7 @@ import { FaFacebook } from "react-icons/fa";
 import supabase from "../../config/supabaseClient";
 import Logo from "../../assets/logo.png"
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../../hooks/Auth";
 
 
 export default function SignUp() {
@@ -21,11 +22,11 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
-  
+
   const handleSignUp = async () => {
     setLoading(true);
     console.log(email);
-    const { data:user, error:supa } = await supabase.auth.signUp({
+    const { data: user, error: supa } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -44,11 +45,11 @@ export default function SignUp() {
       setLoading(false);
       return;
     }
-    const { data:pub_data, error:pub_error } = await supabase.from('users').insert([{
+    const { data: pub_data, error: pub_error } = await supabase.from('users').insert([{
       username,
       password,
       email,
-      full_name: lastName+' '+firstName,
+      full_name: lastName + ' ' + firstName,
       role: 'user',
     }]);
     if (pub_error) {
@@ -70,7 +71,7 @@ export default function SignUp() {
       console.log("code run:");
       window.location.href = '/'
     }
-    
+
     setLoading(false);
   };
 
@@ -78,29 +79,25 @@ export default function SignUp() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
     });
-    
+
     if (error) {
       console.error("Google login error:", error.message);
       return;
     }
-    console.log(data);
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError) {
-      console.error("Error fetching gg user data:", userError.message);
-      return;
-    }
-    console.log("run");
+    const { user } = useAuth();
 
-    
-    const user = userData.user;
+
     console.log(user);
 
-    await supabase.from('users').insert([{
-      username: user.user_metadata?.full_name || user.email,
-      password: '',
-      email: user.email,
-      role: 'user',
-    }]);
+    const insertUsers = async () => {
+      await supabase.from('users').insert([{
+        username: user.user_metadata?.full_name || user.email,
+        password: '',
+        email: user.email,
+        role: 'user',
+      }]);
+    }
+    insertUsers();
   };
 
   const handleFacebookLogin = async () => {
@@ -121,22 +118,21 @@ export default function SignUp() {
       });
       return;
     }
-    if (!data)
-      {
-        window.location.href = '/index';
-      }
+    if (!data) {
+      window.location.href = '/index';
+    }
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError) {
       console.error("Error fetching fb user data:", userError.message);
       return;
     }
-    
+
     const user = userData.user;
     await supabase.from('users').insert([{
       username: user.user_metadata?.full_name || user.email,
       password: '',
       email: user.email,
-      role: 'user',
+      role: 'admin',
     }]).then(({ error }) => {
       if (error) {
         console.error("Insert Error:", error.message);
