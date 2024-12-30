@@ -1,16 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { Box, Heading, Text, VStack, Image, Flex, Spinner, useToast, IconButton } from "@chakra-ui/react";
-import { ArrowBackIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Heading,
+  Text,
+  VStack,
+  Image,
+  Flex,
+  Spinner,
+  useToast,
+  IconButton,
+  Container,
+  SimpleGrid,
+  Badge,
+  Button,
+  useColorModeValue,
+  Skeleton,
+} from "@chakra-ui/react";
+import { ArrowBackIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../config/supabaseClient";
-import { useAuth } from "../../hooks/Auth"; // Assuming you have an Auth context or hook
+import { useAuth } from "../../hooks/Auth";
 
 const MyProducts = () => {
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
-  const { user } = useAuth(); // Assuming useAuth provides the logged-in user
+  const { user } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+
+  const bgColor = useColorModeValue("white", "gray.700");
+  const textColor = useColorModeValue("gray.600", "gray.200");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
 
   const fetchUserId = async (email) => {
     try {
@@ -47,22 +67,19 @@ const MyProducts = () => {
   useEffect(() => {
     const fetchMyProducts = async () => {
       if (!user?.email) {
-        // Wait for the user to be available
         return;
       }
 
       try {
-        // Fetch user ID based on email
         const userId = await fetchUserId(user.email);
         if (!userId) {
           throw new Error("User ID not found.");
         }
 
-        // Fetch the user's products based on seller_id (which is user_id)
         const { data, error } = await supabase
           .from("products")
           .select("*")
-          .eq("seller_id", userId); // Use the seller_id as user_id
+          .eq("seller_id", userId);
 
         if (error) {
           throw new Error(error.message);
@@ -84,27 +101,36 @@ const MyProducts = () => {
       }
     };
 
-    fetchMyProducts(); // Fetch products once the user is available
+    fetchMyProducts();
   }, [user, toast]);
+
+  const handleEdit = (productId) => {
+    // Implement edit functionality
+    console.log("Edit product:", productId);
+  };
+
+  const handleDelete = (productId) => {
+    // Implement delete functionality
+    console.log("Delete product:", productId);
+  };
 
   if (loading) {
     return (
-      <Flex justify="center" align="center" minHeight="100vh">
-        <Spinner size="xl" />
-      </Flex>
+      <Container maxW="container.xl" centerContent>
+        <VStack spacing={8} w="full" py={10}>
+          {[...Array(3)].map((_, index) => (
+            <Skeleton key={index} height="200px" width="100%" borderRadius="md" />
+          ))}
+        </VStack>
+      </Container>
     );
   }
 
   return (
-    <Box bg="gray.100" minH="100vh" p={5}>
-      <Flex justifyContent="center" alignItems="center" mb={8}>
-        <Flex
-          maxWidth="700px"
-          width="100%"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Heading fontSize="2xl" color="gray.700" mb={4}>
+    <Box bg={useColorModeValue("gray.50", "gray.900")} minH="100vh">
+      <Container maxW="container.xl" py={10}>
+        <Flex justifyContent="space-between" alignItems="center" mb={8}>
+          <Heading fontSize="3xl" color={textColor}>
             My Products
           </Heading>
           <IconButton
@@ -116,60 +142,94 @@ const MyProducts = () => {
             size="lg"
           />
         </Flex>
-      </Flex>
 
-      {products.length > 0 ? (
-        <VStack spacing={8} align="start">
-          {products.map((product) => (
-            <Box
-              key={product.id}
-              bg="white"
-              p={6}
-              borderRadius="md"
-              boxShadow="lg"
-              width="100%"
-              maxW="700px"
-              transition="all 0.3s ease"
-              _hover={{ transform: "translateY(-5px)", boxShadow: "xl" }}
-            >
-              <Flex direction={["column", "row"]} align="center">
+        {products.length > 0 ? (
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+            {products.map((product) => (
+              <Box
+                key={product.id}
+                bg={bgColor}
+                p={6}
+                borderRadius="lg"
+                boxShadow="md"
+                borderWidth="1px"
+                borderColor={borderColor}
+                transition="all 0.3s"
+                _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
+              >
                 <Image
                   src={product.image}
                   alt={product.name}
-                  width={["100%", "200px"]}
-                  height={["200px", "200px"]}
+                  width="100%"
+                  height="200px"
                   objectFit="cover"
                   borderRadius="md"
-                  mr={[0, 4]}
-                  mb={[4, 0]}
+                  mb={4}
                 />
-                <Box>
-                  <Heading fontSize="xl" color="gray.700">
-                    {product.name}
-                  </Heading>
-                  <Text mt={2} color="gray.500">
-                    {product.description}
-                  </Text>
-                  <Text mt={2} fontWeight="bold">
-                    Price: ${product.price}
-                  </Text>
-                  <Text mt={2} color="gray.600">
+                <Heading fontSize="xl" color={textColor} mb={2}>
+                  {product.name}
+                </Heading>
+                <Text color={textColor} noOfLines={2} mb={2}>
+                  {product.description}
+                </Text>
+                <Flex justifyContent="space-between" alignItems="center" mb={4}>
+                  <Badge colorScheme="green" fontSize="md">
+                    ${product.price}
+                  </Badge>
+                  <Text color={textColor} fontSize="sm">
                     Stock: {product.stock}
                   </Text>
-                </Box>
-              </Flex>
-            </Box>
-          ))}
-        </VStack>
-      ) : (
-        <Flex justify="center" align="center" minH="300px">
-          <Text fontSize="xl" color="gray.600">
-            You haven't uploaded any products yet.
-          </Text>
-        </Flex>
-      )}
+                </Flex>
+                <Flex justifyContent="space-between">
+                  <Button
+                    leftIcon={<EditIcon />}
+                    colorScheme="blue"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEdit(product.id)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    leftIcon={<DeleteIcon />}
+                    colorScheme="red"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDelete(product.id)}
+                  >
+                    Delete
+                  </Button>
+                </Flex>
+              </Box>
+            ))}
+          </SimpleGrid>
+        ) : (
+          <Flex
+            justify="center"
+            align="center"
+            minH="300px"
+            bg={bgColor}
+            borderRadius="lg"
+            boxShadow="md"
+            p={8}
+          >
+            <VStack spacing={4}>
+              <Text fontSize="xl" color={textColor}>
+                You haven't uploaded any products yet.
+              </Text>
+              <Button
+                colorScheme="blue"
+                onClick={() => navigate("/upload-product")}
+              >
+                Upload Your First Product
+              </Button>
+            </VStack>
+          </Flex>
+        )}
+      </Container>
     </Box>
   );
 };
 
 export default MyProducts;
+

@@ -55,6 +55,7 @@ const Sidebar = ({ userData, onLogout }) => {
           <NavLink to="/profile" style={linkStyles("/profile")}>
             Account Information
           </NavLink>
+          {/*
           <NavLink to="/profile/orders" style={linkStyles("/profile/orders")}>
             List of Orders
           </NavLink>
@@ -70,6 +71,7 @@ const Sidebar = ({ userData, onLogout }) => {
           <NavLink to="/profile/coupon-wallet" style={linkStyles("/profile/coupon-wallet")}>
             Coupon Wallet
           </NavLink>
+          */}
           <Button variant="outline" colorScheme="red" onClick={onLogout}>
             Sign Out
           </Button>
