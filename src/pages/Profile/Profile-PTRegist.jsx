@@ -62,7 +62,7 @@ export default function PTRegistration() {
           if (nullColumns.length > 0) {
             alert(
               `The following fields are missing: "${nullColumns.join(", ")}"
-              Go fucking back to profile and fill it all before regist`
+              Go back to profile and fill it all before regist`
             );
             window.location.href = "/profile";
           }
@@ -71,8 +71,6 @@ export default function PTRegistration() {
               user_id : data[0].user_id || ""
             })
           }
-        } else {
-          alert("No user data found.");
         }
       };
   
@@ -84,6 +82,8 @@ export default function PTRegistration() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    window.location.href = '/'
+
   };
 
   const [image, setImage] = useState(null);
@@ -144,8 +144,7 @@ export default function PTRegistration() {
       {/* Main Content */}
       <Container maxW="container.xl" py={40}>
         <Flex gap={8}>
-          {/* Sidebar */}
-          <Sidebar />
+          <Sidebar userData={user} onLogout={handleLogout} />
 
           {/* Main Form */}
           <Box flex={1} bg="white" p={8} borderRadius="md" shadow="sm">

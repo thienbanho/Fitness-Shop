@@ -8,6 +8,8 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import supabase from "../../config/supabaseClient";
 import Logo from "../../assets/logo.png"
+import { useNavigate } from 'react-router-dom';
+
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,10 +21,11 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
+  
   const handleSignUp = async () => {
     setLoading(true);
-
-    const { user, error } = await supabase.auth.signUp({
+    console.log(email);
+    const { data:user, error:supa } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -30,7 +33,7 @@ export default function SignUp() {
       },
     });
 
-    if (error) {
+    if (supa) {
       toast({
         title: "Sign-up failed",
         description: error.message,
@@ -41,20 +44,17 @@ export default function SignUp() {
       setLoading(false);
       return;
     }
-
-    const { data, insertError } = await supabase.from('users').insert([{
+    const { data:pub_data, error:pub_error } = await supabase.from('users').insert([{
       username,
       password,
       email,
-      first_name: firstName,
-      last_name: lastName,
+      full_name: lastName+' '+firstName,
       role: 'user',
     }]);
-
-    if (insertError) {
+    if (pub_error) {
       toast({
         title: "Database Error",
-        description: insertError.message,
+        description: pub_error.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -67,8 +67,10 @@ export default function SignUp() {
         duration: 5000,
         isClosable: true,
       });
+      console.log("code run:");
+      window.location.href = '/'
     }
-
+    
     setLoading(false);
   };
 
@@ -81,16 +83,20 @@ export default function SignUp() {
       console.error("Google login error:", error.message);
       return;
     }
-
+    console.log(data);
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError) {
-      console.error("Error fetching user data:", userError.message);
+      console.error("Error fetching gg user data:", userError.message);
       return;
     }
+    console.log("run");
+
     
     const user = userData.user;
+    console.log(user);
+
     await supabase.from('users').insert([{
-      username: user.user_metadata.full_name || user.email,
+      username: user.user_metadata?.full_name || user.email,
       password: '',
       email: user.email,
       role: 'user',
@@ -101,7 +107,6 @@ export default function SignUp() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "facebook",
       options: {
-        redirectTo: "http://localhost:5173", 
       },
     });
 
@@ -116,20 +121,36 @@ export default function SignUp() {
       });
       return;
     }
-
+    if (!data)
+      {
+        window.location.href = '/index';
+      }
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError) {
-      console.error("Error fetching user data:", userError.message);
+      console.error("Error fetching fb user data:", userError.message);
       return;
     }
     
     const user = userData.user;
     await supabase.from('users').insert([{
-      username: user.user_metadata.full_name || user.email,
+      username: user.user_metadata?.full_name || user.email,
       password: '',
       email: user.email,
       role: 'user',
-    }]);
+    }]).then(({ error }) => {
+      if (error) {
+        console.error("Insert Error:", error.message);
+        toast({
+          title: "huhu",
+          description: error.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        console.log("Insert successful");
+      }
+    });
   };
 
   return (
@@ -157,15 +178,9 @@ export default function SignUp() {
                 <FormControl isRequired>
                   <FormLabel>First Name</FormLabel>
                   <Input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                  <Input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Last Name</FormLabel>
-                  <Input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>Username</FormLabel>
-                  <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
                   <Input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                 </FormControl>
                 <FormControl isRequired>

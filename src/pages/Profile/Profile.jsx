@@ -90,6 +90,7 @@ export default function Profile() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    window.location.href = "/";
   };
 
   const handleUpdateProfile = async () => {
