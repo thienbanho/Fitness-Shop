@@ -219,7 +219,7 @@ const MyProducts = () => {
               </Text>
               <Button
                 colorScheme="blue"
-                onClick={() => navigate("/upload-product")}
+                onClick={() => navigate("/uploadProduct")}
               >
                 Upload Your First Product
               </Button>

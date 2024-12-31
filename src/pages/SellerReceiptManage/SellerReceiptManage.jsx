@@ -15,6 +15,7 @@ import supabase from "../../config/supabaseClient";
 const SellerReceiptManage = () => {
   const [loading, setLoading] = useState(true);
   const [receipts, setReceipts] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState(""); // Status filter
   const { user } = useAuth();
   const toast = useToast();
 
@@ -54,9 +55,23 @@ const SellerReceiptManage = () => {
     try {
       const { data, error } = await supabase
         .from("receipts")
-        .select(
-          "receipt_id, total, created_date, status, receipt_items (item_id, quantity, price, total, status, product_id, products (product_id, name, seller_id, price))"
-        )
+        .select(`
+          receipt_id,
+          total,
+          created_date,
+          receipt_items:receipt_items (
+            item_id,
+            quantity,
+            price,
+            total,
+            status,
+            product_id,
+            products:products (
+              name,
+              seller_id
+            )
+          )
+        `)
         .eq("receipt_items.products.seller_id", userId);
 
       if (error) {
@@ -78,7 +93,6 @@ const SellerReceiptManage = () => {
 
   const updateItemStatus = async (itemId, newStatus, productId, quantity) => {
     try {
-      // Update the item status
       const { error: updateError } = await supabase
         .from("receipt_items")
         .update({ status: newStatus })
@@ -88,9 +102,7 @@ const SellerReceiptManage = () => {
         throw new Error(updateError.message);
       }
 
-      // If the status is "Successful", update the product stock
       if (newStatus === "Successful") {
-        // Get the current stock of the product
         const { data: productData, error: stockError } = await supabase
           .from("products")
           .select("stock")
@@ -104,7 +116,6 @@ const SellerReceiptManage = () => {
         const currentStock = productData?.stock || 0;
         const newStock = currentStock - quantity;
 
-        // Update the stock with the new value
         const { error: updateStockError } = await supabase
           .from("products")
           .update({ stock: newStock })
@@ -123,7 +134,6 @@ const SellerReceiptManage = () => {
         isClosable: true,
       });
 
-      // Refetch the receipts
       const userId = await fetchUserId(user.email);
       const updatedReceipts = await fetchReceipts(userId);
       setReceipts(updatedReceipts);
@@ -156,6 +166,33 @@ const SellerReceiptManage = () => {
     fetchData();
   }, [user]);
 
+  const handleStatusFilterChange = (e) => {
+    setSelectedStatus(e.target.value);
+  };
+
+  const calculateReceiptStatus = (items) => {
+    const allStatuses = items.map((item) => item.status);
+
+    if (allStatuses.every((status) => status === "Successful")) {
+      return "Successful";
+    } else if (allStatuses.every((status) => status === "Delivered" || status === "Successful")) {
+      return "Delivered";
+    } else if (allStatuses.every((status) => status === "Cancel")) {
+      return "Cancel";
+    } else {
+      return "Pending";
+    }
+  };
+
+  const filteredReceipts = receipts
+    .map((receipt) => ({
+      ...receipt,
+      status: calculateReceiptStatus(receipt.receipt_items),
+    }))
+    .filter((receipt) => {
+      return selectedStatus === "" || receipt.status === selectedStatus;
+    });
+
   if (loading) {
     return (
       <Flex justify="center" align="center" minHeight="100vh">
@@ -170,9 +207,22 @@ const SellerReceiptManage = () => {
         Manage Receipts
       </Heading>
 
-      {receipts.length > 0 ? (
+      {/* Status filter dropdown */}
+      <Select
+        placeholder="Filter by status"
+        value={selectedStatus}
+        onChange={handleStatusFilterChange}
+        mb={4}
+      >
+        <option value="Pending">Pending</option>
+        <option value="Delivered">Delivered</option>
+        <option value="Successful">Successful</option>
+        <option value="Cancel">Cancel</option>
+      </Select>
+
+      {filteredReceipts.length > 0 ? (
         <VStack spacing={8} align="start">
-          {receipts.map((receipt) => (
+          {filteredReceipts.map((receipt) => (
             <Box
               key={receipt.receipt_id}
               bg="white"
@@ -192,9 +242,7 @@ const SellerReceiptManage = () => {
                 {receipt.receipt_items.map((item) => (
                   <Box key={item.item_id}>
                     <Text color="gray.600">
-                      Product:{" "}
-                      {item.products?.name ? item.products.name : "Unknown Product"}{" "}
-                      (Quantity: {item.quantity})
+                      Product: {item.products?.name || "Unknown Product"} (Quantity: {item.quantity})
                     </Text>
                     <Text color="gray.600">Item Total: ${item.total}</Text>
                     <Select
@@ -204,7 +252,7 @@ const SellerReceiptManage = () => {
                       onChange={(e) =>
                         updateItemStatus(item.item_id, e.target.value, item.product_id, item.quantity)
                       }
-                      isDisabled={item.status === "Successful"} // Disable if status is "Successful"
+                      isDisabled={item.status === "Successful"}
                     >
                       <option value="Cancel">Cancel</option>
                       <option value="Pending">Pending</option>

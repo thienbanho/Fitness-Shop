@@ -11,6 +11,13 @@ function Home() {
   useEffect(() => {
     if (!user) return;
     const insertUsers = async () => {
+      const { data: existingUser } = await supabase
+      .from('users')
+      .select()
+      .or(`username.eq.${user.email},email.eq.${user.email}`)
+      .single();
+
+      if (!existingUser) {
       await supabase.from('users').insert([{
         username: user.email,
         full_name: user.user_metadata?.full_name || user.email,
@@ -18,6 +25,7 @@ function Home() {
         email: user.email,
         role: 'user',
       }]);
+      }
     }
     insertUsers();
   });

@@ -9,6 +9,7 @@ import {
     Spinner,
     Divider,
     Center,
+    Select,
 } from "@chakra-ui/react";
 import supabase from "../../config/supabaseClient";
 import { useAuth } from "../../hooks/Auth";
@@ -16,6 +17,7 @@ import { useAuth } from "../../hooks/Auth";
 const ReceiptList = () => {
     const [receipts, setReceipts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedStatus, setSelectedStatus] = useState(""); // New state for status filter
     const toast = useToast();
     const { user } = useAuth();
 
@@ -41,7 +43,6 @@ const ReceiptList = () => {
 
     const calculateNewStatus = async (receiptId) => {
         try {
-            // Fetch all items for the receipt
             const { data: items, error: itemsError } = await supabase
                 .from("receipt_items")
                 .select("status")
@@ -51,9 +52,8 @@ const ReceiptList = () => {
                 throw new Error(itemsError.message);
             }
 
-            if (items.length === 0) return null; // No items found for the receipt
+            if (items.length === 0) return null;
 
-            // Determine if all items have the same status
             const allCancelled = items.every((item) => item.status === "Cancel");
             const allDelivered = items.every((item) => item.status === "Delivered");
             const allSuccessful = items.every((item) => item.status === "Successful");
@@ -64,9 +64,9 @@ const ReceiptList = () => {
                 return "Successful";
             } else if (allCancelled) {
                 return "Cancelled";
-            } else
+            }
 
-            return "Pending"; // Default status if neither condition is met
+            return "Pending";
         } catch (error) {
             toast({
                 title: "Error calculating receipt status",
@@ -81,11 +81,9 @@ const ReceiptList = () => {
 
     const fetchReceipts = async () => {
         try {
-            // Fetch the user_id first
             const userId = await fetchUserId(user.email);
             if (!userId) return;
 
-            // Fetch all receipts for the current user
             const { data: receiptsData, error: receiptsError } = await supabase
                 .from("receipts")
                 .select("*")
@@ -95,7 +93,6 @@ const ReceiptList = () => {
                 throw new Error(receiptsError.message);
             }
 
-            // Calculate new status for each receipt
             const receiptsWithStatus = await Promise.all(
                 receiptsData.map(async (receipt) => {
                     const newStatus = await calculateNewStatus(receipt.receipt_id);
@@ -122,6 +119,17 @@ const ReceiptList = () => {
         fetchReceipts();
     }, [user, toast]);
 
+    // Handle status filter change
+    const handleStatusFilterChange = (e) => {
+        setSelectedStatus(e.target.value);
+    };
+
+    // Filter the receipts based on selected status
+    const filteredReceipts = receipts.filter((receipt) => {
+        if (selectedStatus === "") return true; // Show all receipts if no filter is selected
+        return receipt.newStatus === selectedStatus;
+    });
+
     if (loading) {
         return (
             <Center>
@@ -133,8 +141,23 @@ const ReceiptList = () => {
     return (
         <VStack spacing={4} align="stretch">
             <Heading>Receipts</Heading>
-            {receipts.length > 0 ? (
-                receipts.map((receipt) => (
+
+            {/* Status filter dropdown */}
+            <Select
+                placeholder="Filter by status"
+                value={selectedStatus}
+                onChange={handleStatusFilterChange}
+                mb={4}
+            >
+                <option value="">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Successful">Successful</option>
+                <option value="Cancelled">Cancelled</option>
+            </Select>
+
+            {filteredReceipts.length > 0 ? (
+                filteredReceipts.map((receipt) => (
                     <Box key={receipt.receipt_id} p={4} shadow="md" borderWidth="1px">
                         <Text>Receipt ID: {receipt.receipt_id}</Text>
                         <Text>Total: ${receipt.total}</Text>

@@ -8,31 +8,43 @@ import {
   Heading,
   Center,
   useToast,
+  Input,
+  Checkbox,
+  Text,
+  SimpleGrid,
+  HStack,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 import supabase from "../../config/supabaseClient";
 
 const RoleManage = () => {
   const [users, setUsers] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [role, setRole] = useState("");
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const toast = useToast();
-  const navigate = useNavigate();
 
-  // Fetch users on component mount
+  const usersPerPage = 5;
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const { data, error } = await supabase
+        const { data, error, count } = await supabase
           .from("users")
-          .select("user_id, username, role");
+          .select("user_id, username, role", { count: "exact" })
+          .ilike("username", `%${search}%`)
+          .range((currentPage - 1) * usersPerPage, currentPage * usersPerPage - 1);
 
         if (error) {
           throw error;
         }
 
+        console.log("Fetched users:", data);
         setUsers(data);
+        setTotalPages(Math.ceil(count / usersPerPage));
       } catch (error) {
+        console.error("Error fetching users:", error);
         toast({
           title: "Error fetching users.",
           description: error.message,
@@ -44,10 +56,10 @@ const RoleManage = () => {
     };
 
     fetchUsers();
-  }, [toast]);
+  }, [search, currentPage, toast]);
 
-  const handleUserChange = (event) => {
-    setSelectedUserId(event.target.value);
+  const handleUserChange = (userId) => {
+    setSelectedUserId(userId);
   };
 
   const handleRoleChange = (event) => {
@@ -73,6 +85,7 @@ const RoleManage = () => {
         .eq("user_id", selectedUserId);
 
       if (error) {
+        console.error("Error updating role:", error);
         throw error;
       }
 
@@ -84,7 +97,9 @@ const RoleManage = () => {
         isClosable: true,
       });
 
+      setSelectedUserId(null);
     } catch (error) {
+      console.error("Error during role update:", error);
       toast({
         title: "An error occurred.",
         description: error.message,
@@ -102,15 +117,28 @@ const RoleManage = () => {
           Manage User Role
         </Heading>
 
+        <FormControl id="search">
+          <FormLabel>Search Users</FormLabel>
+          <Input
+            placeholder="Search by username"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </FormControl>
+
         <FormControl id="username">
           <FormLabel>Select User</FormLabel>
-          <Select placeholder="Select user" value={selectedUserId} onChange={handleUserChange}>
+          <SimpleGrid columns={1} spacing={2}>
             {users.map((user) => (
-              <option key={user.user_id} value={user.user_id}>
-                {user.username}
-              </option>
+              <Checkbox
+                key={user.user_id}
+                isChecked={selectedUserId === user.user_id}
+                onChange={() => handleUserChange(user.user_id)}
+              >
+                <Text>{user.username}</Text>
+              </Checkbox>
             ))}
-          </Select>
+          </SimpleGrid>
         </FormControl>
 
         <FormControl id="role">
@@ -127,6 +155,24 @@ const RoleManage = () => {
         <Button colorScheme="teal" onClick={handleSubmit}>
           Update Role
         </Button>
+
+        <HStack spacing={4} justify="space-between" w="full">
+          <Button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
+          >
+            Previous
+          </Button>
+          <Text>
+            Page {currentPage} of {totalPages}
+          </Text>
+          <Button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(currentPage + 1)}
+          >
+            Next
+          </Button>
+        </HStack>
       </VStack>
     </Center>
   );
