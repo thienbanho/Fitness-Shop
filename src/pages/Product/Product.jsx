@@ -14,6 +14,7 @@ import {
     SliderThumb,
     useToast,
     Link,
+    Button,
 } from "@chakra-ui/react";
 import { useBreakpointValue } from "@chakra-ui/react";
 import { useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation from react-router-dom
@@ -37,12 +38,16 @@ const categories = [
     { title: "Thực phẩm chức năng", image: SupplementsImage },
 ];
 
+const ITEMS_PER_PAGE = 10; // Number of products per page
+
 const Product = () => {
     const [products, setProducts] = useState([]);
     const [priceRange, setPriceRange] = useState(50000000);
     const [brand, setBrand] = useState("");
     const [kind, setKind] = useState("");
     const [searchQuery, setSearchQuery] = useState(""); // New state for search query
+    const [currentPage, setCurrentPage] = useState(1); // Current page state
+    const [totalProducts, setTotalProducts] = useState(0); // Total products count
     const toast = useToast();
     const isHorizontal = useBreakpointValue({ base: false, md: true });
     const navigate = useNavigate(); // Use navigate for routing
@@ -53,10 +58,22 @@ const Product = () => {
             const queryParams = new URLSearchParams(location.search); // Get the search query from URL
             const search = queryParams.get("search") || ""; // Get the 'search' query parameter
 
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE - 1;
+
+            // Fetch total count for pagination
+            const { count } = await supabase
+                .from("products")
+                .select("*", { count: "exact", head: true })
+                .ilike("name", `%${search}%`);
+
+            setTotalProducts(count || 0); // Set the total count
+
             const { data, error } = await supabase
                 .from("products")
                 .select("*")
-                .ilike("name", `%${search}%`); // Filter products by search query
+                .ilike("name", `%${search}%`)
+                .range(start, end); // Fetch products for current page
 
             if (error) {
                 toast({
@@ -72,13 +89,25 @@ const Product = () => {
         };
 
         fetchProducts();
-    }, [location.search, toast]); // Fetch products when the search query changes
+    }, [location.search, toast, currentPage]); // Fetch products when the search query or current page changes
 
     // Handle search and update URL
     const handleSearch = (e) => {
-        if (e.key === 'Enter' && searchQuery) {
+        if (e.key === "Enter" && searchQuery) {
             navigate(`/Product?search=${searchQuery}`); // Update URL with search query
+            setCurrentPage(1); // Reset to first page
         }
+    };
+
+    // Pagination controls
+    const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) setCurrentPage((prev) => prev - 1);
     };
 
     return (
@@ -212,6 +241,25 @@ const Product = () => {
                         </Link>
                     ))}
                 </SimpleGrid>
+            </Flex>
+
+            {/* Pagination Controls */}
+            <Flex mt={6} justifyContent="center" gap={4}>
+                <Button
+                    isDisabled={currentPage === 1}
+                    onClick={handlePreviousPage}
+                >
+                    Previous
+                </Button>
+                <Text fontSize="md" fontWeight="bold">
+                    Page {currentPage} of {totalPages}
+                </Text>
+                <Button
+                    isDisabled={currentPage === totalPages}
+                    onClick={handleNextPage}
+                >
+                    Next
+                </Button>
             </Flex>
         </Box>
     );
