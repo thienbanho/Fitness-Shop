@@ -103,7 +103,7 @@ export default function Forum() {
     if (!user_public || !user_public.user_id || !user_public.username) {
       toast({
         title: 'Error',
-        description: 'User information is missing.',
+        description: 'User information is missing, you need to login first.',
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -167,7 +167,7 @@ export default function Forum() {
         title: newTopic,
         created_at: new Date().toISOString(),
       });
-  
+
       if (error) {
         toast({
           title: 'Error adding topic.',
@@ -344,8 +344,11 @@ export default function Forum() {
                     _hover={{ boxShadow: 'xl', bg: 'blue.50' }}
                   >
                     <Text fontWeight="bold" color="black">
-                      {post.user_id === user_public.user_id ? 'You' : post.user_name}
+                      {user_public === null || post.user_id !== user_public.user_id
+                        ? post.user_name
+                        : 'You'}
                     </Text>
+
                     <Text>{post.content}</Text>
                     <Text fontSize="sm" color="gray.500">
                       {new Date(post.created_at).toLocaleString()}
